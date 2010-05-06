@@ -1,0 +1,5 @@
+F0,41,10,42,11,0C,00,00,00,00,00,74,F7 // SC-88* all
+F0,41,10,42,11,0C,00,01,00,00,00,73,F7 // SC-88* instrumental list dump
+F0,41,10,42,11,0C,00,02,00,00,00,72,F7 // SC-88* drum set list dump
+F0,41,10,42,11,0C,00,03,00,00,00,71,F7 // SC-88* drum instrument list dump
+F0,41,10,42,11,0C,00,04,00,00,00,70,F7 // SC-88* insertion effect list dump

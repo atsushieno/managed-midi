@@ -1,0 +1,18 @@
+This is a simple bulk dump tool.
+
+to build the executable, run:
+	gmcs bulkdump.cs ../SMF.cs ../../PortMidiSharp.cs
+
+example usage:
+
+	mono bulkdump.exe --file:sc8820.bin --in:1 --out:5 --interval:500 --sysex:F0,41,10,42,11,0C,00,04,00,00,00,70,F7 --buffer:100000
+
+	--file: specifies SMF output file
+	--in: MIDI input device ID (given by portmidi)
+	--out: MIDI output device ID (given by portmidi)
+	--interval: milliseconds to wait for each read from input.
+	--sysex: comma-separated hex list of sysex as the bulk dump request.
+	--buffer: input buffer size.
+
+See dump-sequences.txt for the example list of known sysex sequences.
+

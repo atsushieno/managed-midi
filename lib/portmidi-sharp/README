@@ -1,0 +1,13 @@
+This is an attempt to use portmidi on Mono.
+
+Looks like portmidi project itself is trying to support managed
+solution, but it looks bogus since it seems trying to use C++/CLI
+mixed solution which is no-go for Mono.
+
+
+You need shared library version of portmidi, which can be built
+with some help of my patches. See portmidi-patches directory as
+well as README in the patch directory.
+
+Atsushi Eno
+
