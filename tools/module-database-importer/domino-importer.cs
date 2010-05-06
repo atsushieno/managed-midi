@@ -41,7 +41,7 @@ namespace Commons.Music.Midi
 					var mad = new MidiInstrumentMap () { Name = map.Attr ("Name") };
 					mdd.Instrument.Maps.Add (mad);
 					foreach (var pc in map.Elements ("PC")) {
-						var pd = new MidiProgramDefinition () { Name = pc.Attr ("Name"), Index = pc.AttrAsInt ("PC") };
+						var pd = new MidiProgramDefinition () { Name = pc.Attr ("Name"), Index = pc.AttrAsInt ("PC") - 1 }; // the domino XML index begins with 1 up to 128, so decrease here.
 						mad.Programs.Add (pd);
 						foreach (var bank in pc.Elements ("Bank")) {
 							if (bank.Attr ("MSB") == null)

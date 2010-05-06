@@ -123,8 +123,35 @@ namespace Commons.Music.Midi
 			}
 			output = MidiDeviceManager.OpenOutput (output_devices [deviceIndex].ID);
 			output.Write (0, new MidiMessage (0xC0 + channel, 0, 0));
+
+			SetupBankSelector (deviceIndex);
+		}
+		
+		void SetupBankSelector (int deviceIndex)
+		{
+			var db = MidiModuleDatabase.Default.Resolve (output_devices [deviceIndex].Name);
+			if (db != null && db.Instrument != null && db.Instrument.Maps.Count > 0) {
+				var map = db.Instrument.Maps [0];
+				foreach (var prog in map.Programs) {
+					var mcat = tone_menu.MenuItems [prog.Index / 8];
+					var mprg = mcat.MenuItems [prog.Index % 8];
+					mprg.MenuItems.Clear ();
+					foreach (var bank in prog.Banks) {
+						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
+						mi.Select += delegate {
+							var mbank = (MidiBankDefinition) mi.Tag;
+							output.Write (0, new MidiMessage (SmfMessage.CC + channel, SmfCC.BankSelect, mbank.Msb));
+							output.Write (0, new MidiMessage (SmfMessage.CC + channel, SmfCC.BankSelectLsb, mbank.Lsb));
+							output.Write (0, new MidiMessage (SmfMessage.Program + channel, (int) mi.Parent.Tag, 0));
+						};
+						mprg.MenuItems.Add (mi);
+					}
+				}
+			}
 		}
 
+		MenuItem tone_menu;
+		
 		static readonly string [] tone_categories = {
 			"&A 0 Piano",
 			"&B 8 Chromatic Percussion",
@@ -146,13 +173,13 @@ namespace Commons.Music.Midi
 
 		void SetupToneSelector ()
 		{
-			var tone = new MenuItem ("&Tone");
-			this.Menu.MenuItems.Add (tone);
+			tone_menu = new MenuItem ("&Tone");
+			this.Menu.MenuItems.Add (tone_menu);
 			MenuItem sub = null;
 			for (int i = 0; i < tone_list.Count; i++) {
 				if (i % 8 == 0) {
 					sub = new MenuItem (tone_categories [i / 8]);
-					tone.MenuItems.Add (sub);
+					tone_menu.MenuItems.Add (sub);
 				}
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
