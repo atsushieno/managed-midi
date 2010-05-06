@@ -13,7 +13,7 @@ $(target): $(target_sources)
 clean:
 	rm -rf $(target)
 
-test-import: domino-importer.exe
-	for fff in *.xml ; do $(RUNTIME) ./domino-importer.exe $$fff ; done;
+test-import: $(target)
+	for fff in *.xml ; do $(RUNTIME) $(target) $$fff ; done;
 
 

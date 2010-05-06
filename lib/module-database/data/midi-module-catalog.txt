@@ -1,0 +1,5 @@
+ms_gs_wavetable_synth.midimod
+roland_sc-88.midimod
+roland_sc-8820.midimod
+roland_sc-88pro.midimod
+yamaha_motif-rack_es.midimod

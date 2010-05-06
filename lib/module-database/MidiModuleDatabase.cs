@@ -22,8 +22,11 @@ namespace Commons.Music.Midi
 		public DefaultMidiModuleDatabase ()
 		{
 			Modules = new List<MidiModuleDefinition> ();
-			foreach (string file in Directory.GetFiles (new Uri (GetType ().Assembly.CodeBase).LocalPath, "*.midimod"))
-				Modules.Add (MidiModuleDefinition.Load (file));
+			var ass = GetType ().Assembly;
+			var catalog = new StreamReader (ass.GetManifestResourceStream ("midi-module-catalog.txt")).ReadToEnd ().Split ('\n');
+			foreach (string filename in catalog)
+				if (filename.Length > 0)
+					Modules.Add (MidiModuleDefinition.Load (ass.GetManifestResourceStream (filename)));
 		}
 
 		public override MidiModuleDefinition Resolve (string moduleName)
