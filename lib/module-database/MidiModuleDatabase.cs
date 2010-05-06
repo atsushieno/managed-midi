@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -19,14 +20,21 @@ namespace Commons.Music.Midi
 
 	class DefaultMidiModuleDatabase : MidiModuleDatabase
 	{
+		static readonly Assembly ass = typeof (DefaultMidiModuleDatabase).Assembly;
+
+		// am too lazy to adjust resource names :/
+		public static Stream GetResource (string name)
+		{
+			return ass.GetManifestResourceStream (name) ?? ass.GetManifestResourceStream ("module-database/data/" + name);
+		}
+
 		public DefaultMidiModuleDatabase ()
 		{
 			Modules = new List<MidiModuleDefinition> ();
-			var ass = GetType ().Assembly;
-			var catalog = new StreamReader (ass.GetManifestResourceStream ("midi-module-catalog.txt")).ReadToEnd ().Split ('\n');
+			var catalog = new StreamReader (GetResource ("midi-module-catalog.txt")).ReadToEnd ().Split ('\n');
 			foreach (string filename in catalog)
 				if (filename.Length > 0)
-					Modules.Add (MidiModuleDefinition.Load (ass.GetManifestResourceStream (filename)));
+					Modules.Add (MidiModuleDefinition.Load (GetResource (filename)));
 		}
 
 		public override MidiModuleDefinition Resolve (string moduleName)
