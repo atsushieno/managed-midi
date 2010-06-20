@@ -11,17 +11,39 @@ namespace Commons.Music.Midi.Player
 {
 	public class Driver
 	{
+		static void ShowHelp ()
+		{
+			Console.WriteLine (@"
+managed-midi-player-console [options] SMF-files(*.mid)
+
+Options:
+--help		show this help.
+--device:x	specifies MIDI output device by ID.
+");
+			Console.WriteLine ("List of MIDI output device IDs: ");
+			foreach (var dev in MidiDeviceManager.AllDevices)
+				if (dev.IsOutput)
+					Console.WriteLine ("\t{0}: {1}", dev.ID, dev.Name);
+		}
+
 		public static void Main (string [] args)
 		{
 			int outdev = MidiDeviceManager.DefaultOutputDeviceID;
 			var files = new List<string> ();
+			if (args.Length == 0) {
+				ShowHelp ();
+				return;
+			}
 			foreach (var arg in args) {
+				if (arg == "--help") {
+					ShowHelp ();
+					return;
+				}
 				if (arg.StartsWith ("--device:")) {
 					if (!int.TryParse (arg.Substring (9), out outdev)) {
-						Console.WriteLine ("Specify device ID: ");
-						foreach (var dev in MidiDeviceManager.AllDevices)
-							if (dev.IsOutput)
-								Console.WriteLine ("{0}: {1}", dev.ID, dev.Name);
+						ShowHelp ();
+						Console.WriteLine ();
+						Console.WriteLine ("Invalid MIDI output device ID.");
 						return;
 					}
 				}
