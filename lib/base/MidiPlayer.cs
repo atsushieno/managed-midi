@@ -128,8 +128,8 @@ namespace Commons.Music.Midi.Player
 
 		int GetDeltaTimeInMilliseconds (int deltaTime)
 		{
-			if (music.DeltaTimeSpec >= 0x80)
-				throw new NotSupportedException ();
+			if (music.DeltaTimeSpec < 0)
+				throw new NotSupportedException ("SMPTe-basd delta time is not implemented yet");
 			return (int) (current_tempo / 1000 * deltaTime / music.DeltaTimeSpec / tempo_ratio);
 		}
 
