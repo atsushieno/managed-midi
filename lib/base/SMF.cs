@@ -493,7 +493,7 @@ namespace Commons.Music.Midi
 					// (note that for more than one meta event it requires step count of 0).
 					int repeatCount = e.Message.Data.Length / 0x77;
 					int mod = e.Message.Data.Length % 0x77;
-					return repeatCount * (12 + 0x77) - (repeatCount > 0 ? 1 : 0) + (mod > 0 ? 12 + mod : 0) - 1;
+					return repeatCount * (12 + 0x77) - (repeatCount > 0 ? 1 : 0) + (mod > 0 ? 12 + mod : 0);
 				}
 
 
