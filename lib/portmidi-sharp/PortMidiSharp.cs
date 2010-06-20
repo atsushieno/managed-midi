@@ -114,15 +114,19 @@ namespace PortMidiSharp
 
 	public struct MidiDeviceInfo
 	{
+		int id;
 		PmDeviceInfo info;
 
 		internal MidiDeviceInfo (int id, IntPtr ptr)
 		{
-			ID = id;
+			this.id = id;
 			this.info = (PmDeviceInfo) Marshal.PtrToStructure (ptr, typeof (PmDeviceInfo));
 		}
 
-		public int ID { get; set; }
+		public int ID {
+			get { return id; }
+			set { id = value; }
+		}
 
 		public string Interface {
 			get { return Marshal.PtrToStringAnsi (info.Interface); }
