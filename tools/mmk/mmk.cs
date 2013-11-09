@@ -51,7 +51,7 @@ namespace Commons.Music.Midi
 
 			var rb = new RadioButton () { Text = "Normal" };
 			rb.Location = new Point (30, 30);
-			rb.CheckedChanged += delegate { if (rb.Checked) channel = 0; };
+			rb.CheckedChanged += delegate { if (rb.Checked) channel = key_channel; };
 			Controls.Add (rb);
 
 			var rb2 = new RadioButton () { Text = "Drum" };
@@ -387,7 +387,8 @@ namespace Commons.Music.Midi
 		}
 
 		MidiOutput output;
-		int channel = 0;
+		int key_channel = 1;
+		int channel = 1;
 		int transpose;
 		int octave = 4; // lowest
 		List<MidiDeviceInfo> output_devices = new List<MidiDeviceInfo> ();
