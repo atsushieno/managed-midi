@@ -19,6 +19,7 @@ managed-midi-player-console [options] SMF-files(*.mid)
 Options:
 --help		show this help.
 --device:x	specifies MIDI output device by ID.
+--diagnose	diagnose MIDI message outputs to console.
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
 			foreach (var dev in MidiDeviceManager.AllDevices)
@@ -30,6 +31,7 @@ Options:
 		{
 			int outdev = MidiDeviceManager.DefaultOutputDeviceID;
 			var files = new List<string> ();
+			bool diagnostic = false;
 			if (args.Length == 0) {
 				ShowHelp ();
 				return;
@@ -39,7 +41,9 @@ Options:
 					ShowHelp ();
 					return;
 				}
-				if (arg.StartsWith ("--device:")) {
+				else if (arg == "--diagnose")
+					diagnostic = true;
+				else if (arg.StartsWith ("--device:")) {
 					if (!int.TryParse (arg.Substring (9), out outdev)) {
 						ShowHelp ();
 						Console.WriteLine ();
@@ -56,6 +60,9 @@ Options:
 				var parser = new SmfReader (File.OpenRead (arg));
 				parser.Parse ();
 				var player = new PortMidiPlayer (output, parser.Music);
+				DateTimeOffset start = DateTimeOffset.Now;
+				if (diagnostic)
+					player.MessageReceived += m => Console.WriteLine ("{0:06} {1:X08}", (DateTimeOffset.Now - start).TotalMilliseconds, m.Value);
 				player.StartLoop ();
 				player.PlayAsync ();
 				Console.WriteLine ("empty line to quit, P to pause and resume");
