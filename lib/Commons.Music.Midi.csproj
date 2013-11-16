@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Commons.Music.Midi</RootNamespace>
+    <AssemblyName>Commons.Music.Midi</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="module-database\data\README" />
+    <None Include="module-database\data\midi-module-catalog.txt" />
+    <None Include="module-database\data\ms_gs_wavetable_synth.midimod" />
+    <None Include="module-database\data\roland_sc-88.midimod" />
+    <None Include="module-database\data\roland_sc-8820.midimod" />
+    <None Include="module-database\data\roland_sc-88pro.midimod" />
+    <None Include="module-database\data\yamaha_motif-rack_es.midimod" />
+    <None Include="portmidi-sharp\README" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="base\MidiMachine.cs" />
+    <Compile Include="base\MidiPlayer.cs" />
+    <Compile Include="base\SMF.cs" />
+    <Compile Include="module-database\MidiModuleDatabase.cs" />
+    <Compile Include="portmidi-sharp\PortMidiPlayer.cs" />
+    <Compile Include="portmidi-sharp\PortMidiSharp.cs" />
+  </ItemGroup>
+</Project>

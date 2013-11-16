@@ -1,0 +1,4 @@
+build/
+lib/bin/
+lib/obj/
+managed-midi.userprefs
