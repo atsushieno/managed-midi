@@ -106,8 +106,8 @@ namespace Commons.Music.Midi
 		public const byte Balance = 0x08;
 		public const byte Pan = 0x0A;
 		public const byte Expression = 0x0B;
-		public const byte Effect1 = 0x0C;
-		public const byte Effect2 = 0x0D;
+		public const byte EffectControl1 = 0x0C;
+		public const byte EffectControl2 = 0x0D;
 		public const byte General1 = 0x10;
 		public const byte General2 = 0x11;
 		public const byte General3 = 0x12;
@@ -150,10 +150,15 @@ namespace Commons.Music.Midi
 		public const byte General8 = 0x53;
 		public const byte PortamentoControl = 0x54;
 		public const byte Rsd = 0x5B;
+		public const byte Effect1 = 0x5B;
 		public const byte Tremolo = 0x5C;
+		public const byte Effect2 = 0x5C;
 		public const byte Csd = 0x5D;
+		public const byte Effect3 = 0x5D;
 		public const byte Celeste = 0x5E;
+		public const byte Effect4 = 0x5E;
 		public const byte Phaser = 0x5F;
+		public const byte Effect5 = 0x5F;
 		public const byte DteIncrement = 0x60;
 		public const byte DteDecrement = 0x61;
 		public const byte NrpnLsb = 0x62;
