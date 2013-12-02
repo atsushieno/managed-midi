@@ -15,14 +15,14 @@ namespace Commons.Music.Midi.Player
 			: base (music)
 		{
 			this.output = output;
-			MessageReceived += delegate (SmfMessage m) { SendMidiMessage (m); };
+			EventReceived += delegate (SmfEvent m) { SendMidiMessage (m); };
 		}
 
 		// it should not be disposed here. The module that
 		// created this object should dispose it instead.
 		MidiOutput output;
 
-		void SendMidiMessage (SmfMessage m)
+		void SendMidiMessage (SmfEvent m)
 		{
 			if ((m.Value & 0xFF) == 0xF0)
 				WriteSysEx (0xF0, m.Data);

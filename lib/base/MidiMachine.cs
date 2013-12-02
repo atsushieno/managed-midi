@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Commons.Music.Midi
 {
-	public delegate void MidiMessageAction (SmfMessage m);
+	public delegate void MidiEventAction (SmfEvent m);
 
 	public class MidiMachine
 	{
@@ -15,60 +15,60 @@ namespace Commons.Music.Midi
 			Channels = arr;
 		}
 
-		public event MidiMessageAction MessageReceived;
+		public event MidiEventAction EventReceived;
 
 		public IList<MidiMachineChannel> Channels { get; private set; }
 
-		public virtual void ProcessMessage (SmfMessage msg)
+		public virtual void ProcessEvent (SmfEvent evt)
 		{
-			switch (msg.MessageType) {
-			case SmfMessage.NoteOn:
-				Channels [msg.Channel].NoteVelocity [msg.Msb] = msg.Lsb;
+			switch (evt.EventType) {
+			case SmfEvent.NoteOn:
+				Channels [evt.Channel].NoteVelocity [evt.Msb] = evt.Lsb;
 				break;
-			case SmfMessage.NoteOff:
-				Channels [msg.Channel].NoteVelocity [msg.Msb] = 0;
+			case SmfEvent.NoteOff:
+				Channels [evt.Channel].NoteVelocity [evt.Msb] = 0;
 				break;
-			case SmfMessage.PAf:
-				Channels [msg.Channel].PAfVelocity [msg.Msb] = msg.Lsb;
+			case SmfEvent.PAf:
+				Channels [evt.Channel].PAfVelocity [evt.Msb] = evt.Lsb;
 				break;
-			case SmfMessage.CC:
+			case SmfEvent.CC:
 				// FIXME: handle RPNs and NRPNs by DTE
-				switch (msg.Msb) {
+				switch (evt.Msb) {
 				case SmfCC.NrpnMsb:
 				case SmfCC.NrpnLsb:
-					Channels [msg.Channel].DteTarget = DteTarget.Nrpn;
+					Channels [evt.Channel].DteTarget = DteTarget.Nrpn;
 					break;
 				case SmfCC.RpnMsb:
 				case SmfCC.RpnLsb:
-					Channels [msg.Channel].DteTarget = DteTarget.Rpn;
+					Channels [evt.Channel].DteTarget = DteTarget.Rpn;
 					break;
 				case SmfCC.DteMsb:
-					Channels [msg.Channel].ProcessDte (msg.Lsb, true);
+					Channels [evt.Channel].ProcessDte (evt.Lsb, true);
 					break;
 				case SmfCC.DteLsb:
-					Channels [msg.Channel].ProcessDte (msg.Lsb, false);
+					Channels [evt.Channel].ProcessDte (evt.Lsb, false);
 					break;
 				case SmfCC.DteIncrement:
-					Channels [msg.Channel].ProcessDteIncrement ();
+					Channels [evt.Channel].ProcessDteIncrement ();
 					break;
 				case SmfCC.DteDecrement:
-					Channels [msg.Channel].ProcessDteDecrement ();
+					Channels [evt.Channel].ProcessDteDecrement ();
 					break;
 				}
-				Channels [msg.Channel].Controls [msg.Msb] = msg.Lsb;
+				Channels [evt.Channel].Controls [evt.Msb] = evt.Lsb;
 				break;
-			case SmfMessage.Program:
-				Channels [msg.Channel].Program = msg.Msb;
+			case SmfEvent.Program:
+				Channels [evt.Channel].Program = evt.Msb;
 				break;
-			case SmfMessage.CAf:
-				Channels [msg.Channel].CAf = msg.Msb;
+			case SmfEvent.CAf:
+				Channels [evt.Channel].CAf = evt.Msb;
 				break;
-			case SmfMessage.Pitch:
-				Channels [msg.Channel].PitchBend = (short) ((msg.Msb << 7) + msg.Lsb);
+			case SmfEvent.Pitch:
+				Channels [evt.Channel].PitchBend = (short) ((evt.Msb << 7) + evt.Lsb);
 				break;
 			}
-			if (MessageReceived != null)
-				MessageReceived (msg);
+			if (EventReceived != null)
+				EventReceived (evt);
 		}
 	}
 	

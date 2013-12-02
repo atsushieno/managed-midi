@@ -34,14 +34,14 @@ namespace Commons.Music.Midi.Player
 				throw new ArgumentNullException ("music");
 
 			this.music = music;
-			events = SmfTrackMerger.Merge (music).Tracks [0].Events;
+			messages = SmfTrackMerger.Merge (music).Tracks [0].Messages;
 			state = PlayerState.Stopped;
 		}
 
 		public event Action Finished;
 
 		SmfMusic music;
-		IList<SmfEvent> events;
+		IList<SmfMessage> messages;
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
 		PlayerState state;
 		bool do_pause, do_stop;
@@ -59,7 +59,7 @@ namespace Commons.Music.Midi.Player
 		}
 		public int GetTotalPlayTimeMilliseconds ()
 		{
-			return SmfMusic.GetTotalPlayTimeMilliseconds (events, music.DeltaTimeSpec);
+			return SmfMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
 		}
 
 		public virtual void Dispose ()
@@ -78,13 +78,13 @@ namespace Commons.Music.Midi.Player
 		void AllControlReset ()
 		{
 			for (int i = 0; i < 16; i++)
-				OnMessage (new SmfMessage ((byte) (i + 0xB0), 0x79, 0, null));
+				OnEvent (new SmfEvent ((byte) (i + 0xB0), 0x79, 0, null));
 		}
 
 		void Mute ()
 		{
 			for (int i = 0; i < 16; i++)
-				OnMessage (new SmfMessage ((byte) (i + 0xB0), 0x78, 0, null));
+				OnEvent (new SmfEvent ((byte) (i + 0xB0), 0x78, 0, null));
 		}
 
 		public void Pause ()
@@ -109,14 +109,14 @@ namespace Commons.Music.Midi.Player
 						state = PlayerState.Paused;
 						continue;
 					}
-					if (event_idx == events.Count)
+					if (event_idx == messages.Count)
 						break;
-					HandleEvent (events [event_idx++]);
+					HandleEvent (messages [event_idx++]);
 				}
 				do_stop = false;
 				Mute ();
 				state = PlayerState.Stopped;
-				if (event_idx == events.Count)
+				if (event_idx == messages.Count)
 					if (Finished != null)
 						Finished ();
 				event_idx = 0;
@@ -141,25 +141,25 @@ namespace Commons.Music.Midi.Player
 			return s;
 		}
 
-		public virtual void HandleEvent (SmfEvent e)
+		public virtual void HandleEvent (SmfMessage m)
 		{
-			if (e.DeltaTime != 0) {
-				var ms = GetDeltaTimeInMilliseconds (e.DeltaTime);
+			if (m.DeltaTime != 0) {
+				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				Thread.Sleep (ms);
 			}
-			if (e.Message.StatusByte == 0xFF && e.Message.Msb == SmfMetaType.Tempo)
-				current_tempo = SmfMetaType.GetTempo (e.Message.Data);
+			if (m.Event.StatusByte == 0xFF && m.Event.Msb == SmfMetaType.Tempo)
+				current_tempo = SmfMetaType.GetTempo (m.Event.Data);
 
-			OnMessage (e.Message);
-			PlayDeltaTime += e.DeltaTime;
+			OnEvent (m.Event);
+			PlayDeltaTime += m.DeltaTime;
 		}
 
-		public MidiMessageAction MessageReceived;
+		public MidiEventAction EventReceived;
 
-		protected virtual void OnMessage (SmfMessage m)
+		protected virtual void OnEvent (SmfEvent m)
 		{
-			if (MessageReceived != null)
-				MessageReceived (m);
+			if (EventReceived != null)
+				EventReceived (m);
 		}
 
 		public void Stop ()
@@ -210,9 +210,9 @@ namespace Commons.Music.Midi.Player
 			return player.GetTotalPlayTimeMilliseconds ();
 		}
 
-		public event MidiMessageAction MessageReceived {
-			add { player.MessageReceived += value; }
-			remove { player.MessageReceived -= value; }
+		public event MidiEventAction EventReceived {
+			add { player.EventReceived += value; }
+			remove { player.EventReceived -= value; }
 		}
 
 		public virtual void Dispose ()
