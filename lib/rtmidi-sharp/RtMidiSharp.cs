@@ -34,7 +34,6 @@ namespace RtMidiSharp
 		ThreadError,
 	}
 
-
 	public delegate void RtMidiCallback (double timestamp, string message, IntPtr userData);
 
 	public static class RtMidi
@@ -147,12 +146,10 @@ namespace RtMidiSharp
 		
 		protected RtMidiDevice (RtMidiPtr handle)
 		{
-			if (handle == IntPtr.Zero)
-				throw new ArgumentException ("Non-null MIDI device handle is expected");
 			this.handle = handle;
 		}
 		
-		public IntPtr Handle {
+		public RtMidiPtr Handle {
 			get { return handle; }
 		}
 		
@@ -290,6 +287,14 @@ namespace RtMidiSharp
 			get { return manager_input.PortCount + manager_output.PortCount; }
 		}
 
+		public static int InputDevieCount {
+			get { return manager_input.PortCount; }
+		}
+		
+		public static int OutputDevieCount {
+			get { return manager_output.PortCount; }
+		}
+
 		public static int DefaultInputDeviceID {
 			get { return 0; }
 		}
@@ -311,17 +316,17 @@ namespace RtMidiSharp
 			return id < manager_input.PortCount ? new MidiDeviceInfo (manager_input, id, id, true) : new MidiDeviceInfo (manager_output, id, id - manager_input.PortCount, false);
 		}
 
-		public static RtMidiInputDevice OpenInput (int inputDevice)
+		public static RtMidiInputDevice OpenInput (int inputPortOnDefaultDevice)
 		{
 			var dev = new RtMidiInputDevice ();
-			dev.OpenPort (inputDevice, GetDeviceInfo (inputDevice).Name);
+			dev.OpenPort (inputPortOnDefaultDevice, GetDeviceInfo (inputPortOnDefaultDevice).Name);
 			return dev;
 		}
 
-		public static RtMidiOutputDevice OpenOutput (int outputDevice)
+		public static RtMidiOutputDevice OpenOutput (int outputPortOnDefaultDevice)
 		{
 			var dev = new RtMidiOutputDevice ();
-			dev.OpenPort (outputDevice - manager_input.PortCount, GetDeviceInfo (outputDevice).Name);
+			dev.OpenPort (outputPortOnDefaultDevice - manager_input.PortCount, GetDeviceInfo (outputPortOnDefaultDevice).Name);
 			return dev;
 		}
 	}
@@ -345,12 +350,16 @@ namespace RtMidiSharp
 			get { return id; }
 		}
 
+		public int Port {
+			get { return port; }
+		}
+
 		public string Interface {
 			get { return manager.CurrentApi.ToString (); }
 		}
 
 		public string Name {
-			get { return RtMidi.rtmidi_get_port_name (manager.Handle, (uint) port); }
+			get { return manager.GetPortName (port); }
 		}
 
 		public bool IsInput { get { return is_input; } }
