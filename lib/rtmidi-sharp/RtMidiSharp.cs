@@ -316,17 +316,17 @@ namespace RtMidiSharp
 			return id < manager_input.PortCount ? new MidiDeviceInfo (manager_input, id, id, true) : new MidiDeviceInfo (manager_output, id, id - manager_input.PortCount, false);
 		}
 
-		public static RtMidiInputDevice OpenInput (int inputPortOnDefaultDevice)
+		public static RtMidiInputDevice OpenInput (int deviceID)
 		{
 			var dev = new RtMidiInputDevice ();
-			dev.OpenPort (inputPortOnDefaultDevice, GetDeviceInfo (inputPortOnDefaultDevice).Name);
+			dev.OpenPort (deviceID, GetDeviceInfo (deviceID).Name);
 			return dev;
 		}
 
-		public static RtMidiOutputDevice OpenOutput (int outputPortOnDefaultDevice)
+		public static RtMidiOutputDevice OpenOutput (int deviceID)
 		{
 			var dev = new RtMidiOutputDevice ();
-			dev.OpenPort (outputPortOnDefaultDevice - manager_input.PortCount, GetDeviceInfo (outputPortOnDefaultDevice).Name);
+			dev.OpenPort (deviceID - manager_input.PortCount, GetDeviceInfo (deviceID).Name);
 			return dev;
 		}
 	}
