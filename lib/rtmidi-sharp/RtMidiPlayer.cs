@@ -18,7 +18,8 @@ namespace Commons.Music.Midi.Player
 		// created this object should dispose it instead.
 		RtMidiOutputDevice output;
 		
-		byte [] buf = new byte [3];
+		byte [] buf2 = new byte [2];
+		byte [] buf3 = new byte [3];
 
 		void SendMidiEvent (SmfEvent m)
 		{
@@ -29,10 +30,20 @@ namespace Commons.Music.Midi.Player
 			else if ((m.Value & 0xFF) == 0xFF)
 				return; // meta. Nothing to send.
 			else {
-				buf [0] = m.StatusByte;
-				buf [1] = m.Msb;
-				buf [2] = m.Lsb;
-				output.SendMessage (buf);
+				switch (m.StatusByte) {
+				case SmfEvent.Program:
+				case SmfEvent.CAf:
+					buf2 [0] = m.StatusByte;
+					buf2 [1] = m.Msb;
+					output.SendMessage (buf2);
+					break;
+				default:
+					buf3 [0] = m.StatusByte;
+					buf3 [1] = m.Msb;
+					buf3 [2] = m.Lsb;
+					output.SendMessage (buf3);
+					break;
+				}
 			}
 		}
 
