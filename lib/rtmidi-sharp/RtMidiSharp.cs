@@ -367,7 +367,7 @@ namespace RtMidiSharp
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} - {1} ({2} {3})", Interface, Name, IsInput ? (IsOutput ? "I/O" : "Input") : (IsOutput ? "Output" : "N/A"));
+			return String.Format ("{0} - {1} ({2})", Interface, Name, IsInput ? (IsOutput ? "I/O" : "Input") : (IsOutput ? "Output" : "N/A"));
 		}
 	}
 }
