@@ -9,6 +9,8 @@ target_sources = \
 	base/MidiMachine.cs \
 	portmidi-sharp/PortMidiSharp.cs \
 	portmidi-sharp/PortMidiPlayer.cs \
+	rtmidi-sharp/RtMidiSharp.cs \
+	rtmidi-sharp/RtMidiPlayer.cs \
 	module-database/MidiModuleDatabase.cs
 
 target_resources = \
