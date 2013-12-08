@@ -53,5 +53,7 @@
     <Compile Include="module-database\MidiModuleDatabase.cs" />
     <Compile Include="portmidi-sharp\PortMidiPlayer.cs" />
     <Compile Include="portmidi-sharp\PortMidiSharp.cs" />
+    <Compile Include="rtmidi-sharp\RtMidiPlayer.cs" />
+    <Compile Include="rtmidi-sharp\RtMidiSharp.cs" />
   </ItemGroup>
 </Project>
