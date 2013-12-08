@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using RtMidiPtr = System.IntPtr;
 using RtMidiInPtr = System.IntPtr;
 using RtMidiOutPtr = System.IntPtr;
+using System.Collections.Generic;
 
 
 namespace RtMidiSharp
@@ -151,7 +152,7 @@ namespace RtMidiSharp
 			this.handle = handle;
 		}
 		
-		protected IntPtr Handle {
+		public IntPtr Handle {
 			get { return handle; }
 		}
 		
@@ -160,6 +161,11 @@ namespace RtMidiSharp
 		}
 		
 		public void Dispose ()
+		{
+			Close ();
+		}
+		
+		public void Close ()
 		{
 			if (is_port_open) {
 				is_port_open = false;
@@ -268,6 +274,91 @@ namespace RtMidiSharp
 			if (message == null)
 				throw new ArgumentNullException ("message");
 			RtMidi.rtmidi_out_send_message (Handle, message, message.Length);
+		}
+	}
+	
+	// Utility classes
+	
+	public static class MidiDeviceManager
+	{
+		static readonly RtMidiOutputDevice manager_output = new RtMidiOutputDevice ();
+		static readonly RtMidiInputDevice manager_input = new RtMidiInputDevice ();
+		
+		// OK, it is not really a device count. But RTMIDI is designed to have bad names enough
+		// to enumerate APIs as DEVICEs.
+		public static int DeviceCount {
+			get { return manager_input.PortCount + manager_output.PortCount; }
+		}
+
+		public static int DefaultInputDeviceID {
+			get { return 0; }
+		}
+
+		public static int DefaultOutputDeviceID {
+			get { return manager_input.PortCount; }
+		}
+
+		public static IEnumerable<MidiDeviceInfo> AllDevices {
+			get {
+				Console.WriteLine (DeviceCount);
+				for (int i = 0; i < DeviceCount; i++)
+					yield return GetDeviceInfo (i);
+			}
+		}
+
+		public static MidiDeviceInfo GetDeviceInfo (int id)
+		{
+			return id < manager_input.PortCount ? new MidiDeviceInfo (manager_input, id, id, true) : new MidiDeviceInfo (manager_output, id, id - manager_input.PortCount, false);
+		}
+
+		public static RtMidiInputDevice OpenInput (int inputDevice)
+		{
+			var dev = new RtMidiInputDevice ();
+			dev.OpenPort (inputDevice, GetDeviceInfo (inputDevice).Name);
+			return dev;
+		}
+
+		public static RtMidiOutputDevice OpenOutput (int outputDevice)
+		{
+			var dev = new RtMidiOutputDevice ();
+			dev.OpenPort (outputDevice - manager_input.PortCount, GetDeviceInfo (outputDevice).Name);
+			return dev;
+		}
+	}
+
+	public class MidiDeviceInfo
+	{
+		readonly RtMidiDevice manager;
+		readonly int id;
+		readonly int port;
+		readonly bool is_input;
+
+		internal MidiDeviceInfo (RtMidiDevice manager, int id, int port, bool isInput)
+		{
+			this.manager = manager;
+			this.id = id;
+			this.port = port;
+			is_input =isInput;
+		}
+		
+		public int ID {
+			get { return id; }
+		}
+
+		public string Interface {
+			get { return manager.CurrentApi.ToString (); }
+		}
+
+		public string Name {
+			get { return RtMidi.rtmidi_get_port_name (manager.Handle, (uint) port); }
+		}
+
+		public bool IsInput { get { return is_input; } }
+		public bool IsOutput { get { return !is_input; } }
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} - {1} ({2} {3})", Interface, Name, IsInput ? (IsOutput ? "I/O" : "Input") : (IsOutput ? "Output" : "N/A"));
 		}
 	}
 }
