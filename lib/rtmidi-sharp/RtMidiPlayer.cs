@@ -30,7 +30,7 @@ namespace Commons.Music.Midi.Player
 			else if ((m.Value & 0xFF) == 0xFF)
 				return; // meta. Nothing to send.
 			else {
-				switch (m.StatusByte) {
+				switch (m.StatusByte & 0xF0) {
 				case SmfEvent.Program:
 				case SmfEvent.CAf:
 					buf2 [0] = m.StatusByte;
