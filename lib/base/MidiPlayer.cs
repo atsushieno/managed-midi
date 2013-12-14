@@ -53,6 +53,10 @@ namespace Commons.Music.Midi.Player
 		public int Tempo {
 			get { return current_tempo; }
 		}
+		// You can break the data at your own risk but I take performance precedence.
+		public byte [] TimeSignature {
+			get { return current_time_signature; }
+		}
 		public void SetTempoRatio (double ratio)
 		{
 			tempo_ratio = ratio;
@@ -123,7 +127,8 @@ namespace Commons.Music.Midi.Player
 			}
 		}
 
-		int current_tempo = SmfMetaType.DefaultTempo; // dummy
+		int current_tempo = SmfMetaType.DefaultTempo;
+		byte [] current_time_signature = new byte [4];
 		double tempo_ratio = 1.0;
 
 		int GetDeltaTimeInMilliseconds (int deltaTime)
@@ -147,8 +152,12 @@ namespace Commons.Music.Midi.Player
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				Thread.Sleep (ms);
 			}
-			if (m.Event.StatusByte == 0xFF && m.Event.Msb == SmfMetaType.Tempo)
-				current_tempo = SmfMetaType.GetTempo (m.Event.Data);
+			if (m.Event.StatusByte == 0xFF) {
+				if (m.Event.Msb == SmfMetaType.Tempo)
+					current_tempo = SmfMetaType.GetTempo (m.Event.Data);
+				else if (m.Event.Msb == SmfMetaType.TimeSignature)
+					Array.Copy (m.Event.Data, current_time_signature, Math.Max (4, m.Event.Data.Length));
+			}
 
 			OnEvent (m.Event);
 			PlayDeltaTime += m.DeltaTime;
@@ -194,6 +203,14 @@ namespace Commons.Music.Midi.Player
 
 		public int Tempo {
 			get { return player.Tempo; }
+		}
+		
+		public int Bpm {
+			get { return (int) (60.0 / Tempo * 1000000.0); }
+		}
+		
+		public byte [] TimeSignature {
+			get { return player.TimeSignature; }
 		}
 
 		public void SetTempoRatio (double value)
