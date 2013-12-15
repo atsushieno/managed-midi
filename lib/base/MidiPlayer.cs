@@ -22,6 +22,7 @@ namespace Commons.Music.Midi.Player
 		PlayerState State { get; }
 		int Tempo { get; }
 		int PlayDeltaTime { get; }
+		TimeSpan PositionInTime { get; }
 		int GetTotalPlayTimeMilliseconds ();
 	}
 
@@ -45,11 +46,14 @@ namespace Commons.Music.Midi.Player
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
 		PlayerState state;
 		bool do_pause, do_stop;
-
+		
 		public PlayerState State {
 			get { return state; }
 		}
 		public int PlayDeltaTime { get; set; }
+		public TimeSpan PositionInTime {
+			get { return GetTimerOffsetWithTempoRatio () + playtime_delta; }
+		}
 		public int Tempo {
 			get { return current_tempo; }
 		}
@@ -59,11 +63,23 @@ namespace Commons.Music.Midi.Player
 		}
 		public void SetTempoRatio (double ratio)
 		{
+			playtime_delta += GetTimerOffsetWithTempoRatio ();
+			timer_resumed = DateTime.Now;
 			tempo_ratio = ratio;
 		}
 		public int GetTotalPlayTimeMilliseconds ()
 		{
 			return SmfMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
+		}
+		
+		TimeSpan GetTimerOffsetWithTempoRatio ()
+		{
+			switch (state) {
+			case PlayerState.Playing:
+			case PlayerState.FastForward:
+				return TimeSpan.FromMilliseconds ((DateTime.Now - timer_resumed).TotalMilliseconds * tempo_ratio);
+			}
+			return TimeSpan.Zero;
 		}
 
 		public virtual void Dispose ()
@@ -76,6 +92,7 @@ namespace Commons.Music.Midi.Player
 		public void Play ()
 		{
 			pause_handle.Set ();
+			timer_resumed = DateTime.Now;
 			state = PlayerState.Playing;
 		}
 
@@ -94,7 +111,11 @@ namespace Commons.Music.Midi.Player
 		public void Pause ()
 		{
 			do_pause = true;
+			playtime_delta += DateTime.Now - timer_resumed;
+			timer_resumed = DateTime.Now;
 			Mute ();
+			Console.WriteLine (playtime_delta);
+			Console.WriteLine (PositionInTime);
 		}
 
 		int event_idx = 0;
@@ -102,6 +123,7 @@ namespace Commons.Music.Midi.Player
 		public void PlayerLoop ()
 		{
 			AllControlReset ();
+			playtime_delta = TimeSpan.Zero;
 			{
 				while (true) {
 					pause_handle.WaitOne ();
@@ -130,6 +152,8 @@ namespace Commons.Music.Midi.Player
 		int current_tempo = SmfMetaType.DefaultTempo;
 		byte [] current_time_signature = new byte [4];
 		double tempo_ratio = 1.0;
+		DateTime timer_resumed;
+		TimeSpan playtime_delta;
 
 		int GetDeltaTimeInMilliseconds (int deltaTime)
 		{
@@ -220,6 +244,10 @@ namespace Commons.Music.Midi.Player
 
 		public int PlayDeltaTime {
 			get { return player.PlayDeltaTime; }
+		}
+		
+		public TimeSpan PositionInTime {
+			get { return player.PositionInTime; }
 		}
 
 		public int GetTotalPlayTimeMilliseconds ()
