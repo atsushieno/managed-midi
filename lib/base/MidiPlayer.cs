@@ -61,11 +61,14 @@ namespace Commons.Music.Midi.Player
 		public byte [] TimeSignature {
 			get { return current_time_signature; }
 		}
-		public void SetTempoRatio (double ratio)
-		{
-			playtime_delta += GetTimerOffsetWithTempoRatio ();
-			timer_resumed = DateTime.Now;
-			tempo_ratio = ratio;
+
+		public double TempoChangeRatio {
+			get { return tempo_ratio; }
+			set {
+				playtime_delta += GetTimerOffsetWithTempoRatio ();
+				timer_resumed = DateTime.Now;
+				tempo_ratio = value;
+			}
 		}
 		public int GetTotalPlayTimeMilliseconds ()
 		{
@@ -225,6 +228,11 @@ namespace Commons.Music.Midi.Player
 			get { return player.State; }
 		}
 
+		public double TempoChangeRatio {
+			get { return player.TempoChangeRatio; }
+			set { player.TempoChangeRatio = value; }
+		}
+
 		public int Tempo {
 			get { return player.Tempo; }
 		}
@@ -237,9 +245,10 @@ namespace Commons.Music.Midi.Player
 			get { return player.TimeSignature; }
 		}
 
+		[Obsolete ("Use TempoChangeRatio setter")]
 		public void SetTempoRatio (double value)
 		{
-			player.SetTempoRatio (value);
+			TempoChangeRatio = value;
 		}
 
 		public int PlayDeltaTime {
