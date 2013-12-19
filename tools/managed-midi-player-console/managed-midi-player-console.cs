@@ -62,7 +62,7 @@ Options:
 				var player = new PortMidiPlayer (output, parser.Music);
 				DateTimeOffset start = DateTimeOffset.Now;
 				if (diagnostic)
-					player.MessageReceived += m => Console.WriteLine ("{0:06} {1:X08}", (DateTimeOffset.Now - start).TotalMilliseconds, m.Value);
+					player.EventReceived += m => Console.WriteLine ("{0:06} {1:X08}", (DateTimeOffset.Now - start).TotalMilliseconds, m.Value);
 				player.StartLoop ();
 				player.PlayAsync ();
 				Console.WriteLine ("empty line to quit, P to pause and resume");

@@ -93,9 +93,9 @@ namespace Commons.Music.Midi
 				var track = new SmfTrack ();
 				foreach (var e in dump.Results) {
 					if (e.SysEx != null)
-						track.Events.Add (new SmfEvent (e.Timestamp, new SmfMessage (0xF0, 0, 0, e.SysEx)));
+						track.Messages.Add (new SmfMessage (e.Timestamp, new SmfEvent (0xF0, 0, 0, e.SysEx)));
 					else
-						track.Events.Add (new SmfEvent (e.Timestamp, new SmfMessage (e.Message.Value)));
+						track.Messages.Add (new SmfMessage (e.Timestamp, new SmfEvent (e.Message.Value)));
 				}
 				music.Tracks.Add (track);
 				using (var f = File.Create (filename))
