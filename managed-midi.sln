@@ -3,18 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi", "lib\Commons.Music.Midi.csproj", "{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmk", "..\..\..\..\..\svn\commons-music-prog\managed-midi\tools\mmk\mmk.csproj", "{13B39050-0AC2-431F-82E2-5502357B2E61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmchromakey", "tools\mmk\mmchromakey.csproj", "{13B39050-0AC2-431F-82E2-5502357B2E61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13B39050-0AC2-431F-82E2-5502357B2E61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = lib\Commons.Music.Midi.csproj
+		StartupItem = ..\..\..\..\..\svn\commons-music-prog\managed-midi\tools\mmk\mmk.csproj
 	EndGlobalSection
 EndGlobal

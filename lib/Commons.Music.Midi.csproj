@@ -38,12 +38,6 @@
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="module-database\data\README" />
-    <None Include="module-database\data\midi-module-catalog.txt" />
-    <None Include="module-database\data\ms_gs_wavetable_synth.midimod" />
-    <None Include="module-database\data\roland_sc-88.midimod" />
-    <None Include="module-database\data\roland_sc-8820.midimod" />
-    <None Include="module-database\data\roland_sc-88pro.midimod" />
-    <None Include="module-database\data\yamaha_motif-rack_es.midimod" />
     <None Include="portmidi-sharp\README" />
   </ItemGroup>
   <ItemGroup>
@@ -55,5 +49,25 @@
     <Compile Include="portmidi-sharp\PortMidiSharp.cs" />
     <Compile Include="rtmidi-sharp\RtMidiPlayer.cs" />
     <Compile Include="rtmidi-sharp\RtMidiSharp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="module-database\data\midi-module-catalog.txt">
+      <LogicalName>module-database/data/midi-module-catalog.txt</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="module-database\data\ms_gs_wavetable_synth.midimod">
+      <LogicalName>module-database/data/ms_gs_wavetable_synth.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="module-database\data\roland_sc-88.midimod">
+      <LogicalName>module-database/data/roland_sc-88.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="module-database\data\roland_sc-8820.midimod">
+      <LogicalName>module-database/data/roland_sc-8820.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="module-database\data\roland_sc-88pro.midimod">
+      <LogicalName>module-database/data/roland_sc-88pro.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="module-database\data\yamaha_motif-rack_es.midimod">
+      <LogicalName>module-database/data/yamaha_motif-rack_es.midimod</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
