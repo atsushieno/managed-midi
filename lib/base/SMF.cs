@@ -292,7 +292,7 @@ namespace Commons.Music.Midi
 
 		public override string ToString ()
 		{
-			return String.Format ("{0:X02}:{1:X02}:{2:X02}{3}", StatusByte, Msb, Lsb, Data != null ? Data.Length + "[data]" : "");
+			return String.Format ("{0:X02}:{1:X02}:{2:X02}{3}", StatusByte, Msb, Lsb, Data != null ? "[data:" + Data.Length + "]" : "");
 		}
 	}
 
