@@ -182,8 +182,8 @@ namespace Commons.Music.Midi.Player
 			if (m.Event.StatusByte == 0xFF) {
 				if (m.Event.Msb == SmfMetaType.Tempo)
 					current_tempo = SmfMetaType.GetTempo (m.Event.Data);
-				else if (m.Event.Msb == SmfMetaType.TimeSignature)
-					Array.Copy (m.Event.Data, current_time_signature, Math.Max (4, m.Event.Data.Length));
+				else if (m.Event.Msb == SmfMetaType.TimeSignature && m.Event.Data.Length == 4)
+					Array.Copy (m.Event.Data, current_time_signature, 4);
 			}
 
 			OnEvent (m.Event);
