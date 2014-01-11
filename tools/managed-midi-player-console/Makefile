@@ -1,5 +1,5 @@
 TOPDIR = ../..
-CSCOMPILE = gmcs -pkg:dotnet
+CSCOMPILE = mcs -pkg:dotnet
 
 target = $(TOPDIR)/build/managed-midi-player-console.exe
 target_sources = managed-midi-player-console.cs

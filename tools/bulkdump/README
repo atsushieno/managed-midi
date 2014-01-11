@@ -1,7 +1,7 @@
 This is a simple bulk dump tool.
 
 to build the executable, run:
-	gmcs bulkdump.cs ../SMF.cs ../../PortMidiSharp.cs
+	mcs bulkdump.cs ../SMF.cs ../../PortMidiSharp.cs
 
 example usage:
 

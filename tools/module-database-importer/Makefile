@@ -1,5 +1,5 @@
 TOPDIR = ../..
-CSCOMPILE = gmcs -r:System.Xml.Linq.dll
+CSCOMPILE = mcs -r:System.Xml.Linq.dll
 RUNTIME = mono
 
 target = $(TOPDIR)/build/domino-importer.exe

@@ -1,4 +1,4 @@
-CSCOMPILE = gmcs -pkg:wcf -r:System.Xml.Linq -debug
+CSCOMPILE = mcs -pkg:wcf -r:System.Xml.Linq -debug
 TOPDIR = ..
 
 target = $(TOPDIR)/build/Commons.Music.Midi.dll

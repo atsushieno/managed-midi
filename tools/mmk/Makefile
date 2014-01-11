@@ -1,4 +1,4 @@
-CSCOMPILE = gmcs -pkg:dotnet -debug
+CSCOMPILE = mcs -pkg:dotnet -debug
 TOPDIR = ../..
 
 mmk = $(TOPDIR)/build/mmk.exe 

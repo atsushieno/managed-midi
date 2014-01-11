@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Commons.Music.Midi;
 using PortMidiSharp;
 using Timer = System.Timers.Timer;
@@ -56,6 +57,9 @@ Options:
 			}
 			var output = MidiDeviceManager.OpenOutput (outdev);
 
+			var wh = new ManualResetEvent (false);
+			bool loop = true;
+			
 			foreach (var arg in files) {
 				var parser = new SmfReader (File.OpenRead (arg));
 				parser.Parse ();
@@ -63,23 +67,35 @@ Options:
 				DateTimeOffset start = DateTimeOffset.Now;
 				if (diagnostic)
 					player.EventReceived += m => Console.WriteLine ("{0:06} {1}", (DateTimeOffset.Now - start).TotalMilliseconds, m);
-				player.StartLoop ();
-				player.PlayAsync ();
-				Console.WriteLine ("empty line to quit, P to pause and resume");
-				while (true) {
-					string line = Console.ReadLine ();
-					if (line == "P") {
-						if (player.State == PlayerState.Playing)
-							player.PauseAsync ();
+				player.Finished += delegate {
+					loop = false;
+					wh.Set ();
+				};
+				
+				new Task (() => {
+					Console.WriteLine ("empty line to quit, P to pause and resume");
+					while (loop) {
+						string line = Console.ReadLine ();
+						if (line == "P") {
+							if (player.State == PlayerState.Playing)
+								player.PauseAsync ();
+							else
+								player.PlayAsync ();
+						}
+						else if (line == "") {
+							player.Dispose ();
+							break;
+						}
 						else
-							player.PlayAsync ();
+							Console.WriteLine ("what do you mean by '{0}' ?", line);
 					}
-					else if (line == "") {
-						player.Dispose ();
-						break;
-					}
-					else
-						Console.WriteLine ("what do you mean by '{0}' ?", line);
+				}).Start ();
+
+
+				//player.StartLoop ();
+				player.PlayAsync ();
+				while (loop) {
+					wh.WaitOne ();
 				}
 			}
 		}

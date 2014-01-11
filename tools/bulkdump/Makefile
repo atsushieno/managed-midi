@@ -1,5 +1,5 @@
 TOPDIR = ../..
-CSCOMPILE = gmcs -pkg:dotnet
+CSCOMPILE = mcs -pkg:dotnet
 
 target = $(TOPDIR)/build/bulkdump-managed.exe
 target_sources = bulkdump.cs
