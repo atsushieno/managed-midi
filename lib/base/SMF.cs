@@ -458,9 +458,6 @@ namespace Commons.Music.Midi
 		{
 			default_meta_writer = delegate (bool lengthMode, SmfMessage e, Stream stream) {
 				if (lengthMode) {
-					if (e.Event.Data.Length == 0)
-						return 3; // 0xFF, metaType, 0
-
 					// [0x00] 0xFF metaType size ... (note that for more than one meta event it requires step count of 0).
 					int repeatCount = e.Event.Data.Length / 0x7F;
 					if (repeatCount == 0)
@@ -491,14 +488,13 @@ namespace Commons.Music.Midi
 				}
 
 				if (lengthMode) {
-					if (e.Event.Data.Length == 0)
-						return 11; // 0xFF, metaType, 8, "DM:0000:"
-
 					// { [0x00] 0xFF metaType DM:xxxx:... } * repeat + 0x00 0xFF metaType DM:xxxx:mod... 
 					// (note that for more than one meta event it requires step count of 0).
 					int repeatCount = e.Event.Data.Length / 0x77;
+					if (repeatCount == 0)
+						return 11 + e.Event.Data.Length;
 					int mod = e.Event.Data.Length % 0x77;
-					return repeatCount * (12 + 0x77) - (repeatCount > 0 ? 1 : 0) + (mod > 0 ? 12 + mod : 0);
+					return repeatCount * (12 + 0x77) - 1 + (mod > 0 ? 12 + mod : 0);
 				}
 
 
