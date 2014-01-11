@@ -83,6 +83,8 @@ Options:
 								player.PlayAsync ();
 						}
 						else if (line == "") {
+							loop = false;
+							wh.Set ();
 							player.Dispose ();
 							break;
 						}
