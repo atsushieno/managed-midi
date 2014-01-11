@@ -20,7 +20,7 @@ managed-midi-player-console [options] SMF-files(*.mid)
 Options:
 --help		show this help.
 --device:x	specifies MIDI output device by ID.
---diagnose	diagnose MIDI message outputs to console.
+--verbose	verbose MIDI message outputs to console.
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
 			foreach (var dev in MidiDeviceManager.AllDevices)
@@ -42,7 +42,7 @@ Options:
 					ShowHelp ();
 					return;
 				}
-				else if (arg == "--diagnose")
+				else if (arg == "--verbose")
 					diagnostic = true;
 				else if (arg.StartsWith ("--device:")) {
 					if (!int.TryParse (arg.Substring (9), out outdev)) {
@@ -66,7 +66,22 @@ Options:
 				var player = new PortMidiPlayer (output, parser.Music);
 				DateTimeOffset start = DateTimeOffset.Now;
 				if (diagnostic)
-					player.EventReceived += m => Console.WriteLine ("{0:06} {1}", (DateTimeOffset.Now - start).TotalMilliseconds, m);
+					player.EventReceived += e => {
+						string type = null;
+						switch (e.EventType) {
+						case SmfEvent.NoteOn: type = "NOn"; break;
+						case SmfEvent.NoteOff: type = "NOff"; break;
+						case SmfEvent.PAf: type = "PAf"; break;
+						case SmfEvent.CC: type = "CC"; break;
+						case SmfEvent.Program: type = "@"; break;
+						case SmfEvent.CAf: type = "CAf"; break;
+						case SmfEvent.Pitch: type = "P"; break;
+						case SmfEvent.SysEx1: type = "SysEX"; break;
+						case SmfEvent.SysEx2: type = "SysEX2"; break;
+						case SmfEvent.Meta: type = "META"; break;
+						}
+						Console.WriteLine ("{0:06} {1:D02} {2} {3}", (DateTimeOffset.Now - start).TotalMilliseconds, e.Channel, type, e);
+					};
 				player.Finished += delegate {
 					loop = false;
 					wh.Set ();
