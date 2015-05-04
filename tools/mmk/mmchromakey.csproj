@@ -3,12 +3,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{13B39050-0AC2-431F-82E2-5502357B2E61}</ProjectGuid>
+    <ProjectGuid>{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>mmk</RootNamespace>
     <AssemblyName>mmk</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,11 +48,5 @@
       <Project>{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}</Project>
       <Name>Commons.Music.Midi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\build\libportmidi.so">
-      <Link>libportmidi.so</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>
