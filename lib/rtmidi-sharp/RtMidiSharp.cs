@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 using RtMidiPtr = System.IntPtr;
@@ -8,7 +7,7 @@ using RtMidiOutPtr = System.IntPtr;
 using System.Collections.Generic;
 
 
-namespace RtMidiSharp
+namespace Commons.Music.Midi.RtMidi
 {
 	public enum RtMidiApi {
 		Unspecified,

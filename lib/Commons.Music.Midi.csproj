@@ -52,6 +52,7 @@
     <Compile Include="rtmidi-sharp\RtMidiSharp.cs" />
     <Compile Include="base\MidiAccessManager.cs" />
     <Compile Include="portmidi-sharp\PortMidiAccess.cs" />
+    <Compile Include="rtmidi-sharp\RtMdiAccess.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="module-database\data\midi-module-catalog.txt">

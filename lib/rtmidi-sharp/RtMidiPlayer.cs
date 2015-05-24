@@ -1,9 +1,6 @@
 using System;
-using Commons.Music.Midi;
-using RtMidiSharp;
-using Timer = System.Timers.Timer;
 
-namespace Commons.Music.Midi.Player
+namespace Commons.Music.Midi.RtMidi
 {
 	public class RtMidiPlayer : MidiPlayer
 	{
