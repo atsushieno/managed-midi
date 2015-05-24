@@ -4,10 +4,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Commons.Music.Midi;
-using PortMidiSharp;
 using Timer = System.Timers.Timer;
 
-namespace Commons.Music.Midi.Player
+namespace Commons.Music.Midi.PortMidi
 {
 	public class PortMidiPlayer : MidiPlayer
 	{

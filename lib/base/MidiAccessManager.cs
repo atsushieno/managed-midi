@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
@@ -8,15 +9,16 @@ namespace Commons.Music.Midi
 	{
 		static MidiAccessManager ()
 		{
-			Default = new EmptyMidiAccess ();
-			/*
-			try {
-				Default = new RtMidiAccess ();
-			} catch (Exception) {
-				Default = new PortMidiAccess ();
-			} catch (Exception) {
-			}
-			*/
+			Default = typeof (MidiAccessManager).Assembly.GetTypes ()
+				.Where (t => t != typeof (EmptyMidiAccess) && t.GetInterfaces ().Contains (typeof (IMidiAccess)))
+				.Select (t => {
+					try {
+						return (IMidiAccess) Activator.CreateInstance (t);
+					} catch {
+						return null;
+					}
+				})
+				.FirstOrDefault () ?? new EmptyMidiAccess ();
 		}
 		
 		public static IMidiAccess Default { get; private set; }
@@ -27,7 +29,12 @@ namespace Commons.Music.Midi
 		IEnumerable<IMidiInput> Inputs { get; }
 		IEnumerable<IMidiOutput> Outputs { get; }
 		
-		event EventHandler StateChanged;
+		event EventHandler<MidiConnectionEventArgs> StateChanged;
+	}
+	
+	public class MidiConnectionEventArgs : EventArgs
+	{
+		public IMidiPortDetails Port { get; private set; }
 	}
 	
 	public interface IMidiPortDetails
@@ -87,7 +94,7 @@ namespace Commons.Music.Midi
 		}
 		
 		// it will never be fired.
-		public event EventHandler StateChanged;
+		public event EventHandler<MidiConnectionEventArgs> StateChanged;
 	}
 	
 	abstract class EmptyMidiPort : IMidiPort

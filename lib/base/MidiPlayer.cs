@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using Commons.Music.Midi;
 
-namespace Commons.Music.Midi.Player
+namespace Commons.Music.Midi
 {
 	public enum PlayerState
 	{
@@ -17,7 +17,7 @@ namespace Commons.Music.Midi.Player
 		Loading
 	}
 
-	public interface IMidiPlayerStatus
+	interface IMidiPlayerStatus
 	{
 		PlayerState State { get; }
 		int Tempo { get; }

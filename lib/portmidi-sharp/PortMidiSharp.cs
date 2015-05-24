@@ -12,9 +12,9 @@ using PmDeviceID = System.Int32;
 using PmTimestamp = System.Int32;
 using PortMidiStream = System.IntPtr;
 using PmMessage = System.Int32;
-using PmError = PortMidiSharp.MidiErrorType;
+using PmError = Commons.Music.Midi.PortMidi.MidiErrorType;
 
-namespace PortMidiSharp
+namespace Commons.Music.Midi.PortMidi
 {
 	public class MidiDeviceManager
 	{
@@ -148,6 +148,25 @@ namespace PortMidiSharp
 
 	public abstract class MidiStream : IDisposable
 	{
+		public static IEnumerable<MidiEvent> Convert (byte [] bytes, int index, int size)
+		{
+			int i = index;
+			int end = index + size;
+			while (i < end) {
+				if (bytes [i] == 0xF0 || bytes [i] == 0xF7) {
+					var tmp = new byte [size];
+					Array.Copy (bytes, i, tmp, 0, tmp.Length);
+					yield return new MidiEvent () {Message = new MidiMessage (0xF0, 0, 0), Data = tmp};
+					i += size + 1;
+				} else {
+					if (end < i + 3)
+						throw new MidiException (MidiErrorType.NoError, "Received data was incomplete to build MIDI status message");
+					yield return new MidiEvent () {Message = new MidiMessage (bytes [i], bytes [i + 1], bytes [i + 2])};
+					i += 3;
+				}
+			}
+		}
+
 		internal PortMidiStream stream;
 		internal PmDeviceID device;
 
@@ -185,25 +204,6 @@ namespace PortMidiSharp
 
 	public class MidiInput : MidiStream
 	{
-		public static IEnumerable<MidiEvent> Convert (byte [] bytes, int index, int size)
-		{
-			int i = index;
-			int end = index + size;
-			while (i < end) {
-				if (bytes [i] == 0xF0 || bytes [i] == 0xF7) {
-					var tmp = new byte [size];
-					Array.Copy (bytes, i, tmp, 0, tmp.Length);
-					yield return new MidiEvent () {Message = new MidiMessage (0xF0, 0, 0), SysEx = tmp};
-					i += size + 1;
-				} else {
-					if (end < i + 3)
-						throw new MidiException (MidiErrorType.NoError, "Received data was incomplete to build MIDI status message");
-					yield return new MidiEvent () {Message = new MidiMessage (bytes [i], bytes [i + 1], bytes [i + 2])};
-					i += 3;
-				}
-			}
-		}
-
 		public MidiInput (PortMidiStream stream, PmDeviceID inputDevice)
 			: base (stream, inputDevice)
 		{
@@ -237,8 +237,8 @@ namespace PortMidiSharp
 
 		public void Write (MidiEvent mevent)
 		{
-			if (mevent.SysEx != null)
-				WriteSysEx (mevent.Timestamp, mevent.SysEx);
+			if (mevent.Data != null)
+				WriteSysEx (mevent.Timestamp, mevent.Data);
 			else
 				Write (mevent.Timestamp, mevent.Message);
 		}
@@ -282,7 +282,7 @@ namespace PortMidiSharp
 		MidiMessage msg;
 		PmTimestamp ts;
 		[NonSerialized]
-		byte [] sysex;
+		byte [] data;
 
 		public MidiMessage Message {
 			get { return msg; }
@@ -294,10 +294,9 @@ namespace PortMidiSharp
 			set { ts = value; }
 		}
 
-		// FIXME: this should be renamed as "Data" (meta events also make use of it)
-		public byte [] SysEx {
-			get { return sysex; }
-			set { sysex = value; }
+		public byte [] Data {
+			get { return data; }
+			set { data = value; }
 		}
 	}
 

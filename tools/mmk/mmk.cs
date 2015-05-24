@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
-using PortMidiSharp;
+using Commons.Music.Midi.PortMidi;
 
 namespace Commons.Music.Midi
 {
