@@ -126,13 +126,13 @@ namespace Commons.Music.Midi.PortMidi
 			return completed_task;
 		}
 
-		public Task SendAsync (byte [] mevent, long timestamp)
+		public Task SendAsync (byte [] mevent, int length, long timestamp)
 		{
 			if (mevent == null)
 				throw new ArgumentNullException (nameof (mevent));
 			if (mevent.Length == 0)
 				return completed_task; // do nothing
-			var events = MidiStream.Convert (mevent, 0, mevent.Length);
+			var events = MidiStream.Convert (mevent, 0, length);
 			if (events.Any ()) {
 				var first = events.First ();
 				first.Timestamp = (int) timestamp;

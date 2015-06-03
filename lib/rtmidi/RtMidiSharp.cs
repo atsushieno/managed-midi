@@ -265,7 +265,7 @@ namespace Commons.Music.Midi.RtMidi
 			RtMidi.rtmidi_out_free (Handle);
 		}
 		
-		public void SendMessage (byte [] message)
+		public void SendMessage (byte [] message, int length)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");

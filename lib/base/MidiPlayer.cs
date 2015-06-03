@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading;
-using Commons.Music.Midi;
 
 namespace Commons.Music.Midi
 {
@@ -30,6 +28,11 @@ namespace Commons.Music.Midi
 	public class MidiSyncPlayer : IDisposable, IMidiPlayerStatus
 	{
 		public MidiSyncPlayer (SmfMusic music)
+			: this (music, new SimpleMidiTimeManager ())
+		{
+		}
+
+		public MidiSyncPlayer (SmfMusic music, IMidiTimeManager timeManager)
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");
@@ -46,6 +49,7 @@ namespace Commons.Music.Midi
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
 		PlayerState state;
 		bool do_pause, do_stop;
+		IMidiTimeManager time_manager;
 		
 		public PlayerState State {
 			get { return state; }
@@ -177,7 +181,7 @@ namespace Commons.Music.Midi
 		{
 			if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
-				Thread.Sleep (ms);
+				time_manager.AdvanceBy (ms);
 			}
 			if (m.Event.StatusByte == 0xFF) {
 				if (m.Event.Msb == SmfMetaType.Tempo)
@@ -215,9 +219,41 @@ namespace Commons.Music.Midi
 		Thread sync_player_thread;
 
 		public MidiPlayer (SmfMusic music)
+			: this (music, MidiAccessManager.Empty)
+		{
+		}
+
+		public MidiPlayer (SmfMusic music, IMidiAccess access)
 		{
 			player = new MidiSyncPlayer (music);
+			output = access.Outputs.FirstOrDefault ();
+			if (output != null) {
+				output.OpenAsync ();
+				EventReceived += (m) => {
+					switch (m.EventType) {
+					case SmfEvent.SysEx1:
+					case SmfEvent.SysEx2:
+						if (buffer.Length <= m.Data.Length)
+							buffer = new byte [buffer.Length * 2];
+						buffer [0] = m.StatusByte;
+						Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
+						output.SendAsync (buffer, m.Data.Length + 1, 0);
+						break;
+					default:
+						var size = SmfEvent.FixedDataSize (m.StatusByte);
+						buffer [0] = m.StatusByte;
+						buffer [1] = m.Msb;
+						if (size == 3)
+							buffer [2] = m.Lsb;
+						output.SendAsync (buffer, size, 0);
+						break;
+					}
+				};
+			}
 		}
+
+		IMidiOutput output;
+		byte [] buffer = new byte [0x100];
 
 		public event Action Finished {
 			add { player.Finished += value; }

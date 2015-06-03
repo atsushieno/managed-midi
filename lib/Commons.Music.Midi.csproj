@@ -39,20 +39,21 @@
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="module-database\data\README" />
-    <None Include="portmidi-sharp\README" />
+    <None Include="portmidi\README" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="base\MidiMachine.cs" />
     <Compile Include="base\MidiPlayer.cs" />
     <Compile Include="base\SMF.cs" />
     <Compile Include="module-database\MidiModuleDatabase.cs" />
-    <Compile Include="portmidi-sharp\PortMidiPlayer.cs" />
-    <Compile Include="portmidi-sharp\PortMidiSharp.cs" />
-    <Compile Include="rtmidi-sharp\RtMidiPlayer.cs" />
-    <Compile Include="rtmidi-sharp\RtMidiSharp.cs" />
     <Compile Include="base\MidiAccessManager.cs" />
-    <Compile Include="portmidi-sharp\PortMidiAccess.cs" />
-    <Compile Include="rtmidi-sharp\RtMdiAccess.cs" />
+    <Compile Include="portmidi\PortMidiAccess.cs" />
+    <Compile Include="portmidi\PortMidiPlayer.cs" />
+    <Compile Include="portmidi\PortMidiSharp.cs" />
+    <Compile Include="rtmidi\RtMidiAccess.cs" />
+    <Compile Include="rtmidi\RtMidiPlayer.cs" />
+    <Compile Include="rtmidi\RtMidiSharp.cs" />
+    <Compile Include="base\MidiTimeManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="module-database\data\midi-module-catalog.txt">

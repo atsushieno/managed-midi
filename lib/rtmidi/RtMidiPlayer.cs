@@ -32,13 +32,13 @@ namespace Commons.Music.Midi.RtMidi
 				case SmfEvent.CAf:
 					buf2 [0] = m.StatusByte;
 					buf2 [1] = m.Msb;
-					output.SendMessage (buf2);
+					output.SendMessage (buf2, buf2.Length);
 					break;
 				default:
 					buf3 [0] = m.StatusByte;
 					buf3 [1] = m.Msb;
 					buf3 [2] = m.Lsb;
-					output.SendMessage (buf3);
+					output.SendMessage (buf3, buf3.Length);
 					break;
 				}
 			}
@@ -49,7 +49,7 @@ namespace Commons.Music.Midi.RtMidi
 			var buf = new byte [sysex.Length + 1];
 			buf [0] = status;
 			Array.Copy (sysex, 0, buf, 1, buf.Length - 1);
-			output.SendMessage (buf);
+			output.SendMessage (buf, buf.Length);
 		}
 	}
 }
