@@ -23,7 +23,7 @@ namespace Commons.Music.Midi
 
 		//public virtual long TotalTicks { get; private set; }
 
-		public virtual void AdvanceBy (int addedTicks)
+		public virtual void AdvanceBy (int addedMilliseconds)
 		{
 			if (addedTicks < 0)
 				throw new InvalidOperationException ("Added ticks must be non-negative.");
