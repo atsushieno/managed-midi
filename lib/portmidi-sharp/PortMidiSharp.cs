@@ -159,10 +159,11 @@ namespace Commons.Music.Midi.PortMidi
 					yield return new MidiEvent () {Message = new MidiMessage (0xF0, 0, 0), Data = tmp};
 					i += size + 1;
 				} else {
-					if (end < i + 3)
+					var dsize = SmfEvent.FixedDataSize (bytes [i]);
+					if (end <= i + dsize)
 						throw new MidiException (MidiErrorType.NoError, "Received data was incomplete to build MIDI status message");
-					yield return new MidiEvent () {Message = new MidiMessage (bytes [i], bytes [i + 1], bytes [i + 2])};
-					i += 3;
+					yield return new MidiEvent () {Message = new MidiMessage (bytes [i], bytes [i + 1], dsize == 1 ? 0 : bytes [i + 2])};
+					i += dsize + 1;
 				}
 			}
 		}
