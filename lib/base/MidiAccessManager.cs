@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
 {
-	public abstract class MidiAccessManager
+	public static class MidiAccessManager
 	{
 		static MidiAccessManager ()
 		{

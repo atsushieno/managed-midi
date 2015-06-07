@@ -25,7 +25,7 @@ namespace Commons.Music.Midi
 
 		public virtual void AdvanceBy (int addedMilliseconds)
 		{
-			if (addedTicks < 0)
+			if (addedMilliseconds < 0)
 				throw new InvalidOperationException ("Added ticks must be non-negative.");
 			//TotalTicks += addedTicks;
 		}
@@ -43,7 +43,7 @@ namespace Commons.Music.Midi
 
 	public class VirtualMidiTimeManager : MidiTimeManagerBase
 	{
-		public void AdvanceBy (int addedMilliseconds)
+		public override void AdvanceBy (int addedMilliseconds)
 		{
 		}
 		//void AdvanceTo (long targetTicks);
@@ -51,7 +51,7 @@ namespace Commons.Music.Midi
 
 	public class SimpleMidiTimeManager : MidiTimeManagerBase
 	{
-		public void AdvanceBy (int addedMilliseconds)
+		public override void AdvanceBy (int addedMilliseconds)
 		{
 			Thread.Sleep (addedMilliseconds);
 			base.AdvanceBy (addedMilliseconds);
