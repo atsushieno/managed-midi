@@ -7,6 +7,23 @@ namespace Commons.Music.Midi
 {
 	public class SmfMusic
 	{
+		#region static members
+
+		public static SmfMusic Read (string file)
+		{
+			using (var f = File.OpenRead (file))
+				return Read (f);
+		}
+
+		public static SmfMusic Read (Stream stream)
+		{
+			var r = new SmfReader ();
+			r.Read (stream);
+			return r.Music;
+		}
+
+		#endregion
+
 		List<SmfTrack> tracks = new List<SmfTrack> ();
 
 		public SmfMusic ()
@@ -527,17 +544,23 @@ namespace Commons.Music.Midi
 
 	public class SmfReader
 	{
-		public SmfReader (Stream stream)
-		{
-			this.stream = stream;
-		}
-
 		Stream stream;
-		SmfMusic data = new SmfMusic ();
+		SmfMusic data;
 
 		public SmfMusic Music { get { return data; } }
 
-		public void Parse ()
+		public void Read (Stream stream)
+		{
+			this.stream = stream;
+			data = new SmfMusic ();
+			try {
+				DoParse ();
+			} finally {
+				this.stream = null;
+			}
+		}
+
+		void DoParse ()
 		{
 			if (
 			    ReadByte ()  != 'M'

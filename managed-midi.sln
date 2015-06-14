@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmk", "tools\mmk\mmk.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmchromakey", "tools\mmk\mmchromakey.csproj", "{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{CBA77B3D-26A5-47D4-ABE0-0357F42C2787}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "managed-midi-player-console", "tools\managed-midi-player-console\managed-midi-player-console.csproj", "{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Tests", "Commons.Music.Midi.Tests\Commons.Music.Midi.Tests.csproj", "{1E071EA9-ED3E-452E-9688-DE1ABABA2293}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +45,26 @@ Global
 		{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535}.Debug|x86.Build.0 = Debug|Any CPU
 		{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535}.Release|x86.ActiveCfg = Release|Any CPU
 		{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535}.Release|x86.Build.0 = Release|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0}.Release|x86.Build.0 = Release|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Debug|x86.Build.0 = Debug|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Release|x86.ActiveCfg = Release|Any CPU
+		{1E071EA9-ED3E-452E-9688-DE1ABABA2293}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
+		{13B39050-0AC2-431F-82E2-5502357B2E61} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
+		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
 	EndGlobalSection
 EndGlobal

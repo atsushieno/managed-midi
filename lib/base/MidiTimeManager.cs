@@ -45,6 +45,7 @@ namespace Commons.Music.Midi
 	{
 		public override void AdvanceBy (int addedMilliseconds)
 		{
+			base.AdvanceBy (addedMilliseconds);
 		}
 		//void AdvanceTo (long targetTicks);
 	}

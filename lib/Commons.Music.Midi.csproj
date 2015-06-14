@@ -40,6 +40,9 @@
     <None Include="Makefile" />
     <None Include="module-database\data\README" />
     <None Include="portmidi\README" />
+    <None Include="librtmidi_c.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="base\MidiMachine.cs" />

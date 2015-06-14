@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Commons.Music.Midi;
-using PortMidiSharp;
-using Timer = System.Timers.Timer;
 
 namespace Commons.Music.Midi.Player
 {
@@ -23,14 +20,14 @@ Options:
 --verbose	verbose MIDI message outputs to console.
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
-			foreach (var dev in MidiDeviceManager.AllDevices)
-				if (dev.IsOutput)
-					Console.WriteLine ("\t{0}: {1}", dev.ID, dev.Name);
+			foreach (var dev in MidiAccessManager.Default.Outputs)
+				Console.WriteLine ("\t{0}: {1}", dev.Details.Id, dev.Details.Name);
 		}
 
 		public static void Main (string [] args)
 		{
-			int outdev = MidiDeviceManager.DefaultOutputDeviceID;
+			var api = MidiAccessManager.Default;
+			var output = api.Outputs.FirstOrDefault ();
 			var files = new List<string> ();
 			bool diagnostic = false;
 			if (args.Length == 0) {
@@ -44,8 +41,9 @@ Options:
 				}
 				else if (arg == "--verbose")
 					diagnostic = true;
-				else if (arg.StartsWith ("--device:")) {
-					if (!int.TryParse (arg.Substring (9), out outdev)) {
+				else if (arg.StartsWith ("--device:", StringComparison.Ordinal)) {
+					output = api.Outputs.FirstOrDefault (o => o.Details.Id == arg.Substring (9));
+					if (output == null) {
 						ShowHelp ();
 						Console.WriteLine ();
 						Console.WriteLine ("Invalid MIDI output device ID.");
@@ -55,15 +53,14 @@ Options:
 				else
 					files.Add (arg);
 			}
-			var output = MidiDeviceManager.OpenOutput (outdev);
 
 			var wh = new ManualResetEvent (false);
 			bool loop = true;
 			
 			foreach (var arg in files) {
-				var parser = new SmfReader (File.OpenRead (arg));
-				parser.Parse ();
-				var player = new PortMidiPlayer (output, parser.Music);
+				var parser = new SmfReader ();
+				parser.Read (File.OpenRead (arg));
+				var player = new MidiPlayer (parser.Music, output);
 				DateTimeOffset start = DateTimeOffset.Now;
 				if (diagnostic)
 					player.EventReceived += e => {

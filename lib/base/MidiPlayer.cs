@@ -36,6 +36,7 @@ namespace Commons.Music.Midi
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");
+			time_manager = timeManager;
 
 			this.music = music;
 			messages = SmfTrackMerger.Merge (music).Tracks [0].Messages;
@@ -224,9 +225,37 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiPlayer (SmfMusic music, IMidiAccess access)
+			: this (music, access.Outputs.FirstOrDefault ())
 		{
-			player = new MidiSyncPlayer (music);
-			output = access.Outputs.FirstOrDefault ();
+		}
+
+		public MidiPlayer (SmfMusic music, IMidiOutput output)
+			: this (music, output, new SimpleMidiTimeManager ())
+		{
+		}
+
+		public MidiPlayer (SmfMusic music, IMidiTimeManager timeManager)
+			: this (music, MidiAccessManager.Empty, timeManager)
+		{
+		}
+
+		public MidiPlayer (SmfMusic music, IMidiAccess access, IMidiTimeManager timeManager)
+			: this (music, access.Outputs.FirstOrDefault (), timeManager)
+		{
+		}
+
+		public MidiPlayer (SmfMusic music, IMidiOutput output, IMidiTimeManager timeManager)
+		{
+			if (music == null)
+				throw new ArgumentNullException ("music");
+			if (output == null)
+				throw new ArgumentNullException ("output");
+			if (timeManager == null)
+				throw new ArgumentNullException ("timeManager");
+			
+			this.output = output;
+
+			player = new MidiSyncPlayer (music, timeManager);
 			if (output != null) {
 				output.OpenAsync ();
 				EventReceived += (m) => {
@@ -243,9 +272,8 @@ namespace Commons.Music.Midi
 						var size = SmfEvent.FixedDataSize (m.StatusByte);
 						buffer [0] = m.StatusByte;
 						buffer [1] = m.Msb;
-						if (size == 3)
-							buffer [2] = m.Lsb;
-						output.SendAsync (buffer, size, 0);
+						buffer [2] = m.Lsb;
+						output.SendAsync (buffer, 3, 0);
 						break;
 					}
 				};
