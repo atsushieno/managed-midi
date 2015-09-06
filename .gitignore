@@ -1,4 +1,6 @@
 build/
-lib/bin/
-lib/obj/
-managed-midi.userprefs
+bin/
+obj/
+*.userprefs
+.vs/
+packages/

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
-using Commons.Music.Midi.PortMidi;
 
 namespace Commons.Music.Midi
 {
@@ -69,15 +68,14 @@ namespace Commons.Music.Midi
 					output.Dispose ();
 			};
 
-			if (MidiDeviceManager.DefaultOutputDeviceID < 0) {
-				MessageBox.Show ("No MIDI device was found.");
+			if (!MidiAccessManager.Default.Outputs.Any ()) {
+				MessageBox.Show ("No MIDI output device was found.");
 				Application.Exit ();
 				return;
 			}
 
-			foreach (var dev in MidiDeviceManager.AllDevices)
-				if (dev.IsOutput)
-					output_devices.Add (dev);
+			foreach (var dev in MidiAccessManager.Default.Outputs)
+				output_devices.Add (dev);
 			SwitchToDevice (0);
 		}
 
@@ -98,7 +96,7 @@ namespace Commons.Music.Midi
 			cb.Location = new Point (10, 10);
 			cb.Width = 200;
 			cb.DropDownStyle = ComboBoxStyle.DropDownList;
-			cb.DataSource = new List<string> (from dev in output_devices select dev.Name);
+			cb.DataSource = new List<string> (from dev in output_devices select dev.Details.Name);
 			cb.SelectedIndexChanged += delegate {
 				try {
 					this.Enabled = false;
@@ -121,15 +119,15 @@ namespace Commons.Music.Midi
 				output.Dispose ();
 				output = null;
 			}
-			output = MidiDeviceManager.OpenOutput (output_devices [deviceIndex].ID);
-			output.Write (0, new MidiMessage (0xC0 + channel, 0, 0));
+			output = MidiAccessManager.Default.Outputs.ElementAt (deviceIndex);
+			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0);
 
 			SetupBankSelector (deviceIndex);
 		}
 		
 		void SetupBankSelector (int deviceIndex)
 		{
-			var db = MidiModuleDatabase.Default.Resolve (output_devices [deviceIndex].Name);
+			var db = MidiModuleDatabase.Default.Resolve (output_devices [deviceIndex].Details.Name);
 			if (db != null && db.Instrument != null && db.Instrument.Maps.Count > 0) {
 				var map = db.Instrument.Maps [0];
 				foreach (var prog in map.Programs) {
@@ -140,9 +138,9 @@ namespace Commons.Music.Midi
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
 						mi.Select += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
-							output.Write (0, new MidiMessage (SmfEvent.CC + channel, SmfCC.BankSelect, mbank.Msb));
-							output.Write (0, new MidiMessage (SmfEvent.CC + channel, SmfCC.BankSelectLsb, mbank.Lsb));
-							output.Write (0, new MidiMessage (SmfEvent.Program + channel, (int) mi.Parent.Tag, 0));
+							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelect, (byte) mbank.Msb }, 0, 0);
+							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0);
+							output.SendAsync (new byte[] { (byte) (SmfEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}
@@ -184,7 +182,7 @@ namespace Commons.Music.Midi
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
 				mi.Select += delegate {
-					output.Write (0, new MidiMessage (0xC0 + channel, (int) mi.Tag, 0));
+					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) mi.Tag, 0 }, 0, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}
@@ -357,7 +355,7 @@ namespace Commons.Music.Midi
 				note = (octave + (low ? 0 : 1)) * 12 - 4 + transpose + nid;
 
 			if (0 <= note && note <= 128)
-				output.Write (0, new MidiMessage ((down ? 0x90 : 0x80) + channel, note, 100));
+				output.SendAsync (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0);
 		}
 
 		class KeyMap
@@ -386,12 +384,12 @@ namespace Commons.Music.Midi
 			public readonly string HighKeys;
 		}
 
-		MidiOutput output;
+		IMidiOutput output;
 		int key_channel = 1;
 		int channel = 1;
 		int transpose;
 		int octave = 4; // lowest
-		List<MidiDeviceInfo> output_devices = new List<MidiDeviceInfo> ();
+		List<IMidiOutput> output_devices = new List<IMidiOutput> ();
 		KeyMap keymap;
 
 		void QuitApplication ()

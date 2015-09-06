@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,9 +40,17 @@
     <None Include="Makefile" />
     <None Include="module-database\data\README" />
     <None Include="portmidi\README" />
-    <None Include="librtmidi_c.so">
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="librtmidi.dylib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="librtmidi.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="rtmidi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="base\MidiMachine.cs" />
@@ -77,5 +85,8 @@
     <EmbeddedResource Include="module-database\data\yamaha_motif-rack_es.midimod">
       <LogicalName>module-database/data/yamaha_motif-rack_es.midimod</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="native_libraries\" />
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@ namespace Commons.Music.Midi.RtMidi
 
 	public static class RtMidi
 	{
-		public const string RtMidiLibrary = "rtmidi_c";
+		public const string RtMidiLibrary = "rtmidi";
 		
 		/* Utility API */
 		[DllImport (RtMidiLibrary)]

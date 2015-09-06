@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +16,13 @@ namespace Commons.Music.Midi.PortMidi
 		}
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
+
+		public PortMidiAccess()
+		{
+			// This is dummy. It is just to try p/invoking portmidi.
+			if (MidiDeviceManager.DeviceCount < 0)
+				throw new InvalidOperationException ("unexpected negative device count.");
+		}
 	}
 
 	class PortMidiPortDetails : IMidiPortDetails
