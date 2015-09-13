@@ -120,6 +120,7 @@ namespace Commons.Music.Midi
 				output = null;
 			}
 			output = MidiAccessManager.Default.Outputs.ElementAt (deviceIndex);
+			output.OpenAsync ().Wait ();
 			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0);
 
 			SetupBankSelector (deviceIndex);
@@ -182,7 +183,7 @@ namespace Commons.Music.Midi
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
 				mi.Select += delegate {
-					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) mi.Tag, 0 }, 0, 0);
+					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}

@@ -131,7 +131,7 @@ namespace Commons.Music.Midi.RtMidi
 			if (timestamp > 0)
 				throw new InvalidOperationException ("non-zero timestamp is not supported");
 			if (mevent == null)
-				throw new ArgumentNullException (nameof (mevent));
+				throw new ArgumentNullException ("mevent");
 			if (mevent.Length == 0)
 				return completed_task; // do nothing
 			impl.SendMessage (mevent, mevent.Length);

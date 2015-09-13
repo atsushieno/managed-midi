@@ -41,7 +41,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="mmk.cs" />
+    <Compile Include="mmk.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Commons.Music.Midi.csproj">

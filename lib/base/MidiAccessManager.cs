@@ -10,16 +10,15 @@ namespace Commons.Music.Midi
 		static MidiAccessManager ()
 		{
 			Empty = new EmptyMidiAccess ();
-			Default = typeof (MidiAccessManager).Assembly.GetTypes ()
-				.Where (t => t != typeof (EmptyMidiAccess) && t.GetInterfaces ().Contains (typeof (IMidiAccess)))
-				.Select (t => {
-					try {
-						return (IMidiAccess)Activator.CreateInstance (t);
-					} catch {
-						return null;
-					}
-				})
-				.FirstOrDefault () ?? Empty;
+			var types = typeof (MidiAccessManager).Assembly.GetTypes ()
+				.Where (t => t != typeof (EmptyMidiAccess) && t.GetInterfaces ().Contains (typeof (IMidiAccess)));
+			foreach (var type in types) {
+				try {
+					Default = (IMidiAccess) Activator.CreateInstance (type);
+				} catch {
+					// ignore, try next
+				}
+			}
 		}
 
 		public static IMidiAccess Default { get; private set; }
@@ -82,8 +81,8 @@ namespace Commons.Music.Midi
 
 	public class MidiReceivedEventArgs : EventArgs
 	{
-		public long Timestamp { get; }
-		public byte [] Data { get; }
+		public long Timestamp { get; private set; }
+		public byte [] Data { get; private set; }
 	}
 
 	class EmptyMidiAccess : IMidiAccess
