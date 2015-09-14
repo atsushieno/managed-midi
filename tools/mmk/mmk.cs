@@ -125,7 +125,7 @@ namespace Commons.Music.Midi
 
 			SetupBankSelector (deviceIndex);
 		}
-		
+
 		void SetupBankSelector (int deviceIndex)
 		{
 			var db = MidiModuleDatabase.Default.Resolve (output_devices [deviceIndex].Details.Name);
@@ -150,7 +150,7 @@ namespace Commons.Music.Midi
 		}
 
 		MenuItem tone_menu;
-		
+
 		static readonly string [] tone_categories = {
 			"&A 0 Piano",
 			"&B 8 Chromatic Percussion",
@@ -200,10 +200,11 @@ namespace Commons.Music.Midi
 			keymap = map;
 
 			int top = 70;
+			int labelOffset = -5;
 
 			// offset 4, 10, 18 are not mapped, so skip those numbers
 			var hl = new List<Button> ();
-			int labelStringIndex = key_labels.Length - 5;
+			int labelStringIndex = key_labels.Length + labelOffset;
 			for (int i = 0; i < keymap.HighKeys.Length; i++) {
 				var b = new NoteButton ();
 				b.Text = key_labels [labelStringIndex % key_labels.Length];
@@ -218,7 +219,7 @@ namespace Commons.Music.Midi
 			}
 			high_buttons = hl.ToArray ();
 			var ll = new List<Button> ();
-			labelStringIndex = key_labels.Length - 5;
+			labelStringIndex = key_labels.Length + labelOffset;
 			for (int i = 0; i < keymap.LowKeys.Length; i++) {
 				var b = new NoteButton ();
 				b.Text = key_labels [labelStringIndex % key_labels.Length];
@@ -290,11 +291,11 @@ namespace Commons.Music.Midi
 			var key = e.KeyCode;
 			switch (key) {
 			case Keys.Up:
-				if (octave < 7)
+				if (!down && octave < 7)
 					octave++;
 				break;
 			case Keys.Down:
-				if (octave > 0)
+				if (!down && octave > 0)
 					octave--;
 				break;
 //			case Keys.Left:
@@ -351,7 +352,7 @@ namespace Commons.Music.Midi
 
 			int note;
 			if (ChromaTone)
-				note = octave * 12 - 4 + transpose + nid + (low ? 2 : 0);
+				note = octave * 12 - 5 + transpose + nid + (low ? 2 : 0);
 			else
 				note = (octave + (low ? 0 : 1)) * 12 - 4 + transpose + nid;
 
@@ -400,4 +401,3 @@ namespace Commons.Music.Midi
 		}
 	}
 }
-
