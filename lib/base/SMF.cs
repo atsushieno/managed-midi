@@ -9,11 +9,13 @@ namespace Commons.Music.Midi
 	{
 		#region static members
 
+		#if !PORTABLE
 		public static SmfMusic Read (string file)
 		{
 			using (var f = File.OpenRead (file))
 				return Read (f);
 		}
+		#endif
 
 		public static SmfMusic Read (Stream stream)
 		{
@@ -525,7 +527,7 @@ namespace Commons.Music.Midi
 					stream.WriteByte (e.Event.MetaType);
 					int size = Math.Min (0x77, total - written);
 					stream.WriteByte ((byte) (size + 8));
-					stream.Write (Encoding.ASCII.GetBytes (String.Format ("DM:{0:D04}:", idx++)), 0, 8);
+					stream.Write (Encoding.UTF8.GetBytes (String.Format ("DM:{0:D04}:", idx++)), 0, 8);
 					stream.Write (e.Event.Data, written, size);
 					written += size;
 				} while (written < total);

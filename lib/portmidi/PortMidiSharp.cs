@@ -21,9 +21,11 @@ namespace Commons.Music.Midi.PortMidi
 		static MidiDeviceManager ()
 		{
 			PortMidiMarshal.Pm_Initialize ();
+			#if !PORTABLE // FIXME: what to do for PCLs!?
 			AppDomain.CurrentDomain.DomainUnload += delegate (object o, EventArgs e) {
 				PortMidiMarshal.Pm_Terminate ();
 			};
+			#endif
 		}
 
 		public static int DeviceCount {
@@ -281,7 +283,9 @@ namespace Commons.Music.Midi.PortMidi
 	{
 		MidiMessage msg;
 		PmTimestamp ts;
+		#if !PORTABLE // FIXME: wait, P/Invoke exists without [NonSerialized]!?
 		[NonSerialized]
+		#endif
 		byte [] data;
 
 		public MidiMessage Message {

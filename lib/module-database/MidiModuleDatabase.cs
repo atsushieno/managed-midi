@@ -20,7 +20,7 @@ namespace Commons.Music.Midi
 
 	class DefaultMidiModuleDatabase : MidiModuleDatabase
 	{
-		static readonly Assembly ass = typeof (DefaultMidiModuleDatabase).Assembly;
+		static readonly Assembly ass = typeof (DefaultMidiModuleDatabase).GetTypeInfo ().Assembly;
 
 		// am too lazy to adjust resource names :/
 		public static Stream GetResource (string name)
@@ -73,11 +73,13 @@ namespace Commons.Music.Midi
 
 		// serialization
 
+		#if !PORTABLE
 		public void Save (string file)
 		{
 			using (var fs = File.OpenWrite (file))
 				Save (fs);
 		}
+		#endif
 
 		public void Save (Stream stream)
 		{
@@ -85,11 +87,13 @@ namespace Commons.Music.Midi
 			ds.WriteObject (stream, this);
 		}
 
+		#if !PORTABLE
 		public static MidiModuleDefinition Load (string file)
 		{
 			using (var fs = File.OpenRead (file))
 				return Load (fs);
 		}
+		#endif
 
 		public static MidiModuleDefinition Load (Stream stream)
 		{

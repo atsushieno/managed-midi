@@ -323,7 +323,6 @@ namespace Commons.Music.Midi.RtMidi
 
 		public static IEnumerable<MidiDeviceInfo> AllDevices {
 			get {
-				Console.WriteLine (DeviceCount);
 				for (int i = 0; i < DeviceCount; i++)
 					yield return GetDeviceInfo (i);
 			}

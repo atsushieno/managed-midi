@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
 {
@@ -54,7 +54,7 @@ namespace Commons.Music.Midi
 	{
 		public override void AdvanceBy (int addedMilliseconds)
 		{
-			Thread.Sleep (addedMilliseconds);
+			Task.Delay (addedMilliseconds);
 			base.AdvanceBy (addedMilliseconds);
 		}
 

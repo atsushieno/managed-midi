@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
@@ -10,8 +11,8 @@ namespace Commons.Music.Midi
 		static MidiAccessManager ()
 		{
 			Empty = new EmptyMidiAccess ();
-			var types = typeof (MidiAccessManager).Assembly.GetTypes ()
-				.Where (t => t != typeof (EmptyMidiAccess) && t.GetInterfaces ().Contains (typeof (IMidiAccess)));
+			IEnumerable<Type> types = typeof (MidiAccessManager).GetTypeInfo ().Assembly.DefinedTypes.Select (ti => ti.AsType ());
+			types = types.Where (t => t != typeof (EmptyMidiAccess) && t.GetTypeInfo ().ImplementedInterfaces.Contains (typeof (IMidiAccess)));
 			foreach (var type in types) {
 				try {
 					Default = (IMidiAccess) Activator.CreateInstance (type);

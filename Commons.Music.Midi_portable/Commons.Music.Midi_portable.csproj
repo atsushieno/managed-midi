@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2A0A4AA1-D455-48B4-ABD0-07217568264E}</ProjectGuid>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Commons.Music.Midi</RootNamespace>
+    <AssemblyName>Commons.Music.Midi</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;PORTABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>PORTABLE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\lib\base\MidiAccessManager.cs">
+      <Link>lib\base\MidiAccessManager.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\base\MidiMachine.cs">
+      <Link>lib\base\MidiMachine.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\base\MidiPlayer.cs">
+      <Link>lib\base\MidiPlayer.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\base\MidiTimeManager.cs">
+      <Link>lib\base\MidiTimeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\base\SMF.cs">
+      <Link>lib\base\SMF.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\module-database\MidiModuleDatabase.cs">
+      <Link>lib\module-database\MidiModuleDatabase.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\portmidi\PortMidiAccess.cs">
+      <Link>lib\portmidi\PortMidiAccess.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\portmidi\PortMidiPlayer.cs">
+      <Link>lib\portmidi\PortMidiPlayer.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\portmidi\PortMidiSharp.cs">
+      <Link>lib\portmidi\PortMidiSharp.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\rtmidi\RtMidiAccess.cs">
+      <Link>lib\rtmidi\RtMidiAccess.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\rtmidi\RtMidiPlayer.cs">
+      <Link>lib\rtmidi\RtMidiPlayer.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\rtmidi\RtMidiSharp.cs">
+      <Link>lib\rtmidi\RtMidiSharp.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\lib\librtmidi.dylib">
+      <Link>lib\librtmidi.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\lib\librtmidi.so">
+      <Link>lib\librtmidi.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\lib\rtmidi.dll">
+      <Link>lib\rtmidi.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\lib\rtmidi_x64.dll">
+      <Link>lib\rtmidi_x64.dll</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\lib\module-database\data\README">
+      <Link>lib\module-database\data\README</Link>
+    </None>
+    <None Include="..\lib\portmidi\README">
+      <Link>lib\portmidi\README</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\lib\module-database\data\midi-module-catalog.txt">
+      <LogicalName>module-database/data/midi-module-catalog.txt</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\lib\module-database\data\ms_gs_wavetable_synth.midimod">
+      <LogicalName>module-database/data/ms_gs_wavetable_synth.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\lib\module-database\data\roland_sc-88.midimod">
+      <LogicalName>module-database/data/roland_sc-88.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\lib\module-database\data\roland_sc-8820.midimod">
+      <LogicalName>module-database/data/roland_sc-8820.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\lib\module-database\data\roland_sc-88pro.midimod">
+      <LogicalName>module-database/data/roland_sc-88pro.midimod</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\lib\module-database\data\yamaha_motif-rack_es.midimod">
+      <LogicalName>module-database/data/yamaha_motif-rack_es.midimod</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+</Project>

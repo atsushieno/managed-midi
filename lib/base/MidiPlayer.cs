@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
 {
@@ -122,8 +123,6 @@ namespace Commons.Music.Midi
 			playtime_delta += DateTime.Now - timer_resumed;
 			timer_resumed = DateTime.Now;
 			Mute ();
-			Console.WriteLine (playtime_delta);
-			Console.WriteLine (PositionInTime);
 		}
 
 		int event_idx = 0;
@@ -217,7 +216,7 @@ namespace Commons.Music.Midi
 	public class MidiPlayer : IDisposable, IMidiPlayerStatus
 	{
 		MidiSyncPlayer player;
-		Thread sync_player_thread;
+		Task sync_player_task;
 
 		public MidiPlayer (SmfMusic music)
 			: this (music, MidiAccessManager.Empty)
@@ -340,9 +339,7 @@ namespace Commons.Music.Midi
 
 		public void StartLoop ()
 		{
-			ThreadStart ts = delegate { player.PlayerLoop (); };
-			sync_player_thread = new Thread (ts);
-			sync_player_thread.Start ();
+			sync_player_task = Task.Run (() => { player.PlayerLoop (); });
 		}
 
 		public void PlayAsync ()
@@ -354,7 +351,7 @@ namespace Commons.Music.Midi
 				player.Play ();
 				return;
 			case PlayerState.Stopped:
-				if (sync_player_thread == null || !sync_player_thread.IsAlive)
+			        if (sync_player_task == null || sync_player_task.Status != TaskStatus.Running)
 					StartLoop ();
 				player.Play ();
 				return;

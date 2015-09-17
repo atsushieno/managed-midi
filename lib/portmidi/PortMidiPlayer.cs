@@ -1,10 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading;
-using Commons.Music.Midi;
-using Timer = System.Timers.Timer;
 
 namespace Commons.Music.Midi.PortMidi
 {
