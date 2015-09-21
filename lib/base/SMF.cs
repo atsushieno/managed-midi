@@ -119,7 +119,7 @@ namespace Commons.Music.Midi
 		public const byte Modulation = 0x01;
 		public const byte Breath = 0x02;
 		public const byte Foot = 0x04;
-		public const byte PortamentTime = 0x05;
+		public const byte PortamentoTime = 0x05;
 		public const byte DteMsb = 0x06;
 		public const byte Volume = 0x07;
 		public const byte Balance = 0x08;
@@ -135,7 +135,7 @@ namespace Commons.Music.Midi
 		public const byte ModulationLsb = 0x21;
 		public const byte BreathLsb = 0x22;
 		public const byte FootLsb = 0x24;
-		public const byte PortamentTimeLsb = 0x25;
+		public const byte PortamentoTimeLsb = 0x25;
 		public const byte DteLsb = 0x26;
 		public const byte VolumeLsb = 0x27;
 		public const byte BalanceLsb = 0x28;
