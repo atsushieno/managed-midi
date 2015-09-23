@@ -7,12 +7,12 @@ namespace Commons.Music.Midi.PortMidi
 {
 	public class PortMidiAccess : IMidiAccess
 	{
-		public IEnumerable<IMidiInput> Inputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiInput (d)); }
+		public IEnumerable<IMidiPortDetails> Inputs {
+			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiPortDetails (d)); }
 		}
 
-		public IEnumerable<IMidiOutput> Outputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiOutput (d)); }
+		public IEnumerable<IMidiPortDetails> Outputs {
+			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiPortDetails (d)); }
 		}
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
@@ -22,6 +22,18 @@ namespace Commons.Music.Midi.PortMidi
 			// This is dummy. It is just to try p/invoking portmidi.
 			if (MidiDeviceManager.DeviceCount < 0)
 				throw new InvalidOperationException ("unexpected negative device count.");
+		}
+		
+		public Task<IMidiInput> OpenInputAsync (string portId)
+		{
+			var p = new PortMidiInput ((PortMidiPortDetails) Inputs.First (i => i.Id == portId));
+			return p.OpenAsync ().ContinueWith (t => (IMidiInput) p);
+		}
+		
+		public Task<IMidiOutput> OpenOutputAsync (string portId)
+		{
+			var p = new PortMidiOutput ((PortMidiPortDetails) Outputs.First (i => i.Id == portId));
+			return p.OpenAsync ().ContinueWith (t => (IMidiOutput) p);
 		}
 	}
 
@@ -52,15 +64,14 @@ namespace Commons.Music.Midi.PortMidi
 	{
 		static internal Task completed_task = Task.FromResult (false);
 
-		protected PortMidiPort (MidiDeviceInfo deviceInfo)
+		protected PortMidiPort (PortMidiPortDetails portDetails)
 		{
-			this.info = deviceInfo;
-			Details = new PortMidiPortDetails (info);
+			if (portDetails == null)
+				throw new ArgumentNullException ("portDetails");
+			Details = portDetails;
 			Connection = MidiPortConnectionState.Closed;
 			State = MidiPortDeviceState.Connected; // there is no way to check that...
 		}
-
-		MidiDeviceInfo info;
 
 		public MidiPortConnectionState Connection { get; internal set; }
 		public IMidiPortDetails Details { get; private set; }
@@ -80,8 +91,8 @@ namespace Commons.Music.Midi.PortMidi
 
 	class PortMidiInput : PortMidiPort, IMidiInput
 	{
-		public PortMidiInput (MidiDeviceInfo info)
-			: base (info)
+		public PortMidiInput (PortMidiPortDetails portDetails)
+			: base (portDetails)
 		{
 		}
 
@@ -109,8 +120,8 @@ namespace Commons.Music.Midi.PortMidi
 
 	class PortMidiOutput : PortMidiPort, IMidiOutput
 	{
-		public PortMidiOutput (MidiDeviceInfo info)
-			: base (info)
+		public PortMidiOutput (PortMidiPortDetails portDetails)
+			: base (portDetails)
 		{
 		}
 
@@ -133,7 +144,7 @@ namespace Commons.Music.Midi.PortMidi
 			return completed_task;
 		}
 
-		public Task SendAsync (byte [] mevent, int length, long timestamp)
+		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
 		{
 			if (mevent == null)
 				throw new ArgumentNullException ("mevent");

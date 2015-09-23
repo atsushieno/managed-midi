@@ -74,9 +74,7 @@ namespace Commons.Music.Midi
 				return;
 			}
 
-			foreach (var dev in MidiAccessManager.Default.Outputs)
-				output_devices.Add (dev);
-			SwitchToDevice (0);
+			SwitchToDevice (MidiAccessManager.Default.Outputs.First ().Id);
 		}
 
 		void SetupMenus ()
@@ -96,14 +94,15 @@ namespace Commons.Music.Midi
 			cb.Location = new Point (10, 10);
 			cb.Width = 200;
 			cb.DropDownStyle = ComboBoxStyle.DropDownList;
-			cb.DataSource = new List<string> (from dev in output_devices select dev.Details.Name);
+			cb.DataSource = new List<string> (from dev in MidiAccessManager.Default.Outputs select dev.Name);
 			cb.SelectedIndexChanged += delegate {
 				try {
 					this.Enabled = false;
 					this.Cursor = Cursors.WaitCursor;
 					if (cb.SelectedIndex < 0)
 						return;
-					SwitchToDevice (cb.SelectedIndex);
+					var d = MidiAccessManager.Default.Outputs.First (_ => _.Name == (string) cb.SelectedItem);
+					SwitchToDevice (d.Id);
 				} finally {
 					this.Enabled = true;
 					cb.Focus ();
@@ -113,22 +112,22 @@ namespace Commons.Music.Midi
 			Controls.Add (cb);
 		}
 
-		void SwitchToDevice (int deviceIndex)
+		void SwitchToDevice (string deviceId)
 		{
 			if (output != null) {
 				output.Dispose ();
 				output = null;
 			}
-			output = MidiAccessManager.Default.Outputs.ElementAt (deviceIndex);
-			output.OpenAsync ().Wait ();
-			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0);
+			var am = MidiAccessManager.Default;
+			output = am.OpenOutputAsync (deviceId).Result;
+			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0, 0);
 
-			SetupBankSelector (deviceIndex);
+			SetupBankSelector (deviceId);
 		}
 
-		void SetupBankSelector (int deviceIndex)
+		void SetupBankSelector (string deviceId)
 		{
-			var db = MidiModuleDatabase.Default.Resolve (output_devices [deviceIndex].Details.Name);
+			var db = MidiModuleDatabase.Default.Resolve (MidiAccessManager.Default.Outputs.First (d => d.Id == deviceId).Name);
 			if (db != null && db.Instrument != null && db.Instrument.Maps.Count > 0) {
 				var map = db.Instrument.Maps [0];
 				foreach (var prog in map.Programs) {
@@ -139,9 +138,9 @@ namespace Commons.Music.Midi
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
 						mi.Select += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
-							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelect, (byte) mbank.Msb }, 0, 0);
-							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0);
-							output.SendAsync (new byte[] { (byte) (SmfEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0);
+							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
+							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
+							output.SendAsync (new byte[] { (byte) (SmfEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}
@@ -183,7 +182,7 @@ namespace Commons.Music.Midi
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
 				mi.Select += delegate {
-					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0);
+					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}
@@ -357,7 +356,7 @@ namespace Commons.Music.Midi
 				note = (octave + (low ? 0 : 1)) * 12 - 4 + transpose + nid;
 
 			if (0 <= note && note <= 128)
-				output.SendAsync (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0);
+				output.SendAsync (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0, 0);
 		}
 
 		class KeyMap
@@ -391,7 +390,6 @@ namespace Commons.Music.Midi
 		int channel = 1;
 		int transpose;
 		int octave = 4; // lowest
-		List<IMidiOutput> output_devices = new List<IMidiOutput> ();
 		KeyMap keymap;
 
 		void QuitApplication ()

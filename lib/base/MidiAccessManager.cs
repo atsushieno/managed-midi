@@ -28,9 +28,11 @@ namespace Commons.Music.Midi
 
 	public interface IMidiAccess
 	{
-		IEnumerable<IMidiInput> Inputs { get; }
-		IEnumerable<IMidiOutput> Outputs { get; }
+		IEnumerable<IMidiPortDetails> Inputs { get; }
+		IEnumerable<IMidiPortDetails> Outputs { get; }
 
+		Task<IMidiInput> OpenInputAsync (string portId);
+		Task<IMidiOutput> OpenOutputAsync (string portId);
 		event EventHandler<MidiConnectionEventArgs> StateChanged;
 	}
 
@@ -66,7 +68,6 @@ namespace Commons.Music.Midi
 		MidiPortDeviceState State { get; }
 		MidiPortConnectionState Connection { get; }
 		event EventHandler StateChanged;
-		Task OpenAsync ();
 		Task CloseAsync ();
 	}
 
@@ -77,7 +78,7 @@ namespace Commons.Music.Midi
 
 	public interface IMidiOutput : IMidiPort, IDisposable
 	{
-		Task SendAsync (byte [] mevent, int length, long timestamp);
+		Task SendAsync (byte [] mevent, int offset, int length, long timestamp);
 	}
 
 	public class MidiReceivedEventArgs : EventArgs
@@ -88,13 +89,28 @@ namespace Commons.Music.Midi
 
 	class EmptyMidiAccess : IMidiAccess
 	{
-		public IEnumerable<IMidiInput> Inputs
+		public IEnumerable<IMidiPortDetails> Inputs
 		{
-			get { yield return EmptyMidiInput.Instance; }
+			get { yield return EmptyMidiInput.Instance.Details; }
 		}
-		public IEnumerable<IMidiOutput> Outputs
+		
+		public IEnumerable<IMidiPortDetails> Outputs
 		{
-			get { yield return EmptyMidiOutput.Instance; }
+			get { yield return EmptyMidiOutput.Instance.Details; }
+		}
+		
+		public Task<IMidiInput> OpenInputAsync (string portId)
+		{
+			if (portId != EmptyMidiInput.Instance.Details.Id)
+				throw new ArgumentException (string.Format ("Port ID {0} does not exist.", portId));
+			return Task.FromResult<IMidiInput> (EmptyMidiInput.Instance);
+		}
+		
+		public Task<IMidiOutput> OpenOutputAsync (string portId)
+		{
+			if (portId != EmptyMidiOutput.Instance.Details.Id)
+				throw new ArgumentException (string.Format ("Port ID {0} does not exist.", portId));
+			return Task.FromResult<IMidiOutput> (EmptyMidiOutput.Instance);
 		}
 
 		// it will never be fired.
@@ -116,12 +132,6 @@ namespace Commons.Music.Midi
 
 		// will never be fired.
 		public event EventHandler StateChanged;
-
-		public Task OpenAsync ()
-		{
-			// do nothing.
-			return completed_task;
-		}
 
 		public Task CloseAsync ()
 		{
@@ -179,7 +189,7 @@ namespace Commons.Music.Midi
 
 		public static EmptyMidiOutput Instance { get; private set; }
 
-		public Task SendAsync (byte [] mevent, int length, long timestamp)
+		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
 		{
 			// do nothing.
 			return completed_task;

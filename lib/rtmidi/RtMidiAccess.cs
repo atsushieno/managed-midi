@@ -7,12 +7,24 @@ namespace Commons.Music.Midi.RtMidi
 {
 	public class RtMidiAccess : IMidiAccess
 	{
-		public IEnumerable<IMidiInput> Inputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new RtMidiInput (d)); }
+		public IEnumerable<IMidiPortDetails> Inputs {
+			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new RtMidiPortDetails (d)); }
 		}
 
-		public IEnumerable<IMidiOutput> Outputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new RtMidiOutput (d)); }
+		public IEnumerable<IMidiPortDetails> Outputs {
+			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new RtMidiPortDetails (d)); }
+		}
+		
+		public Task<IMidiInput> OpenInputAsync (string portId)
+		{
+			var p = new RtMidiInput ((RtMidiPortDetails) Inputs.First (i => i.Id == portId));
+			return p.OpenAsync ().ContinueWith (t => (IMidiInput) p);
+		}
+		
+		public Task<IMidiOutput> OpenOutputAsync (string portId)
+		{
+			var p = new RtMidiOutput ((RtMidiPortDetails) Outputs.First (i => i.Id == portId));
+			return p.OpenAsync ().ContinueWith (t => (IMidiOutput) p);
 		}
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
@@ -45,15 +57,14 @@ namespace Commons.Music.Midi.RtMidi
 	{
 		static internal Task completed_task = Task.FromResult (false);
 
-		protected RtMidiPort (MidiDeviceInfo deviceInfo)
+		protected RtMidiPort (RtMidiPortDetails portDetails)
 		{
-			this.info = deviceInfo;
-			Details = new RtMidiPortDetails (info);
+			if (portDetails == null)
+				throw new ArgumentNullException ("portDetails");
+			Details = portDetails;
 			Connection = MidiPortConnectionState.Closed;
 			State = MidiPortDeviceState.Connected; // there is no way to check that...
 		}
-
-		MidiDeviceInfo info;
 
 		public MidiPortConnectionState Connection { get; internal set; }
 		public IMidiPortDetails Details { get; private set; }
@@ -73,8 +84,8 @@ namespace Commons.Music.Midi.RtMidi
 
 	class RtMidiInput : RtMidiPort, IMidiInput
 	{
-		public RtMidiInput (MidiDeviceInfo info)
-			: base (info)
+		public RtMidiInput (RtMidiPortDetails portDetails)
+			: base (portDetails)
 		{
 		}
 
@@ -102,8 +113,8 @@ namespace Commons.Music.Midi.RtMidi
 
 	class RtMidiOutput : RtMidiPort, IMidiOutput
 	{
-		public RtMidiOutput (MidiDeviceInfo info)
-			: base (info)
+		public RtMidiOutput (RtMidiPortDetails portDetails)
+			: base (portDetails)
 		{
 		}
 
@@ -126,7 +137,7 @@ namespace Commons.Music.Midi.RtMidi
 			return completed_task;
 		}
 
-		public Task SendAsync (byte [] mevent, int length, long timestamp)
+		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
 		{
 			if (timestamp > 0)
 				throw new InvalidOperationException ("non-zero timestamp is not supported");

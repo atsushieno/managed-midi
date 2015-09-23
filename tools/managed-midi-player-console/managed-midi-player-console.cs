@@ -21,7 +21,7 @@ Options:
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
 			foreach (var dev in MidiAccessManager.Default.Outputs)
-				Console.WriteLine ("\t{0}: {1}", dev.Details.Id, dev.Details.Name);
+				Console.WriteLine ("\t{0}: {1}", dev.Id, dev.Name);
 		}
 
 		public static void Main (string [] args)
@@ -42,7 +42,7 @@ Options:
 				else if (arg == "--verbose")
 					diagnostic = true;
 				else if (arg.StartsWith ("--device:", StringComparison.Ordinal)) {
-					output = api.Outputs.FirstOrDefault (o => o.Details.Id == arg.Substring (9));
+					output = api.Outputs.FirstOrDefault (o => o.Id == arg.Substring (9));
 					if (output == null) {
 						ShowHelp ();
 						Console.WriteLine ();
@@ -60,7 +60,7 @@ Options:
 			foreach (var arg in files) {
 				var parser = new SmfReader ();
 				parser.Read (File.OpenRead (arg));
-				var player = new MidiPlayer (parser.Music, output);
+				var player = new MidiPlayer (parser.Music, api.OpenOutputAsync (output.Id).Result);
 				DateTimeOffset start = DateTimeOffset.Now;
 				if (diagnostic)
 					player.EventReceived += e => {

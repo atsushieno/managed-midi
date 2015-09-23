@@ -224,7 +224,7 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiPlayer (SmfMusic music, IMidiAccess access)
-			: this (music, access.Outputs.FirstOrDefault ())
+			: this (music, access, new SimpleMidiTimeManager ())
 		{
 		}
 
@@ -239,7 +239,7 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiPlayer (SmfMusic music, IMidiAccess access, IMidiTimeManager timeManager)
-			: this (music, access.Outputs.FirstOrDefault (), timeManager)
+			: this (music, access.OpenOutputAsync (access.Outputs.FirstOrDefault ().Id).Result, timeManager)
 		{
 		}
 
@@ -255,31 +255,28 @@ namespace Commons.Music.Midi
 			this.output = output;
 
 			player = new MidiSyncPlayer (music, timeManager);
-			if (output != null) {
-				output.OpenAsync ();
-				EventReceived += (m) => {
-					switch (m.EventType) {
-					case SmfEvent.SysEx1:
-					case SmfEvent.SysEx2:
-						if (buffer.Length <= m.Data.Length)
-							buffer = new byte [buffer.Length * 2];
-						buffer [0] = m.StatusByte;
-						Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
-						output.SendAsync (buffer, m.Data.Length + 1, 0);
-						break;
-					case SmfEvent.Meta:
-						// do nothing.
-						break;
-					default:
-						var size = SmfEvent.FixedDataSize (m.StatusByte);
-						buffer [0] = m.StatusByte;
-						buffer [1] = m.Msb;
-						buffer [2] = m.Lsb;
-						output.SendAsync (buffer, size + 1, 0);
-						break;
-					}
-				};
-			}
+			EventReceived += (m) => {
+				switch (m.EventType) {
+				case SmfEvent.SysEx1:
+				case SmfEvent.SysEx2:
+					if (buffer.Length <= m.Data.Length)
+						buffer = new byte [buffer.Length * 2];
+					buffer [0] = m.StatusByte;
+					Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
+					output.SendAsync (buffer, 0, m.Data.Length + 1, 0);
+					break;
+				case SmfEvent.Meta:
+					// do nothing.
+					break;
+				default:
+					var size = SmfEvent.FixedDataSize (m.StatusByte);
+					buffer [0] = m.StatusByte;
+					buffer [1] = m.Msb;
+					buffer [2] = m.Lsb;
+					output.SendAsync (buffer, 0, size + 1, 0);
+					break;
+				}
+			};
 		}
 
 		IMidiOutput output;

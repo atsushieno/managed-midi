@@ -14,10 +14,9 @@ namespace Commons.Music.Midi.Tests
 			Assert.AreEqual (1, api.Outputs.Count (), "output count");
 			Assert.AreEqual (1, api.Inputs.Count (), "input count");
 
-			var output = api.Outputs.First ();
-			output.OpenAsync ();
-			output.SendAsync (new byte [3] { SmfEvent.NoteOn, 0, 0 }, 0, 0);
-			output.SendAsync (new byte [3] { SmfEvent.NoteOff, 0, 0 }, 0, 0);
+			var output = api.OpenOutputAsync (api.Outputs.First ().Id).Result;
+			output.SendAsync (new byte [3] { SmfEvent.NoteOn, 0, 0 }, 0, 0, 0);
+			output.SendAsync (new byte [3] { SmfEvent.NoteOff, 0, 0 }, 0, 0, 0);
 		}
 	}
 }
