@@ -134,7 +134,7 @@ namespace Commons.Music.Midi.RtMidi
 				throw new ArgumentNullException ("mevent");
 			if (mevent.Length == 0)
 				return completed_task; // do nothing
-			impl.SendMessage (mevent, mevent.Length);
+			impl.SendMessage (mevent, length);
 			return completed_task;
 		}
 	}

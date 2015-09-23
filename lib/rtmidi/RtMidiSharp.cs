@@ -288,7 +288,8 @@ namespace Commons.Music.Midi.RtMidi
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
-			RtMidi.rtmidi_out_send_message (Handle, message, message.Length);
+			// While it could emit message parsing error, it still returns 0...!
+			RtMidi.rtmidi_out_send_message (Handle, message, length);
 		}
 	}
 	

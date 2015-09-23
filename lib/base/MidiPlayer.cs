@@ -267,12 +267,15 @@ namespace Commons.Music.Midi
 						Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
 						output.SendAsync (buffer, m.Data.Length + 1, 0);
 						break;
+					case SmfEvent.Meta:
+						// do nothing.
+						break;
 					default:
 						var size = SmfEvent.FixedDataSize (m.StatusByte);
 						buffer [0] = m.StatusByte;
 						buffer [1] = m.Msb;
 						buffer [2] = m.Lsb;
-						output.SendAsync (buffer, 3, 0);
+						output.SendAsync (buffer, size + 1, 0);
 						break;
 					}
 				};

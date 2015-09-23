@@ -54,7 +54,12 @@ namespace Commons.Music.Midi
 	{
 		public override void AdvanceBy (int addedMilliseconds)
 		{
-			Task.Delay (addedMilliseconds);
+#if PORTABLE
+			var t = Task.Delay (addedMilliseconds);
+			t.Wait ();
+#else
+			System.Threading.Thread.Sleep (addedMilliseconds);
+#endif
 			base.AdvanceBy (addedMilliseconds);
 		}
 
