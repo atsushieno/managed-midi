@@ -27,7 +27,7 @@ Options:
 		public static void Main (string [] args)
 		{
 			var api = MidiAccessManager.Default;
-			var output = api.Outputs.FirstOrDefault ();
+			var output = api.Outputs.LastOrDefault ();
 			var files = new List<string> ();
 			bool diagnostic = false;
 			if (args.Length == 0) {
@@ -104,7 +104,6 @@ Options:
 							Console.WriteLine ("what do you mean by '{0}' ?", line);
 					}
 				}).Start ();
-
 
 				//player.StartLoop ();
 				player.PlayAsync ();
