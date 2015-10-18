@@ -17,6 +17,7 @@ managed-midi-player-console [options] SMF-files(*.mid)
 Options:
 --help		show this help.
 --device:x	specifies MIDI output device by ID.
+--provider:x	specifies custome MIDI access manager type.
 --verbose	verbose MIDI message outputs to console.
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
@@ -24,20 +25,32 @@ Options:
 				Console.WriteLine ("\t{0}: {1}", dev.Id, dev.Name);
 		}
 
-		public static void Main (string [] args)
+		public static int Main (string [] args)
 		{
-			var api = MidiAccessManager.Default;
+			var apiProviderSpec = args.FirstOrDefault (a => a.StartsWith ("--provider:", StringComparison.Ordinal));
+			var apiType = Type.GetType (apiProviderSpec.Substring ("--provider:".Length));
+			if (apiProviderSpec != null) {
+				if (apiType == null) {
+					ShowHelp ();
+					Console.Error.WriteLine ();
+					Console.Error.WriteLine (apiProviderSpec + " didn't work.");
+					Console.Error.WriteLine ();
+					return -1;
+				}
+				Console.Error.WriteLine ("Using MidiAccess '{0}'", apiType.AssemblyQualifiedName);
+			}
+			var api = apiProviderSpec != null ?
+				(IMidiAccess) Activator.CreateInstance (apiType) :
+				MidiAccessManager.Default;
 			var output = api.Outputs.LastOrDefault ();
 			var files = new List<string> ();
 			bool diagnostic = false;
-			if (args.Length == 0) {
-				ShowHelp ();
-				return;
-			}
 			foreach (var arg in args) {
+				if (arg == apiProviderSpec)
+					continue;
 				if (arg == "--help") {
 					ShowHelp ();
-					return;
+					return 0;
 				}
 				else if (arg == "--verbose")
 					diagnostic = true;
@@ -47,11 +60,16 @@ Options:
 						ShowHelp ();
 						Console.WriteLine ();
 						Console.WriteLine ("Invalid MIDI output device ID.");
-						return;
+						Console.Error.WriteLine ();
+						return -2;
 					}
 				}
 				else
 					files.Add (arg);
+			}
+			if (!files.Any ()) {
+				ShowHelp ();
+				return 0;
 			}
 
 			var wh = new ManualResetEvent (false);
@@ -110,7 +128,9 @@ Options:
 				while (loop) {
 					wh.WaitOne ();
 				}
+				player.PauseAsync ();
 			}
+			return 0;
 		}
 	}
 }

@@ -308,12 +308,6 @@ namespace Commons.Music.Midi
 			get { return player.TimeSignature; }
 		}
 
-		[Obsolete ("Use TempoChangeRatio setter")]
-		public void SetTempoRatio (double value)
-		{
-			TempoChangeRatio = value;
-		}
-
 		public int PlayDeltaTime {
 			get { return player.PlayDeltaTime; }
 		}
