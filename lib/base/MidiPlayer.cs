@@ -241,6 +241,7 @@ namespace Commons.Music.Midi
 		public MidiPlayer (SmfMusic music, IMidiAccess access, IMidiTimeManager timeManager)
 			: this (music, access.OpenOutputAsync (access.Outputs.FirstOrDefault ().Id).Result, timeManager)
 		{
+			should_dispose_output = true;
 		}
 
 		public MidiPlayer (SmfMusic music, IMidiOutput output, IMidiTimeManager timeManager)
@@ -280,6 +281,7 @@ namespace Commons.Music.Midi
 		}
 
 		IMidiOutput output;
+		bool should_dispose_output;
 		byte [] buffer = new byte [0x100];
 
 		public event Action Finished {
@@ -329,6 +331,8 @@ namespace Commons.Music.Midi
 		public virtual void Dispose ()
 		{
 			player.Stop ();
+			if (should_dispose_output)
+				output.Dispose ();
 		}
 
 		public void StartLoop ()
