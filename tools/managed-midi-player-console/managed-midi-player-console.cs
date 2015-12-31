@@ -16,9 +16,10 @@ managed-midi-player-console [options] SMF-files(*.mid)
 
 Options:
 --help		show this help.
---device:x	specifies MIDI output device by ID.
---provider:x	specifies custome MIDI access manager type.
---verbose	verbose MIDI message outputs to console.
+--device:x	specify MIDI output device by ID.
+--provider:x	specify custome MIDI access manager type
+                (assembly qualified name).
+--verbose	output verbose MIDI messages to the console.
 ");
 			Console.WriteLine ("List of MIDI output device IDs: ");
 			foreach (var dev in MidiAccessManager.Default.Outputs)

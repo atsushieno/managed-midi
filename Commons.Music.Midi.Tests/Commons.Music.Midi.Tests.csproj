@@ -39,18 +39,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="MidiPlayerTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="RtMidiTest.cs" />
+    <Compile Include="PortMidiTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\Commons.Music.Midi.csproj">
       <Project>{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}</Project>
       <Name>Commons.Music.Midi</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="New Folder\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\testmidi.mid" />

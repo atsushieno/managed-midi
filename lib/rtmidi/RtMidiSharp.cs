@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 using RtMidiPtr = System.IntPtr;
@@ -304,14 +305,6 @@ namespace Commons.Music.Midi.RtMidi
 		// to enumerate APIs as DEVICEs.
 		public static int DeviceCount {
 			get { return manager_input.PortCount + manager_output.PortCount; }
-		}
-
-		public static int InputDevieCount {
-			get { return manager_input.PortCount; }
-		}
-
-		public static int OutputDevieCount {
-			get { return manager_output.PortCount; }
 		}
 
 		public static int DefaultInputDeviceID {

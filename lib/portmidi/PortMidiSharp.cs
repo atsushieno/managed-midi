@@ -452,11 +452,15 @@ namespace Commons.Music.Midi.PortMidi
 	[StructLayout (LayoutKind.Sequential)]
 	struct PmDeviceInfo
 	{
+		[MarshalAs (UnmanagedType.SysInt)]
 		public int StructVersion; // it is not actually used.
 		public IntPtr Interface; // char*
 		public IntPtr Name; // char*
+		[MarshalAs (UnmanagedType.SysInt)]
 		public int Input; // 1 or 0
+		[MarshalAs (UnmanagedType.SysInt)]
 		public int Output; // 1 or 0
+		[MarshalAs (UnmanagedType.SysInt)]
 		public int Opened;
 
 		public override string ToString ()
