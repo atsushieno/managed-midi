@@ -29,8 +29,9 @@ Options:
 		public static int Main (string [] args)
 		{
 			var apiProviderSpec = args.FirstOrDefault (a => a.StartsWith ("--provider:", StringComparison.Ordinal));
-			var apiType = Type.GetType (apiProviderSpec.Substring ("--provider:".Length));
+			Type apiType = null;
 			if (apiProviderSpec != null) {
+				apiType = Type.GetType (apiProviderSpec.Substring ("--provider:".Length));
 				if (apiType == null) {
 					ShowHelp ();
 					Console.Error.WriteLine ();
