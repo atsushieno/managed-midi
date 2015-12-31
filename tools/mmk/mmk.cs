@@ -17,6 +17,8 @@ namespace Commons.Music.Midi
 		public const bool ChromaTone = false;
 #endif
 
+		IMidiAccess access;
+
 		static Mmk ()
 		{
 			tone_list = new List<string> ();
@@ -63,18 +65,20 @@ namespace Commons.Music.Midi
 
 		void SetupMidiDevices ()
 		{
+			access = new PortMidi.PortMidiAccess ();
+			
 			Application.ApplicationExit += delegate {
 				if (output != null)
 					output.Dispose ();
 			};
 
-			if (!MidiAccessManager.Default.Outputs.Any ()) {
+			if (!access.Outputs.Any ()) {
 				MessageBox.Show ("No MIDI output device was found.");
 				Application.Exit ();
 				return;
 			}
 
-			SwitchToDevice (MidiAccessManager.Default.Outputs.First ().Id);
+			SwitchToDevice (access.Outputs.First ().Id);
 		}
 
 		void SetupMenus ()
@@ -94,14 +98,14 @@ namespace Commons.Music.Midi
 			cb.Location = new Point (10, 10);
 			cb.Width = 200;
 			cb.DropDownStyle = ComboBoxStyle.DropDownList;
-			cb.DataSource = new List<string> (from dev in MidiAccessManager.Default.Outputs select dev.Name);
+			cb.DataSource = new List<string> (from dev in access.Outputs select dev.Name);
 			cb.SelectedIndexChanged += delegate {
 				try {
 					this.Enabled = false;
 					this.Cursor = Cursors.WaitCursor;
 					if (cb.SelectedIndex < 0)
 						return;
-					var d = MidiAccessManager.Default.Outputs.First (_ => _.Name == (string) cb.SelectedItem);
+					var d = access.Outputs.First (_ => _.Name == (string) cb.SelectedItem);
 					SwitchToDevice (d.Id);
 				} finally {
 					this.Enabled = true;
@@ -118,8 +122,7 @@ namespace Commons.Music.Midi
 				output.Dispose ();
 				output = null;
 			}
-			var am = MidiAccessManager.Default;
-			output = am.OpenOutputAsync (deviceId).Result;
+			output = access.OpenOutputAsync (deviceId).Result;
 			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0, 0);
 
 			SetupBankSelector (deviceId);
@@ -127,7 +130,7 @@ namespace Commons.Music.Midi
 
 		void SetupBankSelector (string deviceId)
 		{
-			var db = MidiModuleDatabase.Default.Resolve (MidiAccessManager.Default.Outputs.First (d => d.Id == deviceId).Name);
+			var db = MidiModuleDatabase.Default.Resolve (access.Outputs.First (d => d.Id == deviceId).Name);
 			if (db != null && db.Instrument != null && db.Instrument.Maps.Count > 0) {
 				var map = db.Instrument.Maps [0];
 				foreach (var prog in map.Programs) {
