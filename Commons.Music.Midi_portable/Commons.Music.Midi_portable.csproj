@@ -11,7 +11,7 @@
     <RootNamespace>Commons.Music.Midi</RootNamespace>
     <AssemblyName>Commons.Music.Midi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,24 +53,6 @@
     <Compile Include="..\lib\module-database\MidiModuleDatabase.cs">
       <Link>lib\module-database\MidiModuleDatabase.cs</Link>
     </Compile>
-    <Compile Include="..\lib\portmidi\PortMidiAccess.cs">
-      <Link>lib\portmidi\PortMidiAccess.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\portmidi\PortMidiPlayer.cs">
-      <Link>lib\portmidi\PortMidiPlayer.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\portmidi\PortMidiSharp.cs">
-      <Link>lib\portmidi\PortMidiSharp.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\rtmidi\RtMidiAccess.cs">
-      <Link>lib\rtmidi\RtMidiAccess.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\rtmidi\RtMidiPlayer.cs">
-      <Link>lib\rtmidi\RtMidiPlayer.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\rtmidi\RtMidiSharp.cs">
-      <Link>lib\rtmidi\RtMidiSharp.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\librtmidi.dylib">
@@ -92,9 +74,6 @@
   <ItemGroup>
     <None Include="..\lib\module-database\data\README">
       <Link>lib\module-database\data\README</Link>
-    </None>
-    <None Include="..\lib\portmidi\README">
-      <Link>lib\portmidi\README</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
