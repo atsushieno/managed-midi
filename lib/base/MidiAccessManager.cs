@@ -83,8 +83,8 @@ namespace Commons.Music.Midi
 
 	public class MidiReceivedEventArgs : EventArgs
 	{
-		public long Timestamp { get; private set; }
-		public byte [] Data { get; private set; }
+		public long Timestamp { get; set; }
+		public byte [] Data { get; set; }
 	}
 
 	class EmptyMidiAccess : IMidiAccess
