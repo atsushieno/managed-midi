@@ -55,23 +55,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\lib\librtmidi.dylib">
-      <Link>lib\librtmidi.dylib</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\lib\librtmidi.so">
-      <Link>lib\librtmidi.so</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\lib\rtmidi.dll">
-      <Link>lib\rtmidi.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\lib\rtmidi_x64.dll">
-      <Link>lib\rtmidi_x64.dll</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\lib\module-database\data\README">
       <Link>lib\module-database\data\README</Link>
     </None>
