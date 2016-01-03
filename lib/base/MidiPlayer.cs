@@ -239,7 +239,7 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiPlayer (SmfMusic music, IMidiAccess access, IMidiTimeManager timeManager)
-			: this (music, access.OpenOutputAsync (access.Outputs.FirstOrDefault ().Id).Result, timeManager)
+			: this (music, access.OpenOutputAsync (access.Outputs.First ().Id).Result, timeManager)
 		{
 			should_dispose_output = true;
 		}
