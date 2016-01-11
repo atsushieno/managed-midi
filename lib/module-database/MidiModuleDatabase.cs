@@ -17,6 +17,21 @@ namespace Commons.Music.Midi
 		public abstract MidiModuleDefinition Resolve (string moduleName);
 	}
 
+	public class MergedMidiModuleDatabase : MidiModuleDatabase
+	{
+		public MergedMidiModuleDatabase (IEnumerable<MidiModuleDatabase> sources)
+		{
+			List = new List<MidiModuleDatabase> ();
+		}
+		
+		public IList<MidiModuleDatabase> List { get; private set; }
+		
+		public override MidiModuleDefinition Resolve (string moduleName)
+		{
+			return List.Select (d => d.Resolve (moduleName)).FirstOrDefault (m => m != null);
+		}
+	}
+	
 	class DefaultMidiModuleDatabase : MidiModuleDatabase
 	{
 		static readonly Assembly ass = typeof (DefaultMidiModuleDatabase).GetTypeInfo ().Assembly;
@@ -150,6 +165,7 @@ namespace Commons.Music.Midi
 		public string Name { get; set; }
 		[DataMember]
 		public int Index { get; set; }
+
 
 		public IList<MidiBankDefinition> Banks { get; private set; }
 
