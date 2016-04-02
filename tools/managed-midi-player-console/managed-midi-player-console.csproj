@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>managedmidiplayerconsole</RootNamespace>
     <AssemblyName>managed-midi-player-console</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,10 +37,17 @@
     <Compile Include="managed-midi-player-console.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Commons.Music.Midi.csproj">
-      <Project>{D2FFA1EE-91DD-477D-8965-1E43CB0CBB69}</Project>
+    <ProjectReference Include="..\..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">
+      <Project>{59eefb0d-3957-43fc-8272-c3b460f7ff84}</Project>
+      <Name>Commons.Music.Midi.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{2a0a4aa1-d455-48b4-abd0-07217568264e}</Project>
       <Name>Commons.Music.Midi</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
