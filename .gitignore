@@ -2,5 +2,6 @@ build/
 bin/
 obj/
 *.userprefs
+*.csproj.user
 .vs/
 packages/
