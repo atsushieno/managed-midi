@@ -47,6 +47,9 @@
     <Compile Include="rtmidi\RtMidiAccess.cs" />
     <Compile Include="rtmidi\RtMidiPlayer.cs" />
     <Compile Include="rtmidi\RtMidiSharp.cs" />
+    <Compile Include="winmm\WinmmMidiAccess.cs" />
+    <Compile Include="winmm\WinMMNatives.cs" />
+    <Compile Include="winmm\WinMMMidiPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="librtmidi.dylib">
@@ -65,6 +68,9 @@
       <Project>{2a0a4aa1-d455-48b4-abd0-07217568264e}</Project>
       <Name>Commons.Music.Midi</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="winmm\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

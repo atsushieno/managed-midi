@@ -246,6 +246,27 @@ namespace Commons.Music.Midi
 
 		public const byte EndSysEx = 0xF7;
 
+		public static IEnumerable<SmfEvent> Convert (byte[] bytes, int index, int size)
+		{
+			int i = index;
+			int end = index + size;
+			while (i < end) {
+				if (bytes[i] == 0xF0) {
+					var tmp = new byte [size];
+					Array.Copy (bytes, i, tmp, 0, tmp.Length);
+					yield return new SmfEvent (0xF0, 0, 0, tmp);
+					i += size + 1;
+				}
+				else
+				{
+					if (end < i + 3)
+						throw new Exception (string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes[i]));
+					yield return new SmfEvent (bytes[i], bytes[i + 1], bytes[i + 2], null);
+					i += 3;
+				}
+			}
+		}
+
 		public SmfEvent (int value)
 		{
 			Value = value;
