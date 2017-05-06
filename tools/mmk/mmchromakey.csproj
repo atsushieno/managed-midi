@@ -49,9 +49,5 @@
       <Project>{59eefb0d-3957-43fc-8272-c3b460f7ff84}</Project>
       <Name>Commons.Music.Midi.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Commons.Music.Midi\Commons.Music.Midi.csproj">
-      <Project>{2A0A4AA1-D455-48B4-ABD0-07217568264E}</Project>
-      <Name>Commons.Music.Midi</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

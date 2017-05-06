@@ -53,7 +53,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.csproj">
       <Project>{2a0a4aa1-d455-48b4-abd0-07217568264e}</Project>
-      <Name>Commons.Music.Midi</Name>
+      <Name>Commons.Music.Midi.Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

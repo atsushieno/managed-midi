@@ -14,9 +14,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Desktop", "Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj", "{59EEFB0D-3957-43FC-8272-C3B460F7FF84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi", "Commons.Music.Midi\Commons.Music.Midi.csproj", "{2A0A4AA1-D455-48B4-ABD0-07217568264E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Portable", "Commons.Music.Midi\Commons.Music.Midi.Portable.csproj", "{2A0A4AA1-D455-48B4-ABD0-07217568264E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.UwpWithStub", "Commons.Music.Midi.UwpWithStub\Commons.Music.Midi.UwpWithStub.csproj", "{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.Shared", "Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.shproj", "{8742663D-9BB6-43D5-887D-0668E550652F}"
+EndProject
+Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "managed-midi", "managed-midi\managed-midi.nuproj", "{767F88BA-2844-4DD5-8215-35B08A645FEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "Commons.Music.Midi.Uwp\Commons.Music.Midi.Uwp.csproj", "{DDAD7F20-40BE-446C-BED1-E770DD7A0503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +88,22 @@ Global
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|x86.ActiveCfg = Release|Any CPU
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|x86.Build.0 = Release|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Debug|x86.Build.0 = Debug|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{767F88BA-2844-4DD5-8215-35B08A645FEA}.Release|x86.Build.0 = Release|Any CPU
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|x86.ActiveCfg = Debug|x86
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|x86.Build.0 = Debug|x86
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.ActiveCfg = Release|x86
+		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

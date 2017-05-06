@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.props" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{767F88BA-2844-4DD5-8215-35B08A645FEA}</ProjectGuid>
+    <Description>cross-platform raw MIDI API</Description>
+    <PackageId>managed-midi</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>atsushieno</Authors>
+    <DevelopmentDependency>false</DevelopmentDependency>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>managedmidi</RootNamespace>
+    <UsePartialTypes>false</UsePartialTypes>
+    <AssemblyName>managed-midi</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <IntermediateOutputPath>obj\Debug</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <IntermediateOutputPath>obj\Release</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="readme.txt">
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Packaging">
+      <Version>0.1.248</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">
+      <Project>{59EEFB0D-3957-43FC-8272-C3B460F7FF84}</Project>
+      <Name>Commons.Music.Midi.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.Portable.csproj">
+      <Project>{2A0A4AA1-D455-48B4-ABD0-07217568264E}</Project>
+      <Name>Commons.Music.Midi.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
+  <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets')" />
+</Project>

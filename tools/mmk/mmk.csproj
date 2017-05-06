@@ -51,10 +51,6 @@
       <Project>{59eefb0d-3957-43fc-8272-c3b460f7ff84}</Project>
       <Name>Commons.Music.Midi.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Commons.Music.Midi\Commons.Music.Midi.csproj">
-      <Project>{2a0a4aa1-d455-48b4-abd0-07217568264e}</Project>
-      <Name>Commons.Music.Midi</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
