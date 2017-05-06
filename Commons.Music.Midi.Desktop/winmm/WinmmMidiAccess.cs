@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi.WinMM
@@ -16,22 +18,21 @@ namespace Commons.Music.Midi.WinMM
 				for (uint i = 0; i < devs; i++)
 				{
 					MidiInCaps caps;
-					WinMMNatives.midiInGetDevCaps(ref i, out caps, (uint)Marshal.SizeOf(typeof(MidiInCaps)));
-					yield return new WinMMPortDetails(i, caps.Name, caps.DriverVersion);
+					WinMMNatives.midiInGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf (typeof (MidiInCaps)));
+					yield return new WinMMPortDetails (i, caps.Name, caps.DriverVersion);
 				}
 			}
 		}
 
-		public IEnumerable<IMidiPortDetails> Outputs
-		{
-			get
-			{
-				int devs = WinMMNatives.midiOutGetNumDevs();
-				for (uint i = 0; i < devs; i++)
-				{
+		public IEnumerable<IMidiPortDetails> Outputs {
+			get {
+				int devs = WinMMNatives.midiOutGetNumDevs ();
+				for (uint i = 0; i < devs; i++) {
 					MidiOutCaps caps;
-					WinMMNatives.midiOutGetDevCaps(ref i, out caps, (uint)Marshal.SizeOf(typeof(MidiOutCaps)));
-					yield return new WinMMPortDetails(i, caps.Name, caps.DriverVersion);
+					var err = WinMMNatives.midiOutGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf (typeof (MidiOutCaps)));
+                    if (err != 0)
+                        throw new Win32Exception (err);
+					yield return new WinMMPortDetails (i, caps.Name, caps.DriverVersion);
 				}
 			}
 		}
@@ -130,10 +131,10 @@ namespace Commons.Music.Midi.WinMM
 
 	class WinMMMidiOutput : IMidiOutput
 	{
-		public WinMMMidiOutput(IMidiPortDetails details)
+		public WinMMMidiOutput (IMidiPortDetails details)
 		{
 			Details = details;
-			WinMMNatives.midiOutOpen(out handle, uint.Parse(Details.Id), null, IntPtr.Zero, MidiOutOpenFlags.Null);
+			WinMMNatives.midiOutOpen (out handle, uint.Parse (Details.Id), null, IntPtr.Zero, MidiOutOpenFlags.Null);
 			Connection = MidiPortConnectionState.Open;
 		}
 
@@ -157,18 +158,31 @@ namespace Commons.Music.Midi.WinMM
 			});
 		}
 
-		public void Dispose()
+		public void Dispose ()
 		{
-			CloseAsync().RunSynchronously();
+			CloseAsync ().RunSynchronously ();
 		}
 
 		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
 		{
 			foreach (var evt in SmfEvent.Convert (mevent, offset, length)) {
-				if (evt.StatusByte < 0xF0)
-					WinMMNatives.midiOutShortMsg (handle, (uint) (evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16)));
-				else
-					WinMMNatives.midiOutLongMsg (handle, evt.StatusByte, evt.Data, evt.Data.Length);
+                if (evt.StatusByte < 0xF0)
+                    WinMMNatives.midiOutShortMsg(handle, (uint)(evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16)));
+                else
+                {
+                    MidiHdr sysex = default (MidiHdr);
+                    unsafe
+                    {
+                        fixed (void* ptr = evt.Data)
+                        {
+                            sysex.Data = (IntPtr) ptr;
+                            sysex.BufferLength = evt.Data.Length;
+                            sysex.Flags = 0;
+                            WinMMNatives.midiOutPrepareHeader (handle, ref sysex, (uint) Marshal.SizeOf<MidiHdr> ());
+                            WinMMNatives.midiOutLongMsg (handle, ref sysex, evt.Data.Length);
+                        }
+                    }
+                }
 			}
 			return Task.FromResult<int> (0);
 		}

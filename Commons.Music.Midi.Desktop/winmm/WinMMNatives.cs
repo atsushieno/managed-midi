@@ -3,24 +3,24 @@ using System.Runtime.InteropServices;
 
 namespace Commons.Music.Midi.WinMM
 {
-	[StructLayout (LayoutKind.Sequential)]
-	struct MidiInCaps
+    [StructLayout (LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    struct MidiInCaps
 	{
 		public short Mid;
 		public short Pid;
-		public ushort DriverVersion;
-		[MarshalAs (UnmanagedType.LPStr, SizeConst = WinMMNatives.MaxPNameLen)]
+		public int  DriverVersion;
+		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = WinMMNatives.MaxPNameLen)]
 		public string Name;
 		public int Support;
 	}
 
-	[StructLayout (LayoutKind.Sequential)]
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 	struct MidiOutCaps
 	{
 		public short Mid;
 		public short Pid;
-		public ushort DriverVersion;
-		[MarshalAs (UnmanagedType.LPStr, SizeConst = WinMMNatives.MaxPNameLen)]
+		public int DriverVersion;
+		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = WinMMNatives.MaxPNameLen)]
 		public string Name;
 		public short Technology;
 		public short Voices;
@@ -76,10 +76,10 @@ namespace Commons.Music.Midi.WinMM
 		internal static extern int midiOutGetNumDevs ();
 
 		[DllImport (LibraryName)]
-		internal static extern int midiInGetDevCaps (ref uint uDeviceID, out MidiInCaps midiInCaps, uint sizeOfMidiInCaps);
+		internal static extern int midiInGetDevCaps (UIntPtr uDeviceID, out MidiInCaps midiInCaps, uint sizeOfMidiInCaps);
 
 		[DllImport (LibraryName)]
-		internal static extern int midiOutGetDevCaps (ref uint uDeviceID, out MidiOutCaps midiOutCaps, uint sizeOfMidiOutCaps);
+		internal static extern int midiOutGetDevCaps (UIntPtr uDeviceID, out MidiOutCaps midiOutCaps, uint sizeOfMidiOutCaps);
 
 		[DllImport (LibraryName)]
 		internal static extern int midiInOpen (out IntPtr midiIn, uint deviceID, MidiInProc callback, IntPtr callbackInstance, MidiInOpenFlags flags);
@@ -94,12 +94,15 @@ namespace Commons.Music.Midi.WinMM
 		internal static extern int midiOutClose (IntPtr midiIn);
 
 		[DllImport (LibraryName)]
-		internal static extern int midiOutMessage (IntPtr deviceID, uint msg, ref int dw1, ref int dw2);
+		internal static extern int midiOutMessage (IntPtr handle, uint msg, ref int dw1, ref int dw2);
 
-		[DllImport(LibraryName)]
-		internal static extern int midiOutShortMsg (IntPtr deviceID, uint msg);
+		[DllImport (LibraryName)]
+		internal static extern int midiOutShortMsg (IntPtr handle, uint msg);
 
-		[DllImport(LibraryName)]
-		internal static extern int midiOutLongMsg (IntPtr deviceID, uint msg, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] byte [] midiOutHdr, int midiOutHdrSize);
-	}
+		[DllImport (LibraryName)]
+		internal static extern int midiOutLongMsg (IntPtr handle, ref MidiHdr midiOutHdr, int midiOutHdrSize);
+
+        [DllImport (LibraryName)]
+        internal static extern int midiOutPrepareHeader (IntPtr handle, ref MidiHdr midiOutHdr, uint midiOutHdrSize);
+    }
 }

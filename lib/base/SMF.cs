@@ -255,14 +255,15 @@ namespace Commons.Music.Midi
 					var tmp = new byte [size];
 					Array.Copy (bytes, i, tmp, 0, tmp.Length);
 					yield return new SmfEvent (0xF0, 0, 0, tmp);
-					i += size + 1;
+					i += size;
 				}
 				else
 				{
-					if (end < i + 3)
+					if (end < i + SmfEvent.FixedDataSize (bytes [i]))
 						throw new Exception (string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes[i]));
-					yield return new SmfEvent (bytes[i], bytes[i + 1], bytes[i + 2], null);
-					i += 3;
+                    var z = SmfEvent.FixedDataSize (bytes[i]);
+					yield return new SmfEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null);
+					i += z + 1;
 				}
 			}
 		}
