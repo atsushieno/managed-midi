@@ -24,6 +24,8 @@ Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "managed-midi", "managed-mid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "Commons.Music.Midi.Uwp\Commons.Music.Midi.Uwp.csproj", "{DDAD7F20-40BE-446C-BED1-E770DD7A0503}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.CoreMidi", "Commons.Music.Midi.CoreMidi\Commons.Music.Midi.CoreMidi.csproj", "{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,14 @@ Global
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.ActiveCfg = Release|x86
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.Build.0 = Release|x86
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Debug|x86.Build.0 = Debug|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|x86.ActiveCfg = Release|Any CPU
+		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
