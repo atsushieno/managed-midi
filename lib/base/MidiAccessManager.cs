@@ -22,6 +22,7 @@ namespace Commons.Music.Midi
 			}
 		}
 
+		[Obsolete ("There wouldn't be a usable default within the this assembly and this property will be removed in the very near future.")]
 		public static IMidiAccess Default { get; private set; }
 		public static IMidiAccess Empty { get; internal set; }
 	}
