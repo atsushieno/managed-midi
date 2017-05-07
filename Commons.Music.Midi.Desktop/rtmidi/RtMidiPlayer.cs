@@ -2,6 +2,7 @@ using System;
 
 namespace Commons.Music.Midi.RtMidi
 {
+	[Obsolete ("Now MidiPlayer class takes IMidiAccess so that you don't have to depend on implementation-specific player anymore.")]
 	public class RtMidiPlayer : MidiPlayer
 	{
 		public RtMidiPlayer (RtMidiOutputDevice output, SmfMusic music)

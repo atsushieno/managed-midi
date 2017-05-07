@@ -2,6 +2,7 @@ using System;
 
 namespace Commons.Music.Midi.PortMidi
 {
+	[Obsolete ("Now MidiPlayer class takes IMidiAccess so that you don't have to depend on implementation-specific player anymore.")]
 	public class PortMidiPlayer : MidiPlayer
 	{
 		public PortMidiPlayer (MidiOutput output, SmfMusic music)
