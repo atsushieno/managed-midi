@@ -34,6 +34,10 @@
       <Version>0.1.248</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="NuGet.Build.Packaging">
+      <Version>0.1.248</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">
@@ -43,6 +47,10 @@
     <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.Portable.csproj">
       <Project>{2A0A4AA1-D455-48B4-ABD0-07217568264E}</Project>
       <Name>Commons.Music.Midi.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Commons.Music.Midi.CoreMidi\Commons.Music.Midi.CoreMidi.csproj">
+      <Project>{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}</Project>
+      <Name>Commons.Music.Midi.CoreMidi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />

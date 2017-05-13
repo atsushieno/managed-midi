@@ -5,3 +5,4 @@ obj/
 *.csproj.user
 .vs/
 packages/
+.DS_Store

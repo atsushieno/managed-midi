@@ -69,7 +69,12 @@ namespace Commons.Music.Midi.CoreMidiApi
 			Id = src.EndpointName;
 			Manufacturer = src.Manufacturer;
 			Name = src.DisplayName;
-			Version = src.DriverVersion.ToString();
+
+			try {
+				Version = src.DriverVersion.ToString ();
+			} catch {
+				Version = "N/A";
+			}
 		}
 
 		public MidiEndpoint Endpoint { get; set; }
