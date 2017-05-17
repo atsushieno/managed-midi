@@ -13,7 +13,7 @@ namespace Commons.Music.Midi.Tests
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
 			var vt = new VirtualMidiTimeManager ();
-			var player = new MidiPlayer (SmfMusic.Read (stream), MidiAccessManager.Empty, vt);
+			var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
 			player.PlayAsync ();
 			vt.AdvanceBy (10000);
 			player.PauseAsync ();
@@ -25,7 +25,7 @@ namespace Commons.Music.Midi.Tests
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
 			var vt = new AlmostVirtualMidiTimeManager ();
-			var player = new MidiPlayer (SmfMusic.Read (stream), new RtMidi.RtMidiAccess (), vt);
+			var player = new MidiPlayer (MidiMusic.Read (stream), new RtMidi.RtMidiAccess (), vt);
 			player.PlayAsync ();
 			vt.AdvanceBy (10000);
 			player.PauseAsync ();
@@ -37,7 +37,7 @@ namespace Commons.Music.Midi.Tests
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
 			var vt = new AlmostVirtualMidiTimeManager ();
-			var player = new MidiPlayer (SmfMusic.Read (stream), new PortMidi.PortMidiAccess (), vt);
+			var player = new MidiPlayer (MidiMusic.Read (stream), new PortMidi.PortMidiAccess (), vt);
 			player.PlayAsync ();
 			vt.AdvanceBy (10000);
 			player.PauseAsync ();

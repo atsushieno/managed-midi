@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Commons.Music.Midi
 {
-	public delegate void MidiEventAction (SmfEvent m);
+	public delegate void MidiEventAction (MidiEvent m);
 
 	public class MidiMachine
 	{
@@ -19,51 +19,51 @@ namespace Commons.Music.Midi
 
 		public IList<MidiMachineChannel> Channels { get; private set; }
 
-		public virtual void ProcessEvent (SmfEvent evt)
+		public virtual void ProcessEvent (MidiEvent evt)
 		{
 			switch (evt.EventType) {
-			case SmfEvent.NoteOn:
+			case MidiEvent.NoteOn:
 				Channels [evt.Channel].NoteVelocity [evt.Msb] = evt.Lsb;
 				break;
-			case SmfEvent.NoteOff:
+			case MidiEvent.NoteOff:
 				Channels [evt.Channel].NoteVelocity [evt.Msb] = 0;
 				break;
-			case SmfEvent.PAf:
+			case MidiEvent.PAf:
 				Channels [evt.Channel].PAfVelocity [evt.Msb] = evt.Lsb;
 				break;
-			case SmfEvent.CC:
+			case MidiEvent.CC:
 				// FIXME: handle RPNs and NRPNs by DTE
 				switch (evt.Msb) {
-				case SmfCC.NrpnMsb:
-				case SmfCC.NrpnLsb:
+				case MidiCC.NrpnMsb:
+				case MidiCC.NrpnLsb:
 					Channels [evt.Channel].DteTarget = DteTarget.Nrpn;
 					break;
-				case SmfCC.RpnMsb:
-				case SmfCC.RpnLsb:
+				case MidiCC.RpnMsb:
+				case MidiCC.RpnLsb:
 					Channels [evt.Channel].DteTarget = DteTarget.Rpn;
 					break;
-				case SmfCC.DteMsb:
+				case MidiCC.DteMsb:
 					Channels [evt.Channel].ProcessDte (evt.Lsb, true);
 					break;
-				case SmfCC.DteLsb:
+				case MidiCC.DteLsb:
 					Channels [evt.Channel].ProcessDte (evt.Lsb, false);
 					break;
-				case SmfCC.DteIncrement:
+				case MidiCC.DteIncrement:
 					Channels [evt.Channel].ProcessDteIncrement ();
 					break;
-				case SmfCC.DteDecrement:
+				case MidiCC.DteDecrement:
 					Channels [evt.Channel].ProcessDteDecrement ();
 					break;
 				}
 				Channels [evt.Channel].Controls [evt.Msb] = evt.Lsb;
 				break;
-			case SmfEvent.Program:
+			case MidiEvent.Program:
 				Channels [evt.Channel].Program = evt.Msb;
 				break;
-			case SmfEvent.CAf:
+			case MidiEvent.CAf:
 				Channels [evt.Channel].CAf = evt.Msb;
 				break;
-			case SmfEvent.Pitch:
+			case MidiEvent.Pitch:
 				Channels [evt.Channel].PitchBend = (short) ((evt.Msb << 7) + evt.Lsb);
 				break;
 			}
@@ -87,7 +87,7 @@ namespace Commons.Music.Midi
 		byte dte_target;
 
 		public short RpnTarget {
-			get { return (short) ((Controls [SmfCC.RpnMsb] << 7) + Controls [SmfCC.RpnLsb]); }
+			get { return (short) ((Controls [MidiCC.RpnMsb] << 7) + Controls [MidiCC.RpnLsb]); }
 		}
 
 		public void ProcessDte (byte value, bool msb)
@@ -95,11 +95,11 @@ namespace Commons.Music.Midi
 			short [] arr;
 			switch (DteTarget) {
 			case DteTarget.Rpn:
-				dte_target = Controls [msb ? SmfCC.RpnMsb : SmfCC.RpnLsb];
+				dte_target = Controls [msb ? MidiCC.RpnMsb : MidiCC.RpnLsb];
 				arr = RPNs;
 				break;
 			case DteTarget.Nrpn:
-				dte_target = Controls [msb ? SmfCC.NrpnMsb : SmfCC.NrpnLsb];
+				dte_target = Controls [msb ? MidiCC.NrpnMsb : MidiCC.NrpnLsb];
 				arr = NRPNs;
 				break;
 			default:

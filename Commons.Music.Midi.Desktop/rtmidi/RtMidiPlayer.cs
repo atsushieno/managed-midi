@@ -5,11 +5,11 @@ namespace Commons.Music.Midi.RtMidi
 	[Obsolete ("Now MidiPlayer class takes IMidiAccess so that you don't have to depend on implementation-specific player anymore.")]
 	public class RtMidiPlayer : MidiPlayer
 	{
-		public RtMidiPlayer (RtMidiOutputDevice output, SmfMusic music)
+		public RtMidiPlayer (RtMidiOutputDevice output, MidiMusic music)
 			: base (music)
 		{
 			this.output = output;
-			EventReceived += delegate (SmfEvent e) { SendMidiEvent (e); };
+			EventReceived += delegate (MidiEvent e) { SendMidiEvent (e); };
 		}
 
 		// it should not be disposed here. The module that
@@ -19,7 +19,7 @@ namespace Commons.Music.Midi.RtMidi
 		byte [] buf2 = new byte [2];
 		byte [] buf3 = new byte [3];
 
-		void SendMidiEvent (SmfEvent m)
+		void SendMidiEvent (MidiEvent m)
 		{
 			if ((m.Value & 0xFF) == 0xF0)
 				WriteSysEx (0xF0, m.Data);
@@ -29,8 +29,8 @@ namespace Commons.Music.Midi.RtMidi
 				return; // meta. Nothing to send.
 			else {
 				switch (m.StatusByte & 0xF0) {
-				case SmfEvent.Program:
-				case SmfEvent.CAf:
+				case MidiEvent.Program:
+				case MidiEvent.CAf:
 					buf2 [0] = m.StatusByte;
 					buf2 [1] = m.Msb;
 					output.SendMessage (buf2, buf2.Length);

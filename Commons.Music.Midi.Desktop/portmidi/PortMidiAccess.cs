@@ -8,11 +8,11 @@ namespace Commons.Music.Midi.PortMidi
 	public class PortMidiAccess : IMidiAccess
 	{
 		public IEnumerable<IMidiPortDetails> Inputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiPortDetails (d)); }
+			get { return PortMidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiPortDetails (d)); }
 		}
 
 		public IEnumerable<IMidiPortDetails> Outputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiPortDetails (d)); }
+			get { return PortMidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiPortDetails (d)); }
 		}
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
@@ -20,7 +20,7 @@ namespace Commons.Music.Midi.PortMidi
 		public PortMidiAccess()
 		{
 			// This is dummy. It is just to try p/invoking portmidi.
-			if (MidiDeviceManager.DeviceCount < 0)
+			if (PortMidiDeviceManager.DeviceCount < 0)
 				throw new InvalidOperationException ("unexpected negative device count.");
 		}
 		
@@ -39,7 +39,7 @@ namespace Commons.Music.Midi.PortMidi
 
 	class PortMidiPortDetails : IMidiPortDetails
 	{
-		public PortMidiPortDetails (MidiDeviceInfo deviceInfo)
+		public PortMidiPortDetails (PortMidiDeviceInfo deviceInfo)
 		{
 			RawId = deviceInfo.ID;
 			Id = deviceInfo.ID.ToString ();
@@ -98,7 +98,7 @@ namespace Commons.Music.Midi.PortMidi
 
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
 
-		MidiInput impl;
+		PortMidiInputStream impl;
 
 		public override Task CloseAsync ()
 		{
@@ -112,7 +112,7 @@ namespace Commons.Music.Midi.PortMidi
 		public override Task OpenAsync ()
 		{
 			Connection = MidiPortConnectionState.Pending;
-			impl = MidiDeviceManager.OpenInput (((PortMidiPortDetails) Details).RawId);
+			impl = PortMidiDeviceManager.OpenInput (((PortMidiPortDetails) Details).RawId);
 			Connection = MidiPortConnectionState.Open;
 			return completed_task;
 		}
@@ -125,7 +125,7 @@ namespace Commons.Music.Midi.PortMidi
 		{
 		}
 
-		MidiOutput impl;
+		PortMidiOutputStream impl;
 
 		public override Task CloseAsync ()
 		{
@@ -139,7 +139,7 @@ namespace Commons.Music.Midi.PortMidi
 		public override Task OpenAsync ()
 		{
 			Connection = MidiPortConnectionState.Pending;
-			impl = MidiDeviceManager.OpenOutput (((PortMidiPortDetails) Details).RawId);
+			impl = PortMidiDeviceManager.OpenOutput (((PortMidiPortDetails) Details).RawId);
 			Connection = MidiPortConnectionState.Open;
 			return completed_task;
 		}
@@ -150,7 +150,7 @@ namespace Commons.Music.Midi.PortMidi
 				throw new ArgumentNullException ("mevent");
 			if (mevent.Length == 0)
 				return completed_task; // do nothing
-			var events = MidiStream.Convert (mevent, 0, length);
+			var events = PortMidiStream.Convert (mevent, 0, length);
 			if (events.Any ()) {
 				var first = events.First ();
 				first.Timestamp = (int) timestamp;

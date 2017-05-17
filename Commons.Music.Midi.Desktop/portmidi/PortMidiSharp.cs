@@ -12,13 +12,13 @@ using PmDeviceID = System.Int32;
 using PmTimestamp = System.Int32;
 using PortMidiStream = System.IntPtr;
 using PmMessage = System.Int32;
-using PmError = Commons.Music.Midi.PortMidi.MidiErrorType;
+using PmError = Commons.Music.Midi.PortMidi.PortMidiErrorType;
 
 namespace Commons.Music.Midi.PortMidi
 {
-	public class MidiDeviceManager
+	public class PortMidiDeviceManager
 	{
-		static MidiDeviceManager ()
+		static PortMidiDeviceManager ()
 		{
 			PortMidiMarshal.Pm_Initialize ();
 			#if !PORTABLE // FIXME: what to do for PCLs!?
@@ -40,45 +40,45 @@ namespace Commons.Music.Midi.PortMidi
 			get { return PortMidiMarshal.Pm_GetDefaultOutputDeviceID (); }
 		}
 
-		public static IEnumerable<MidiDeviceInfo> AllDevices {
+		public static IEnumerable<PortMidiDeviceInfo> AllDevices {
 			get {
 				for (int i = 0; i < DeviceCount; i++)
 					yield return GetDeviceInfo (i);
 			}
 		}
 
-		public static MidiDeviceInfo GetDeviceInfo (PmDeviceID id)
+		public static PortMidiDeviceInfo GetDeviceInfo (PmDeviceID id)
 		{
-			return new MidiDeviceInfo (id, PortMidiMarshal.Pm_GetDeviceInfo (id));
+			return new PortMidiDeviceInfo (id, PortMidiMarshal.Pm_GetDeviceInfo (id));
 		}
 
-		public static MidiInput OpenInput (PmDeviceID inputDevice)
+		public static PortMidiInputStream OpenInput (PmDeviceID inputDevice)
 		{
 			return OpenInput (inputDevice, default_buffer_size);
 		}
 
 		const int default_buffer_size = 1024;
 
-		public static MidiInput OpenInput (PmDeviceID inputDevice, int bufferSize)
+		public static PortMidiInputStream OpenInput (PmDeviceID inputDevice, int bufferSize)
 		{
-			PortMidiStream stream;
+			IntPtr stream;
 			var e = PortMidiMarshal.Pm_OpenInput (out stream, inputDevice, IntPtr.Zero, bufferSize, null, IntPtr.Zero);
 			if (e != PmError.NoError)
-				throw new MidiException (e, String.Format ("Failed to open MIDI input device {0}", e));
-			return new MidiInput (stream, inputDevice);
+				throw new PortMidiException (e, String.Format ("Failed to open MIDI input device {0}", e));
+			return new PortMidiInputStream (stream, inputDevice);
 		}
 
-		public static MidiOutput OpenOutput (PmDeviceID outputDevice)
+		public static PortMidiOutputStream OpenOutput (PmDeviceID outputDevice)
 		{
-			PortMidiStream stream;
+			IntPtr stream;
 			var e = PortMidiMarshal.Pm_OpenOutput (out stream, outputDevice, IntPtr.Zero, 0, null, IntPtr.Zero, 0);
 			if (e != PmError.NoError)
-				throw new MidiException (e, String.Format ("Failed to open MIDI output device {0}", e));
-			return new MidiOutput (stream, outputDevice, 0);
+				throw new PortMidiException (e, String.Format ("Failed to open MIDI output device {0}", e));
+			return new PortMidiOutputStream (stream, outputDevice, 0);
 		}
 	}
 
-	public enum MidiErrorType
+	public enum PortMidiErrorType
 	{
 		NoError = 0,
 		NoData = 0,
@@ -94,16 +94,16 @@ namespace Commons.Music.Midi.PortMidi
 		BufferMaxSize,
 	}
 
-	public class MidiException : Exception
+	public class PortMidiException : Exception
 	{
 		PmError error_type;
 
-		public MidiException (PmError errorType, string message)
+		public PortMidiException (PmError errorType, string message)
 			: this (errorType, message, null)
 		{
 		}
 
-		public MidiException (PmError errorType, string message, Exception innerException)
+		public PortMidiException (PmError errorType, string message, Exception innerException)
 			: base (message, innerException)
 		{
 			error_type = errorType;
@@ -114,12 +114,12 @@ namespace Commons.Music.Midi.PortMidi
 		}
 	}
 
-	public struct MidiDeviceInfo
+	public struct PortMidiDeviceInfo
 	{
 		int id;
 		PmDeviceInfo info;
 
-		internal MidiDeviceInfo (int id, IntPtr ptr)
+		internal PortMidiDeviceInfo (int id, IntPtr ptr)
 		{
 			this.id = id;
 			this.info = (PmDeviceInfo) Marshal.PtrToStructure (ptr, typeof (PmDeviceInfo));
@@ -148,9 +148,9 @@ namespace Commons.Music.Midi.PortMidi
 		}
 	}
 
-	public abstract class MidiStream : IDisposable
+	public abstract class PortMidiStream : IDisposable
 	{
-		public static IEnumerable<MidiEvent> Convert (byte [] bytes, int index, int size)
+		public static IEnumerable<PortMidiEvent> Convert (byte [] bytes, int index, int size)
 		{
 			int i = index;
 			int end = index + size;
@@ -158,21 +158,21 @@ namespace Commons.Music.Midi.PortMidi
 				if (bytes [i] == 0xF0 || bytes [i] == 0xF7) {
 					var tmp = new byte [size];
 					Array.Copy (bytes, i, tmp, 0, tmp.Length);
-					yield return new MidiEvent () {Message = new MidiMessage (0xF0, 0, 0), Data = tmp};
+					yield return new PortMidiEvent () {Message = new PortMidiMessage (0xF0, 0, 0), Data = tmp};
 					i += size + 1;
 				} else {
 					if (end < i + 3)
-						throw new MidiException (MidiErrorType.NoError, string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes [i]));
-					yield return new MidiEvent () {Message = new MidiMessage (bytes [i], bytes [i + 1], bytes [i + 2])};
+						throw new PortMidiException (PortMidiErrorType.NoError, string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes [i]));
+					yield return new PortMidiEvent () {Message = new PortMidiMessage (bytes [i], bytes [i + 1], bytes [i + 2])};
 					i += 3;
 				}
 			}
 		}
 
-		internal PortMidiStream stream;
+		internal IntPtr stream;
 		internal PmDeviceID device;
 
-		protected MidiStream (PortMidiStream stream, PmDeviceID deviceID)
+		protected PortMidiStream (IntPtr stream, PmDeviceID deviceID)
 		{
 			this.stream = stream;
 			device = deviceID;
@@ -193,7 +193,7 @@ namespace Commons.Music.Midi.PortMidi
 			PortMidiMarshal.Pm_Close (stream);
 		}
 
-		public void SetFilter (MidiFilter filters)
+		public void SetFilter (PortMidiFilter filters)
 		{
 			PortMidiMarshal.Pm_SetFilter (stream, filters);
 		}
@@ -204,15 +204,15 @@ namespace Commons.Music.Midi.PortMidi
 		}
 	}
 
-	public class MidiInput : MidiStream
+	public class PortMidiInputStream : PortMidiStream
 	{
-		public MidiInput (PortMidiStream stream, PmDeviceID inputDevice)
+		public PortMidiInputStream (IntPtr stream, PmDeviceID inputDevice)
 			: base (stream, inputDevice)
 		{
 		}
 
 		public bool HasData {
-			get { return PortMidiMarshal.Pm_Poll (stream) == MidiErrorType.GotData; }
+			get { return PortMidiMarshal.Pm_Poll (stream) == PortMidiErrorType.GotData; }
 		}
 
 		public int Read (byte [] buffer, int index, int length)
@@ -222,7 +222,7 @@ namespace Commons.Music.Midi.PortMidi
 				var ptr = Marshal.UnsafeAddrOfPinnedArrayElement (buffer, index);
 				int size = PortMidiMarshal.Pm_Read (stream, ptr, length);
 				if (size < 0)
-					throw new MidiException ((MidiErrorType) size, PortMidiMarshal.Pm_GetErrorText ((PmError) size));
+					throw new PortMidiException ((PortMidiErrorType) size, PortMidiMarshal.Pm_GetErrorText ((PmError) size));
 				return size * 4;
 			} finally {
 				gch.Free ();
@@ -230,14 +230,14 @@ namespace Commons.Music.Midi.PortMidi
 		}
 	}
 
-	public class MidiOutput : MidiStream
+	public class PortMidiOutputStream : PortMidiStream
 	{
-		public MidiOutput (PortMidiStream stream, PmDeviceID outputDevice, int latency)
+		public PortMidiOutputStream (IntPtr stream, PmDeviceID outputDevice, int latency)
 			: base (stream, outputDevice)
 		{
 		}
 
-		public void Write (MidiEvent mevent)
+		public void Write (PortMidiEvent mevent)
 		{
 			if (mevent.Data != null)
 				WriteSysEx (mevent.Timestamp, mevent.Data);
@@ -245,33 +245,33 @@ namespace Commons.Music.Midi.PortMidi
 				Write (mevent.Timestamp, mevent.Message);
 		}
 
-		public void Write (PmTimestamp when, MidiMessage msg)
+		public void Write (PmTimestamp when, PortMidiMessage msg)
 		{
 			var ret = PortMidiMarshal.Pm_WriteShort (stream, when, msg);
 			if (ret != PmError.NoError)
-				throw new MidiException (ret, String.Format ("Failed to write message {0} : {1}", msg.Value, PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
+				throw new PortMidiException (ret, String.Format ("Failed to write message {0} : {1}", msg.Value, PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
 		}
 
 		public void WriteSysEx (PmTimestamp when, byte [] sysex)
 		{
 			var ret = PortMidiMarshal.Pm_WriteSysEx (stream, when, sysex);
 			if (ret != PmError.NoError)
-				throw new MidiException (ret, String.Format ("Failed to write sysex message : {0}", PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
+				throw new PortMidiException (ret, String.Format ("Failed to write sysex message : {0}", PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
 		}
 
-		public void Write (MidiEvent [] buffer)
+		public void Write (PortMidiEvent [] buffer)
 		{
 			Write (buffer, 0, buffer.Length);
 		}
 
-		public void Write (MidiEvent [] buffer, int index, int length)
+		public void Write (PortMidiEvent [] buffer, int index, int length)
 		{
 			var gch = GCHandle.Alloc (buffer);
 			try {
 				var ptr = Marshal.UnsafeAddrOfPinnedArrayElement (buffer, index);
 				var ret = PortMidiMarshal.Pm_Write (stream, ptr, length);
 				if (ret != PmError.NoError)
-					throw new MidiException (ret, String.Format ("Failed to write messages : {0}", PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
+					throw new PortMidiException (ret, String.Format ("Failed to write messages : {0}", PortMidiMarshal.Pm_GetErrorText ((PmError) ret)));
 			} finally {
 				gch.Free ();
 			}
@@ -279,16 +279,16 @@ namespace Commons.Music.Midi.PortMidi
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public struct MidiEvent
+	public struct PortMidiEvent
 	{
-		MidiMessage msg;
+		PortMidiMessage msg;
 		PmTimestamp ts;
 		#if !PORTABLE // FIXME: wait, P/Invoke exists without [NonSerialized]!?
 		[NonSerialized]
 		#endif
 		byte [] data;
 
-		public MidiMessage Message {
+		public PortMidiMessage Message {
 			get { return msg; }
 			set { msg = value; }
 		}
@@ -304,16 +304,16 @@ namespace Commons.Music.Midi.PortMidi
 		}
 	}
 
-	public struct MidiMessage
+	public struct PortMidiMessage
 	{
 		PmMessage v;
 
-		public MidiMessage (PmMessage value)
+		public PortMidiMessage (PmMessage value)
 		{
 			v = value;
 		}
 
-		public MidiMessage (int status, int data1, int data2)
+		public PortMidiMessage (int status, int data1, int data2)
 		{
 			v = ((((data2) << 16) & 0xFF0000) | (((data1) << 8) & 0xFF00) | ((status) & 0xFF)); 
 		}
@@ -326,7 +326,7 @@ namespace Commons.Music.Midi.PortMidi
 	public delegate PmTimestamp MidiTimeProcDelegate (IntPtr timeInfo);
 
 	[Flags]
-	public enum MidiFilter : int
+	public enum PortMidiFilter : int
 	{
 		Active = 1 << 0x0E,
 		SysEx = 1 << 0x00,
@@ -363,7 +363,7 @@ namespace Commons.Music.Midi.PortMidi
 
 		// TODO
 		[DllImport ("portmidi")]
-		public static extern int Pm_HasHostError (PortMidiStream stream);
+		public static extern int Pm_HasHostError (IntPtr stream);
 
 		// TODO
 		[DllImport ("portmidi")]
@@ -394,7 +394,7 @@ namespace Commons.Music.Midi.PortMidi
 
 		[DllImport ("portmidi")]
 		public static extern PmError Pm_OpenInput (
-			out PortMidiStream stream,
+			out IntPtr stream,
 			PmDeviceID inputDevice,
 			IntPtr inputDriverInfo,
 			int bufferSize,
@@ -403,7 +403,7 @@ namespace Commons.Music.Midi.PortMidi
 
 		[DllImport ("portmidi")]
 		public static extern PmError Pm_OpenOutput (
-			out PortMidiStream stream,
+			out IntPtr stream,
 			PmDeviceID outputDevice,
 			IntPtr outputDriverInfo,
 			int bufferSize,
@@ -412,19 +412,19 @@ namespace Commons.Music.Midi.PortMidi
 			int latency);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_SetFilter (PortMidiStream stream, MidiFilter filters);
+		public static extern PmError Pm_SetFilter (IntPtr stream, PortMidiFilter filters);
 
 		// TODO
 		public static int Pm_Channel (int channel) { return 1 << channel; }
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_SetChannelMask (PortMidiStream stream, int mask);
+		public static extern PmError Pm_SetChannelMask (IntPtr stream, int mask);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_Abort (PortMidiStream stream);
+		public static extern PmError Pm_Abort (IntPtr stream);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_Close (PortMidiStream stream);
+		public static extern PmError Pm_Close (IntPtr stream);
 
 		// TODO
 		public static int Pm_MessageStatus (int msg) { return ((msg) & 0xFF); }
@@ -434,19 +434,19 @@ namespace Commons.Music.Midi.PortMidi
 		public static int Pm_MessageData2 (int msg) { return (((msg) >> 16) & 0xFF); }
 
 		[DllImport ("portmidi")]
-		public static extern int Pm_Read (PortMidiStream stream, IntPtr buffer, int length);
+		public static extern int Pm_Read (IntPtr stream, IntPtr buffer, int length);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_Poll (PortMidiStream stream);
+		public static extern PmError Pm_Poll (IntPtr stream);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_Write (PortMidiStream stream, IntPtr buffer, int length);
+		public static extern PmError Pm_Write (IntPtr stream, IntPtr buffer, int length);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_WriteShort (PortMidiStream stream, PmTimestamp when, MidiMessage msg);
+		public static extern PmError Pm_WriteShort (IntPtr stream, PmTimestamp when, PortMidiMessage msg);
 
 		[DllImport ("portmidi")]
-		public static extern PmError Pm_WriteSysEx (PortMidiStream stream, PmTimestamp when, byte [] msg);
+		public static extern PmError Pm_WriteSysEx (IntPtr stream, PmTimestamp when, byte [] msg);
 	}
 
 	[StructLayout (LayoutKind.Sequential)]

@@ -95,7 +95,7 @@ namespace Commons.Music.Midi.WinMM
 				var status = (byte)(param1 & 0xFF);
 				var msb = (byte)((param1 & 0xFF00) >> 8);
 				var lsb = (byte)((param1 & 0xFF0000) >> 16);
-				var data = SmfEvent.FixedDataSize(status) == 3 ? data3b : data2b;
+				var data = MidiEvent.FixedDataSize(status) == 3 ? data3b : data2b;
 				data[0] = status;
 				data[1] = msb;
 				if (data.Length == 3)
@@ -165,7 +165,7 @@ namespace Commons.Music.Midi.WinMM
 
 		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
 		{
-			foreach (var evt in SmfEvent.Convert (mevent, offset, length)) {
+			foreach (var evt in MidiEvent.Convert (mevent, offset, length)) {
                 if (evt.StatusByte < 0xF0)
                     WinMMNatives.midiOutShortMsg(handle, (uint)(evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16)));
                 else

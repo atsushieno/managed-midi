@@ -86,16 +86,16 @@ Options:
 					player.EventReceived += e => {
 						string type = null;
 						switch (e.EventType) {
-						case SmfEvent.NoteOn: type = "NOn"; break;
-						case SmfEvent.NoteOff: type = "NOff"; break;
-						case SmfEvent.PAf: type = "PAf"; break;
-						case SmfEvent.CC: type = "CC"; break;
-						case SmfEvent.Program: type = "@"; break;
-						case SmfEvent.CAf: type = "CAf"; break;
-						case SmfEvent.Pitch: type = "P"; break;
-						case SmfEvent.SysEx1: type = "SysEX"; break;
-						case SmfEvent.SysEx2: type = "SysEX2"; break;
-						case SmfEvent.Meta: type = "META"; break;
+						case MidiEvent.NoteOn: type = "NOn"; break;
+						case MidiEvent.NoteOff: type = "NOff"; break;
+						case MidiEvent.PAf: type = "PAf"; break;
+						case MidiEvent.CC: type = "CC"; break;
+						case MidiEvent.Program: type = "@"; break;
+						case MidiEvent.CAf: type = "CAf"; break;
+						case MidiEvent.Pitch: type = "P"; break;
+						case MidiEvent.SysEx1: type = "SysEX"; break;
+						case MidiEvent.SysEx2: type = "SysEX2"; break;
+						case MidiEvent.Meta: type = "META"; break;
 						}
 						Console.WriteLine ("{0:06} {1:D02} {2} {3}", (DateTimeOffset.Now - start).TotalMilliseconds, e.Channel, type, e);
 					};

@@ -141,9 +141,9 @@ namespace Commons.Music.Midi
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
 						mi.Select += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
-							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
-							output.SendAsync (new byte[] { (byte) (SmfEvent.CC + channel), SmfCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
-							output.SendAsync (new byte[] { (byte) (SmfEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
+							output.SendAsync (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
+							output.SendAsync (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
+							output.SendAsync (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}

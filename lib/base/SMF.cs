@@ -5,19 +5,19 @@ using System.Text;
 
 namespace Commons.Music.Midi
 {
-	public class SmfMusic
+	public class MidiMusic
 	{
 		#region static members
 
 		#if !PORTABLE
-		public static SmfMusic Read (string file)
+		public static MidiMusic Read (string file)
 		{
 			using (var f = File.OpenRead (file))
 				return Read (f);
 		}
 		#endif
 
-		public static SmfMusic Read (Stream stream)
+		public static MidiMusic Read (Stream stream)
 		{
 			var r = new SmfReader ();
 			r.Read (stream);
@@ -26,9 +26,9 @@ namespace Commons.Music.Midi
 
 		#endregion
 
-		List<SmfTrack> tracks = new List<SmfTrack> ();
+		List<MidiTrack> tracks = new List<MidiTrack> ();
 
-		public SmfMusic ()
+		public MidiMusic ()
 		{
 			Format = 1;
 		}
@@ -37,12 +37,12 @@ namespace Commons.Music.Midi
 
 		public byte Format { get; set; }
 
-		public void AddTrack (SmfTrack track)
+		public void AddTrack (MidiTrack track)
 		{
 			this.tracks.Add (track);
 		}
 
-		public IList<SmfTrack> Tracks {
+		public IList<MidiTrack> Tracks {
 			get { return tracks; }
 		}
 
@@ -53,59 +53,59 @@ namespace Commons.Music.Midi
 			return GetTotalPlayTimeMilliseconds (Tracks [0].Messages, DeltaTimeSpec);
 		}
 		
-		public static int GetTotalPlayTimeMilliseconds (IList<SmfMessage> messages, int deltaTimeSpec)
+		public static int GetTotalPlayTimeMilliseconds (IList<MidiMessage> messages, int deltaTimeSpec)
 		{
 			if (deltaTimeSpec < 0)
 				throw new NotSupportedException ("non-tick based DeltaTime");
 			else {
-				int tempo = SmfMetaType.DefaultTempo;
+				int tempo = MidiMetaType.DefaultTempo;
 				int v = 0;
 				foreach (var m in messages) {
 					v += (int) (tempo / 1000 * m.DeltaTime / deltaTimeSpec);
-					if (m.Event.EventType == SmfEvent.Meta && m.Event.Msb == SmfMetaType.Tempo)
-						tempo = SmfMetaType.GetTempo (m.Event.Data);
+					if (m.Event.EventType == MidiEvent.Meta && m.Event.Msb == MidiMetaType.Tempo)
+						tempo = MidiMetaType.GetTempo (m.Event.Data);
 				}
 				return v;
 			}
 		}
 	}
 
-	public class SmfTrack
+	public class MidiTrack
 	{
-		public SmfTrack ()
-			: this (new List<SmfMessage> ())
+		public MidiTrack ()
+			: this (new List<MidiMessage> ())
 		{
 		}
 
-		public SmfTrack (IList<SmfMessage> messages)
+		public MidiTrack (IList<MidiMessage> messages)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
-			this.messages = messages as List<SmfMessage> ?? new List<SmfMessage> (messages);
+			this.messages = messages as List<MidiMessage> ?? new List<MidiMessage> (messages);
 		}
 
-		List<SmfMessage> messages;
+		List<MidiMessage> messages;
 
-		public void AddMessage (SmfMessage msg)
+		public void AddMessage (MidiMessage msg)
 		{
 			messages.Add (msg);
 		}
 
-		public IList<SmfMessage> Messages {
+		public IList<MidiMessage> Messages {
 			get { return messages; }
 		}
 	}
 
-	public struct SmfMessage
+	public struct MidiMessage
 	{
-		public SmfMessage (int deltaTime, SmfEvent evt)
+		public MidiMessage (int deltaTime, MidiEvent evt)
 		{
 			DeltaTime = deltaTime;
 			Event = evt;
 		}
 
 		public readonly int DeltaTime;
-		public readonly SmfEvent Event;
+		public readonly MidiEvent Event;
 
 		public override string ToString ()
 		{
@@ -113,7 +113,7 @@ namespace Commons.Music.Midi
 		}
 	}
 
-	public static class SmfCC
+	public static class MidiCC
 	{
 		public const byte BankSelect = 0x00;
 		public const byte Modulation = 0x01;
@@ -195,7 +195,7 @@ namespace Commons.Music.Midi
 		public const byte PolyModeOn = 0x7F;
 	}
 	
-	public static class SmfRpnType
+	public static class MidiRpnType
 	{
 		public const short PitchBendSensitivity = 0;
 		public const short FineTuning = 1;
@@ -205,7 +205,7 @@ namespace Commons.Music.Midi
 		public const short ModulationDepth = 5;
 	}
 	
-	public static class SmfMetaType
+	public static class MidiMetaType
 	{
 		public const byte SequenceNumber = 0x00;
 		public const byte Text = 0x01;
@@ -231,7 +231,7 @@ namespace Commons.Music.Midi
 		}
 	}
 
-	public struct SmfEvent
+	public struct MidiEvent
 	{
 		public const byte NoteOff = 0x80;
 		public const byte NoteOn = 0x90;
@@ -246,7 +246,7 @@ namespace Commons.Music.Midi
 
 		public const byte EndSysEx = 0xF7;
 
-		public static IEnumerable<SmfEvent> Convert (byte[] bytes, int index, int size)
+		public static IEnumerable<MidiEvent> Convert (byte[] bytes, int index, int size)
 		{
 			int i = index;
 			int end = index + size;
@@ -254,27 +254,27 @@ namespace Commons.Music.Midi
 				if (bytes[i] == 0xF0) {
 					var tmp = new byte [size];
 					Array.Copy (bytes, i, tmp, 0, tmp.Length);
-					yield return new SmfEvent (0xF0, 0, 0, tmp);
+					yield return new MidiEvent (0xF0, 0, 0, tmp);
 					i += size;
 				}
 				else
 				{
-					if (end < i + SmfEvent.FixedDataSize (bytes [i]))
+					if (end < i + MidiEvent.FixedDataSize (bytes [i]))
 						throw new Exception (string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes[i]));
-                    var z = SmfEvent.FixedDataSize (bytes[i]);
-					yield return new SmfEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null);
+                    var z = MidiEvent.FixedDataSize (bytes[i]);
+					yield return new MidiEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null);
 					i += z + 1;
 				}
 			}
 		}
 
-		public SmfEvent (int value)
+		public MidiEvent (int value)
 		{
 			Value = value;
 			Data = null;
 		}
 
-		public SmfEvent (byte type, byte arg1, byte arg2, byte [] data)
+		public MidiEvent (byte type, byte arg1, byte arg2, byte [] data)
 		{
 			Value = type + (arg1 << 8) + (arg2 << 16);
 			Data = data;
@@ -367,7 +367,7 @@ namespace Commons.Music.Midi
 			stream.WriteByte ((byte) (v % 0x100));
 		}
 
-		public void WriteMusic (SmfMusic music)
+		public void WriteMusic (MidiMusic music)
 		{
 			WriteHeader (music.Format, (short) music.Tracks.Count, music.DeltaTimeSpec);
 			foreach (var track in music.Tracks)
@@ -384,9 +384,9 @@ namespace Commons.Music.Midi
 			WriteShort (deltaTimeSpec);
 		}
 
-		Func<bool,SmfMessage,Stream,int> meta_event_writer;
+		Func<bool,MidiMessage,Stream,int> meta_event_writer;
 
-		public Func<bool,SmfMessage,Stream,int> MetaEventWriter {
+		public Func<bool,MidiMessage,Stream,int> MetaEventWriter {
 			get { return meta_event_writer; }
 			set {
 				if (value == null)
@@ -395,21 +395,21 @@ namespace Commons.Music.Midi
 			}
 		}
 
-		public void WriteTrack (SmfTrack track)
+		public void WriteTrack (MidiTrack track)
 		{
 			stream.Write (Encoding.UTF8.GetBytes ("MTrk"), 0, 4);
 			WriteInt (GetTrackDataSize (track));
 
 			byte running_status = 0;
 
-			foreach (SmfMessage e in track.Messages) {
+			foreach (MidiMessage e in track.Messages) {
 				Write7BitVariableInteger (e.DeltaTime);
 				switch (e.Event.EventType) {
-				case SmfEvent.Meta:
+				case MidiEvent.Meta:
 					meta_event_writer (false, e, stream);
 					break;
-				case SmfEvent.SysEx1:
-				case SmfEvent.SysEx2:
+				case MidiEvent.SysEx1:
+				case MidiEvent.SysEx2:
 					stream.WriteByte (e.Event.EventType);
 					Write7BitVariableInteger (e.Event.Data.Length);
 					stream.Write (e.Event.Data, 0, e.Event.Data.Length);
@@ -417,7 +417,7 @@ namespace Commons.Music.Midi
 				default:
 					if (DisableRunningStatus || e.Event.StatusByte != running_status)
 						stream.WriteByte (e.Event.StatusByte);
-					int len = SmfEvent.FixedDataSize (e.Event.EventType);
+					int len = MidiEvent.FixedDataSize (e.Event.EventType);
 					stream.WriteByte (e.Event.Msb);
 					if (len > 1)
 						stream.WriteByte (e.Event.Lsb);
@@ -441,21 +441,21 @@ namespace Commons.Music.Midi
 			return ret;
 		}
 
-		int GetTrackDataSize (SmfTrack track)
+		int GetTrackDataSize (MidiTrack track)
 		{
 			int size = 0;
 			byte running_status = 0;
-			foreach (SmfMessage e in track.Messages) {
+			foreach (MidiMessage e in track.Messages) {
 				// delta time
 				size += GetVariantLength (e.DeltaTime);
 
 				// arguments
 				switch (e.Event.EventType) {
-				case SmfEvent.Meta:
+				case MidiEvent.Meta:
 					size += meta_event_writer (true, e, null);
 					break;
-				case SmfEvent.SysEx1:
-				case SmfEvent.SysEx2:
+				case MidiEvent.SysEx1:
+				case MidiEvent.SysEx2:
 					size++;
 					size += GetVariantLength (e.Event.Data.Length);
 					size += e.Event.Data.Length;
@@ -464,7 +464,7 @@ namespace Commons.Music.Midi
 					// message type & channel
 					if (DisableRunningStatus || running_status != e.Event.StatusByte)
 						size++;
-					size += SmfEvent.FixedDataSize (e.Event.EventType);
+					size += MidiEvent.FixedDataSize (e.Event.EventType);
 					break;
 				}
 
@@ -493,11 +493,11 @@ namespace Commons.Music.Midi
 	public static class SmfWriterExtension
 	{
 
-		static readonly Func<bool, SmfMessage, Stream, int> default_meta_writer, vsq_meta_text_splitter;
+		static readonly Func<bool, MidiMessage, Stream, int> default_meta_writer, vsq_meta_text_splitter;
 
 		static SmfWriterExtension ()
 		{
-			default_meta_writer = delegate (bool lengthMode, SmfMessage e, Stream stream) {
+			default_meta_writer = delegate (bool lengthMode, MidiMessage e, Stream stream) {
 				if (lengthMode) {
 					// [0x00] 0xFF metaType size ... (note that for more than one meta event it requires step count of 0).
 					int repeatCount = e.Event.Data.Length / 0x7F;
@@ -522,7 +522,7 @@ namespace Commons.Music.Midi
 				return 0;
 			};
 
-			vsq_meta_text_splitter = delegate (bool lengthMode, SmfMessage e, Stream stream) {
+			vsq_meta_text_splitter = delegate (bool lengthMode, MidiMessage e, Stream stream) {
 				// The split should not be applied to "Master Track"
 				if (e.Event.Data.Length < 0x80) {
 					return default_meta_writer (lengthMode, e, stream);
@@ -557,11 +557,11 @@ namespace Commons.Music.Midi
 			};
 		}
 
-		public static Func<bool, SmfMessage, Stream, int> DefaultMetaEventWriter {
+		public static Func<bool, MidiMessage, Stream, int> DefaultMetaEventWriter {
 			get { return default_meta_writer; }
 		}
 
-		public static Func<bool, SmfMessage, Stream, int> VsqMetaTextSplitter {
+		public static Func<bool, MidiMessage, Stream, int> VsqMetaTextSplitter {
 			get { return vsq_meta_text_splitter; }
 		}
 	}
@@ -569,14 +569,14 @@ namespace Commons.Music.Midi
 	public class SmfReader
 	{
 		Stream stream;
-		SmfMusic data;
+		MidiMusic data;
 
-		public SmfMusic Music { get { return data; } }
+		public MidiMusic Music { get { return data; } }
 
 		public void Read (Stream stream)
 		{
 			this.stream = stream;
-			data = new SmfMusic ();
+			data = new MidiMusic ();
 			try {
 				DoParse ();
 			} finally {
@@ -605,9 +605,9 @@ namespace Commons.Music.Midi
 			}
 		}
 
-		SmfTrack ReadTrack ()
+		MidiTrack ReadTrack ()
 		{
-			var tr = new SmfTrack ();
+			var tr = new MidiTrack ();
 			if (
 			    ReadByte ()  != 'M'
 			    || ReadByte ()  != 'T'
@@ -630,27 +630,27 @@ namespace Commons.Music.Midi
 		int current_track_size;
 		byte running_status;
 
-		SmfMessage ReadMessage (int deltaTime)
+		MidiMessage ReadMessage (int deltaTime)
 		{
 			byte b = PeekByte ();
 			running_status = b < 0x80 ? running_status : ReadByte ();
 			int len;
 			switch (running_status) {
-			case SmfEvent.SysEx1:
-			case SmfEvent.SysEx2:
-			case SmfEvent.Meta:
-				byte metaType = running_status == SmfEvent.Meta ? ReadByte () : (byte) 0;
+			case MidiEvent.SysEx1:
+			case MidiEvent.SysEx2:
+			case MidiEvent.Meta:
+				byte metaType = running_status == MidiEvent.Meta ? ReadByte () : (byte) 0;
 				len = ReadVariableLength ();
 				byte [] args = new byte [len];
 				if (len > 0)
 					ReadBytes (args);
-				return new SmfMessage (deltaTime, new SmfEvent (running_status, metaType, 0, args));
+				return new MidiMessage (deltaTime, new MidiEvent (running_status, metaType, 0, args));
 			default:
 				int value = running_status;
 				value += ReadByte () << 8;
-				if (SmfEvent.FixedDataSize (running_status) == 2)
+				if (MidiEvent.FixedDataSize (running_status) == 2)
 					value += ReadByte () << 16;
-				return new SmfMessage (deltaTime, new SmfEvent (value));
+				return new MidiMessage (deltaTime, new MidiEvent (value));
 			}
 		}
 
@@ -747,37 +747,37 @@ namespace Commons.Music.Midi
 
 	public class SmfTrackMerger
 	{
-		public static SmfMusic Merge (SmfMusic source)
+		public static MidiMusic Merge (MidiMusic source)
 		{
 			return new SmfTrackMerger (source).GetMergedMessages ();
 		}
 
-		SmfTrackMerger (SmfMusic source)
+		SmfTrackMerger (MidiMusic source)
 		{
 			this.source = source;
 		}
 
-		SmfMusic source;
+		MidiMusic source;
 
 		// FIXME: it should rather be implemented to iterate all
 		// tracks with index to messages, pick the track which contains
 		// the nearest event and push the events into the merged queue.
 		// It's simpler, and costs less by removing sort operation
 		// over thousands of events.
-		SmfMusic GetMergedMessages ()
+		MidiMusic GetMergedMessages ()
 		{
-			IList<SmfMessage> l = new List<SmfMessage> ();
+			IList<MidiMessage> l = new List<MidiMessage> ();
 
 			foreach (var track in source.Tracks) {
 				int delta = 0;
 				foreach (var mev in track.Messages) {
 					delta += mev.DeltaTime;
-					l.Add (new SmfMessage (delta, mev.Event));
+					l.Add (new MidiMessage (delta, mev.Event));
 				}
 			}
 
 			if (l.Count == 0)
-				return new SmfMusic () { DeltaTimeSpec = source.DeltaTimeSpec }; // empty (why did you need to sort your song file?)
+				return new MidiMusic () { DeltaTimeSpec = source.DeltaTimeSpec }; // empty (why did you need to sort your song file?)
 
 			// Sort() does not always work as expected.
 			// For example, it does not always preserve event 
@@ -806,7 +806,7 @@ namespace Commons.Music.Midi
 				});
 
 			// now build a new event list based on the sorted blocks.
-			var l2 = new List<SmfMessage> (l.Count);
+			var l2 = new List<MidiMessage> (l.Count);
 			int idx;
 			for (int i = 0; i < idxl.Count; i++)
 				for (idx = idxl [i], prev = l [idx].DeltaTime; idx < l.Count && l [idx].DeltaTime == prev; idx++)
@@ -820,28 +820,28 @@ namespace Commons.Music.Midi
 			for (int i = 0; i < l.Count - 1; i++) {
 				if (l [i].Event.Value != 0) { // if non-dummy
 					var tmp = l [i + 1].DeltaTime - l [i].DeltaTime;
-					l [i] = new SmfMessage (waitToNext, l [i].Event);
+					l [i] = new MidiMessage (waitToNext, l [i].Event);
 					waitToNext = tmp;
 				}
 			}
-			l [l.Count - 1] = new SmfMessage (waitToNext, l [l.Count - 1].Event);
+			l [l.Count - 1] = new MidiMessage (waitToNext, l [l.Count - 1].Event);
 
-			var m = new SmfMusic ();
+			var m = new MidiMusic ();
 			m.DeltaTimeSpec = source.DeltaTimeSpec;
 			m.Format = 0;
-			m.Tracks.Add (new SmfTrack (l));
+			m.Tracks.Add (new MidiTrack (l));
 			return m;
 		}
 	}
 
 	public class SmfTrackSplitter
 	{
-		public static SmfMusic Split (IList<SmfMessage> source, short deltaTimeSpec)
+		public static MidiMusic Split (IList<MidiMessage> source, short deltaTimeSpec)
 		{
 			return new SmfTrackSplitter (source, deltaTimeSpec).Split ();
 		}
 
-		SmfTrackSplitter (IList<SmfMessage> source, short deltaTimeSpec)
+		SmfTrackSplitter (IList<MidiMessage> source, short deltaTimeSpec)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -851,7 +851,7 @@ namespace Commons.Music.Midi
 			tracks.Add (-1, mtr);
 		}
 
-		IList<SmfMessage> source;
+		IList<MidiMessage> source;
 		short delta_time_spec;
 		Dictionary<int,SplitTrack> tracks = new Dictionary<int,SplitTrack> ();
 
@@ -860,16 +860,16 @@ namespace Commons.Music.Midi
 			public SplitTrack (int trackID)
 			{
 				TrackID = trackID;
-				Track = new SmfTrack ();
+				Track = new MidiTrack ();
 			}
 
 			public int TrackID;
 			public int TotalDeltaTime;
-			public SmfTrack Track;
+			public MidiTrack Track;
 
-			public void AddMessage (int deltaInsertAt, SmfMessage e)
+			public void AddMessage (int deltaInsertAt, MidiMessage e)
 			{
-				e = new SmfMessage (deltaInsertAt - TotalDeltaTime, e.Event);
+				e = new MidiMessage (deltaInsertAt - TotalDeltaTime, e.Event);
 				Track.Messages.Add (e);
 				TotalDeltaTime = deltaInsertAt;
 			}
@@ -888,19 +888,19 @@ namespace Commons.Music.Midi
 		// Override it to customize track dispatcher. It would be
 		// useful to split note messages out from non-note ones,
 		// to ease data reading.
-		public virtual int GetTrackID (SmfMessage e)
+		public virtual int GetTrackID (MidiMessage e)
 		{
 			switch (e.Event.EventType) {
-			case SmfEvent.Meta:
-			case SmfEvent.SysEx1:
-			case SmfEvent.SysEx2:
+			case MidiEvent.Meta:
+			case MidiEvent.SysEx1:
+			case MidiEvent.SysEx2:
 				return -1;
 			default:
 				return e.Event.Channel;
 			}
 		}
 
-		public SmfMusic Split ()
+		public MidiMusic Split ()
 		{
 			int totalDeltaTime = 0;
 			foreach (var e in source) {
@@ -909,7 +909,7 @@ namespace Commons.Music.Midi
 				GetTrack (id).AddMessage (totalDeltaTime, e);
 			}
 
-			var m = new SmfMusic ();
+			var m = new MidiMusic ();
 			m.DeltaTimeSpec = delta_time_spec;
 			foreach (var t in tracks.Values)
 				m.Tracks.Add (t.Track);

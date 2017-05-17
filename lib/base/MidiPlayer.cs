@@ -28,12 +28,12 @@ namespace Commons.Music.Midi
 	// Player implementation. Plays a MIDI song synchronously.
 	public class MidiSyncPlayer : IDisposable, IMidiPlayerStatus
 	{
-		public MidiSyncPlayer (SmfMusic music)
+		public MidiSyncPlayer (MidiMusic music)
 			: this (music, new SimpleMidiTimeManager ())
 		{
 		}
 
-		public MidiSyncPlayer (SmfMusic music, IMidiTimeManager timeManager)
+		public MidiSyncPlayer (MidiMusic music, IMidiTimeManager timeManager)
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");
@@ -46,8 +46,8 @@ namespace Commons.Music.Midi
 
 		public event Action Finished;
 
-		SmfMusic music;
-		IList<SmfMessage> messages;
+		MidiMusic music;
+		IList<MidiMessage> messages;
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
 		PlayerState state;
 		bool do_pause, do_stop;
@@ -78,7 +78,7 @@ namespace Commons.Music.Midi
 		}
 		public int GetTotalPlayTimeMilliseconds ()
 		{
-			return SmfMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
+			return MidiMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
 		}
 		
 		TimeSpan GetTimerOffsetWithTempoRatio ()
@@ -108,13 +108,13 @@ namespace Commons.Music.Midi
 		void AllControlReset ()
 		{
 			for (int i = 0; i < 16; i++)
-				OnEvent (new SmfEvent ((byte) (i + 0xB0), 0x79, 0, null));
+				OnEvent (new MidiEvent ((byte) (i + 0xB0), 0x79, 0, null));
 		}
 
 		void Mute ()
 		{
 			for (int i = 0; i < 16; i++)
-				OnEvent (new SmfEvent ((byte) (i + 0xB0), 0x78, 0, null));
+				OnEvent (new MidiEvent ((byte) (i + 0xB0), 0x78, 0, null));
 		}
 
 		public void Pause ()
@@ -156,7 +156,7 @@ namespace Commons.Music.Midi
 			}
 		}
 
-		int current_tempo = SmfMetaType.DefaultTempo;
+		int current_tempo = MidiMetaType.DefaultTempo;
 		byte [] current_time_signature = new byte [4];
 		double tempo_ratio = 1.0;
 		DateTime timer_resumed;
@@ -177,16 +177,16 @@ namespace Commons.Music.Midi
 			return s;
 		}
 
-		public virtual void HandleEvent (SmfMessage m)
+		public virtual void HandleEvent (MidiMessage m)
 		{
 			if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.AdvanceBy (ms);
 			}
 			if (m.Event.StatusByte == 0xFF) {
-				if (m.Event.Msb == SmfMetaType.Tempo)
-					current_tempo = SmfMetaType.GetTempo (m.Event.Data);
-				else if (m.Event.Msb == SmfMetaType.TimeSignature && m.Event.Data.Length == 4)
+				if (m.Event.Msb == MidiMetaType.Tempo)
+					current_tempo = MidiMetaType.GetTempo (m.Event.Data);
+				else if (m.Event.Msb == MidiMetaType.TimeSignature && m.Event.Data.Length == 4)
 					Array.Copy (m.Event.Data, current_time_signature, 4);
 			}
 
@@ -196,7 +196,7 @@ namespace Commons.Music.Midi
 
 		public MidiEventAction EventReceived;
 
-		protected virtual void OnEvent (SmfEvent m)
+		protected virtual void OnEvent (MidiEvent m)
 		{
 			if (EventReceived != null)
 				EventReceived (m);
@@ -218,33 +218,33 @@ namespace Commons.Music.Midi
 		MidiSyncPlayer player;
 		Task sync_player_task;
 
-		public MidiPlayer (SmfMusic music)
+		public MidiPlayer (MidiMusic music)
 			: this (music, MidiAccessManager.Empty)
 		{
 		}
 
-		public MidiPlayer (SmfMusic music, IMidiAccess access)
+		public MidiPlayer (MidiMusic music, IMidiAccess access)
 			: this (music, access, new SimpleMidiTimeManager ())
 		{
 		}
 
-		public MidiPlayer (SmfMusic music, IMidiOutput output)
+		public MidiPlayer (MidiMusic music, IMidiOutput output)
 			: this (music, output, new SimpleMidiTimeManager ())
 		{
 		}
 
-		public MidiPlayer (SmfMusic music, IMidiTimeManager timeManager)
+		public MidiPlayer (MidiMusic music, IMidiTimeManager timeManager)
 			: this (music, MidiAccessManager.Empty, timeManager)
 		{
 		}
 
-		public MidiPlayer (SmfMusic music, IMidiAccess access, IMidiTimeManager timeManager)
+		public MidiPlayer (MidiMusic music, IMidiAccess access, IMidiTimeManager timeManager)
 			: this (music, access.OpenOutputAsync (access.Outputs.First ().Id).Result, timeManager)
 		{
 			should_dispose_output = true;
 		}
 
-		public MidiPlayer (SmfMusic music, IMidiOutput output, IMidiTimeManager timeManager)
+		public MidiPlayer (MidiMusic music, IMidiOutput output, IMidiTimeManager timeManager)
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");
@@ -258,19 +258,19 @@ namespace Commons.Music.Midi
 			player = new MidiSyncPlayer (music, timeManager);
 			EventReceived += (m) => {
 				switch (m.EventType) {
-				case SmfEvent.SysEx1:
-				case SmfEvent.SysEx2:
+				case MidiEvent.SysEx1:
+				case MidiEvent.SysEx2:
 					if (buffer.Length <= m.Data.Length)
 						buffer = new byte [buffer.Length * 2];
 					buffer [0] = m.StatusByte;
 					Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
 					output.SendAsync (buffer, 0, m.Data.Length + 1, 0);
 					break;
-				case SmfEvent.Meta:
+				case MidiEvent.Meta:
 					// do nothing.
 					break;
 				default:
-					var size = SmfEvent.FixedDataSize (m.StatusByte);
+					var size = MidiEvent.FixedDataSize (m.StatusByte);
 					buffer [0] = m.StatusByte;
 					buffer [1] = m.Msb;
 					buffer [2] = m.Lsb;

@@ -3,7 +3,7 @@ namespace Commons.Music.Midi.WinMM
 {
 	public class WinMMMidiPlayer : MidiPlayer
 	{
-		public WinMMMidiPlayer (SmfMusic music)
+		public WinMMMidiPlayer (MidiMusic music)
 			: base (music)
 		{
 		}
