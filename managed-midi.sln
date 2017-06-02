@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.UwpWithS
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.Shared", "Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.shproj", "{8742663D-9BB6-43D5-887D-0668E550652F}"
 EndProject
-Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "managed-midi", "managed-midi\managed-midi.nuproj", "{767F88BA-2844-4DD5-8215-35B08A645FEA}"
+Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "NuGetPackaging", "managed-midi\NuGetPackaging.nuproj", "{767F88BA-2844-4DD5-8215-35B08A645FEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "Commons.Music.Midi.Uwp\Commons.Music.Midi.Uwp.csproj", "{DDAD7F20-40BE-446C-BED1-E770DD7A0503}"
 EndProject

@@ -30,16 +30,6 @@
     <IntermediateOutputPath>obj\Release</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Build.Packaging">
-      <Version>0.1.248</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="NuGet.Build.Packaging">
-      <Version>0.1.248</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">
       <Project>{59EEFB0D-3957-43FC-8272-C3B460F7FF84}</Project>
       <Name>Commons.Music.Midi.Desktop</Name>
@@ -52,6 +42,16 @@
       <Project>{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}</Project>
       <Name>Commons.Music.Midi.CoreMidi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Commons.Music.Midi.Android\Commons.Music.Midi.Android.csproj">
+      <Project>{8C6AF32A-3692-43B3-A907-9395564DB067}</Project>
+      <Name>Commons.Music.Midi.Android</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Build.Packaging">
+      <Version>0.1.283</Version>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
   <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets')" />
