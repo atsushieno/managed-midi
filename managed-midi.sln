@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.CoreMidi", "Commons.Music.Midi.CoreMidi\Commons.Music.Midi.CoreMidi.csproj", "{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Android", "Commons.Music.Midi.Android\Commons.Music.Midi.Android.csproj", "{8C6AF32A-3692-43B3-A907-9395564DB067}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +116,14 @@ Global
 		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|x86.ActiveCfg = Release|Any CPU
 		{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}.Release|x86.Build.0 = Release|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
