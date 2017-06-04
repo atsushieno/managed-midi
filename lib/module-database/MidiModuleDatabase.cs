@@ -87,27 +87,11 @@ namespace Commons.Music.Midi
 
 		// serialization
 
-		#if !PORTABLE
-		public void Save (string file)
-		{
-			using (var fs = File.OpenWrite (file))
-				Save (fs);
-		}
-		#endif
-
 		public void Save (Stream stream)
 		{
 			var ds = new DataContractJsonSerializer (typeof (MidiModuleDefinition));
 			ds.WriteObject (stream, this);
 		}
-
-		#if !PORTABLE
-		public static MidiModuleDefinition Load (string file)
-		{
-			using (var fs = File.OpenRead (file))
-				return Load (fs);
-		}
-		#endif
 
 		public static MidiModuleDefinition Load (Stream stream)
 		{

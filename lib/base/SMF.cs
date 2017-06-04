@@ -9,14 +9,6 @@ namespace Commons.Music.Midi
 	{
 		#region static members
 
-		#if !PORTABLE
-		public static MidiMusic Read (string file)
-		{
-			using (var f = File.OpenRead (file))
-				return Read (f);
-		}
-		#endif
-
 		public static MidiMusic Read (Stream stream)
 		{
 			var r = new SmfReader ();
