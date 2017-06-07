@@ -57,6 +57,7 @@
     <Compile Include="winmm\WinmmMidiAccess.cs" />
     <Compile Include="winmm\WinMMNatives.cs" />
     <Compile Include="winmm\WinMMMidiPlayer.cs" />
+    <Compile Include="MidiAccessManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="librtmidi.dylib">

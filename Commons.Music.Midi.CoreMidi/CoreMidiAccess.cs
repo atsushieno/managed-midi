@@ -7,6 +7,17 @@ using CoreMidi;
 
 using MIDI = CoreMidi.Midi;
 
+namespace Commons.Music.Midi
+{
+	public partial class MidiAccessManager
+	{
+		partial void InitializeDefault ()
+		{
+			Default = new CoreMidiApi.CoreMidiAccess ();
+		}
+	}
+}
+
 namespace Commons.Music.Midi.CoreMidiApi
 {
 	public class CoreMidiAccess : IMidiAccess

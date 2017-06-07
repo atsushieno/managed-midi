@@ -6,25 +6,23 @@ using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
 {
-	public static class MidiAccessManager
+	public partial class MidiAccessManager
 	{
 		static MidiAccessManager ()
 		{
-			Empty = new EmptyMidiAccess ();
-			IEnumerable<Type> types = typeof (MidiAccessManager).GetTypeInfo ().Assembly.DefinedTypes.Select (ti => ti.AsType ());
-			types = types.Where (t => t != typeof (EmptyMidiAccess) && t.GetTypeInfo ().ImplementedInterfaces.Contains (typeof (IMidiAccess)));
-			foreach (var type in types) {
-				try {
-					Default = (IMidiAccess) Activator.CreateInstance (type);
-				} catch {
-					// ignore, try next
-				}
-			}
+			Default = Empty = new EmptyMidiAccess ();
+			new MidiAccessManager ().InitializeDefault ();
 		}
 
-		[Obsolete ("There wouldn't be a usable default within the this assembly and this property will be removed in the very near future.")]
+		private MidiAccessManager ()
+		{
+			// We need this only for that we want to use partial method!
+		}
+
 		public static IMidiAccess Default { get; private set; }
 		public static IMidiAccess Empty { get; internal set; }
+
+		partial void InitializeDefault ();
 	}
 
 	public interface IMidiAccess

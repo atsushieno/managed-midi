@@ -7,6 +7,17 @@ using Android.Content;
 using Android.Media.Midi;
 using Android.Runtime;
 
+namespace Commons.Music.Midi
+{
+	public partial class MidiAccessManager
+	{
+		partial void InitializeDefault ()
+		{
+			Default = new AndroidExtensions.AndroidMidiAccess (Android.App.Application.Context);
+		}
+	}
+}
+
 namespace Commons.Music.Midi.AndroidExtensions
 {
 	public class AndroidMidiAccess : IMidiAccess
