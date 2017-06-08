@@ -173,44 +173,44 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 			int end = offset + length;
 			for (int i = offset; i < end;) {
 				switch (mevent [i] & 0xF0) {
-				case SmfEvent.NoteOn:
+				case MidiEvent.NoteOn:
 					if (i + 3 < end)
 						yield return new MidiNoteOnMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1], mevent [i + 2]);
 					break;
-				case SmfEvent.NoteOff:
+				case MidiEvent.NoteOff:
 					if (i + 3 < end)
 						yield return new MidiNoteOffMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1], mevent [i + 2]);
 					break;
-				case SmfEvent.PAf:
+				case MidiEvent.PAf:
 					if (i + 3 < end)
 						yield return new MidiPolyphonicKeyPressureMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1], mevent [i + 2]);
 					break;
-				case SmfEvent.CC:
+				case MidiEvent.CC:
 					if (i + 3 < end)
 						yield return new MidiControlChangeMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1], mevent [i + 2]);
 					break;
-				case SmfEvent.Program:
+				case MidiEvent.Program:
 					if (i + 2 < end)
 						yield return new MidiProgramChangeMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1]);
 					break;
-				case SmfEvent.CAf:
+				case MidiEvent.CAf:
 					if (i + 2 < end)
 						yield return new MidiChannelPressureMessage ((byte)(mevent [i] & 0x7F), mevent [i + 1]);
 					break;
-				case SmfEvent.Pitch:
+				case MidiEvent.Pitch:
 					if (i + 3 < end)
 						yield return new MidiPitchBendChangeMessage ((byte)(mevent [i] & 0x7F), (ushort)((mevent [i + 1] << 13) + mevent [i + 2]));
 					break;
-				case SmfEvent.SysEx1:
-					int pos = Array.IndexOf (mevent, SmfEvent.EndSysEx, i, length - i);
+				case MidiEvent.SysEx1:
+					int pos = Array.IndexOf (mevent, MidiEvent.EndSysEx, i, length - i);
 					if (pos >= 0)
 						yield return new MidiSystemExclusiveMessage (new Buffer (mevent, i, pos - i));
 					break;
 				default:
 					throw new NotSupportedException ($"MIDI message byte '{mevent [i].ToString ("X02")}' is not supported.");
 				}
-				if (mevent [i] != SmfEvent.SysEx1)
-					i += SmfEvent.FixedDataSize (mevent [i]);
+				if (mevent [i] != MidiEvent.SysEx1)
+					i += MidiEvent.FixedDataSize (mevent [i]);
 			}
 		}
 	}
