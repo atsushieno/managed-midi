@@ -42,6 +42,10 @@
       <Project>{8D8311AF-0FC7-4BBF-842B-79CC0313FAAE}</Project>
       <Name>Commons.Music.Midi.CoreMidi</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Commons.Music.Midi.Uwp\Commons.Music.Midi.Uwp.csproj">
+      <Project>{DDAD7F20-40BE-446C-BED1-E770DD7A0503}</Project>
+      <Name>Commons.Music.Midi.Uwp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Commons.Music.Midi.Android\Commons.Music.Midi.Android.csproj">
       <Project>{8C6AF32A-3692-43B3-A907-9395564DB067}</Project>
       <Name>Commons.Music.Midi.Android</Name>
@@ -52,6 +56,11 @@
       <Version>0.1.283</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
   <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets')" />
