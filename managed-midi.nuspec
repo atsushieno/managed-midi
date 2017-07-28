@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.0.0.0</version>
+    <version>1.0.0.1</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
@@ -26,6 +26,10 @@
     <file src="Commons.Music.Midi.Desktop/bin/Debug/rtmidi.dll" target="lib/net46" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.dll" target="lib/MonoAndroid" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.pdb" target="lib/MonoAndroid" />
+    <file src="Commons.Music.Midi.iOS/bin/Debug/Commons.Music.Midi.dll" target="lib/XamariniOS" />
+    <file src="Commons.Music.Midi.iOS/bin/Debug/Commons.Music.Midi.pdb" target="lib/XamariniOS" />
+    <file src="Commons.Music.Midi.XamMac/bin/Debug/Commons.Music.Midi.dll" target="lib/XamarinMac" />
+    <file src="Commons.Music.Midi.XamMac/bin/Debug/Commons.Music.Midi.pdb" target="lib/XamarinMac" />
   </files>
 </package>
 

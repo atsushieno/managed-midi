@@ -24,9 +24,9 @@ The entire API is subject to change. Historically there has been a lot of breaki
 
 ## The library structure
 
-The current version of managed-midi is designed to be packaged as a NuGet library using NuGetizer 3000: https://github.com/NuGet/NuGet.Build.Packaging
+<del>The current version of managed-midi is designed to be packaged as a NuGet library using NuGetizer 3000: https://github.com/NuGet/NuGet.Build.Packaging</del>I cannot build both CoreMidi (XamMac) and UWP at the same time, so it will be packaged manually.
 
-However there is no reference assembly; the PCL package is part of the package, which contains *no* raw MIDI API access implementation. It can still be used to implement platform-specific API.
+However there is no reference assembly; the PCL package is part of the package, which contains *no* raw MIDI API access implementation. It can still be used to implement platform-specific API on top of it.
 
 While there is PCL version, there is a shared library version of the most of the common API and data set. PCL version is just a project that wraps around it. Other assembllies such as Desktop, CoreMidi, Android and UWP versions use this shared project.
 
