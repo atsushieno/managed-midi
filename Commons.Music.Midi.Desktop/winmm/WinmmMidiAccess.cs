@@ -178,7 +178,7 @@ namespace Commons.Music.Midi.WinMM
                             sysex.Data = (IntPtr) ptr;
                             sysex.BufferLength = evt.Data.Length;
                             sysex.Flags = 0;
-                            WinMMNatives.midiOutPrepareHeader (handle, ref sysex, (uint) Marshal.SizeOf<MidiHdr> ());
+                            WinMMNatives.midiOutPrepareHeader (handle, ref sysex, (uint) Marshal.SizeOf (typeof (MidiHdr)));
                             WinMMNatives.midiOutLongMsg (handle, ref sysex, evt.Data.Length);
                         }
                     }

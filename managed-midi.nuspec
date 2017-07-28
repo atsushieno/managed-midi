@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
@@ -19,11 +19,11 @@
   <files>
     <file src="README.md" target="README.md" />
     <file src="LICENSE" target="LICENSE" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.dll" target="lib/net46" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.pdb" target="lib/net46" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.so" target="lib/net46" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.dylib" target="lib/net46" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/rtmidi.dll" target="lib/net46" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.dll" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.pdb" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.so" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.dylib" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/rtmidi.dll" target="lib/net45" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.dll" target="lib/MonoAndroid" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.pdb" target="lib/MonoAndroid" />
     <file src="Commons.Music.Midi.iOS/bin/Debug/Commons.Music.Midi.dll" target="lib/XamariniOS" />
