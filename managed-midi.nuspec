@@ -7,8 +7,8 @@
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
     <projectUrl>https://github.com/atsushieno/managed-midi</projectUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <title>managed-midi</title>
+    <summary>Cross-platform MIDI access API for Mono and .NET</summary>
     <description>Cross-platform MIDI access API for Mono and .NET</description>
     <releaseNotes>See github commit logs, there isn't a lot of commits.</releaseNotes>
     <copyright>(C) 2010-2017, Atsushi Eno</copyright> 
