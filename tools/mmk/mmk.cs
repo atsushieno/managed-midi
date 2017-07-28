@@ -65,7 +65,7 @@ namespace Commons.Music.Midi
 
 		void SetupMidiDevices ()
 		{
-			access = new PortMidi.PortMidiAccess ();
+			access = MidiAccessManager.Default;
 			
 			Application.ApplicationExit += delegate {
 				if (output != null)
