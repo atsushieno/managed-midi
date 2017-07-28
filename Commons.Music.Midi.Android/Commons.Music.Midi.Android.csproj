@@ -7,8 +7,8 @@
     <ProjectGuid>{8C6AF32A-3692-43B3-A907-9395564DB067}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>Commons.Music.Midi.Android</RootNamespace>
-    <AssemblyName>Commons.Music.Midi.Android</AssemblyName>
+    <RootNamespace>Commons.Music.Midi</RootNamespace>
+    <AssemblyName>Commons.Music.Midi</AssemblyName>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>

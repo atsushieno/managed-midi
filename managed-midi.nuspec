@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>managed-midi</id>
+    <version>1.0.0.0</version>
+    <authors>Atsushi Eno</authors>
+    <owners>Atsushi Eno</owners>
+    <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/atsushieno/managed-midi</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <title>managed-midi</title>
+    <description>Cross-platform MIDI access API for Mono and .NET</description>
+    <releaseNotes>See github commit logs, there isn't a lot of commits.</releaseNotes>
+    <copyright>(C) 2010-2017, Atsushi Eno</copyright> 
+    <tags>midi mono</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="README.md" target="README.md" />
+    <file src="LICENSE" target="LICENSE" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.dll" target="lib/net46" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.pdb" target="lib/net46" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.so" target="lib/net46" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.dylib" target="lib/net46" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/rtmidi.dll" target="lib/net46" />
+    <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.dll" target="lib/MonoAndroid" />
+    <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.pdb" target="lib/MonoAndroid" />
+  </files>
+</package>
+
