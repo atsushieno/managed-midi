@@ -23,7 +23,6 @@
     <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.pdb" target="lib/net45" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.so" target="lib/net45" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.dylib" target="lib/net45" />
-    <file src="Commons.Music.Midi.Desktop/bin/Debug/rtmidi.dll" target="lib/net45" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.dll" target="lib/MonoAndroid" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.pdb" target="lib/MonoAndroid" />
     <file src="Commons.Music.Midi.iOS/bin/Debug/Commons.Music.Midi.dll" target="lib/XamariniOS" />
