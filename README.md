@@ -138,7 +138,7 @@ player.Dispose();
 
 ### The library structure
 
-<del>The current version of managed-midi is designed to be packaged as a NuGet library using NuGetizer 3000: https://github.com/NuGet/NuGet.Build.Packaging<del>I cannot build both CoreMidi (XamMac) and UWP at the same time, so it will be packaged manually.
+<del>The current version of managed-midi is designed to be packaged as a NuGet library using NuGetizer 3000: https://github.com/NuGet/NuGet.Build.Packaging</del>I cannot build both CoreMidi (XamMac) and UWP at the same time, so it will be packaged manually.
 
 There is no reference assembly; the PCL package is part of the package, which contains *no* raw MIDI API access implementation. It can still be used to implement platform-specific API on top of it.
 
