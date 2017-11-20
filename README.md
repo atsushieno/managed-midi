@@ -101,36 +101,38 @@ When trying them below, C# shell is useful: `csharp -r Commons.Music.Midi.Deskto
 
 Make sure that you have active and audible (i.e. non-thru) MIDI output device.
 
-  using Commons.Music.Midi;
+```csharp
+using Commons.Music.Midi;
 
-  var access = MidiAccessManager.Default;
-  var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
-  output.SendAsync(new byte [] {0xC0, 0x0}, 0, 2, 0); // Piano
-  output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
-  output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
-  output.SendAsync(new byte [] {0xC0, 0x30}, 3, 2, 0); // Strings Ensemble
-  output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
-  output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
-  output.CloseAsync();
+var access = MidiAccessManager.Default;
+var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
+output.SendAsync(new byte [] {0xC0, 0x0}, 0, 2, 0); // Piano
+output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
+output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
+output.SendAsync(new byte [] {0xC0, 0x30}, 3, 2, 0); // Strings Ensemble
+output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
+output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
+output.CloseAsync();
+```
 
 ### Play MIDI song file (SMF), detecting specific events
 
-  using Commons.Music.Midi;
+```csharp
+using Commons.Music.Midi;
 
-  var access = MidiAccessManager.Default;
-  var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
-  var music = MidiMusic.Read(System.IO.File.OpenRead("mysong.mid"));
-  var player = new MidiPlayer(music, output);
-  player.EventReceived += (MidiEvent e) => {
-    if (e.EventType == MidiEvent.Program)
-      Console.WriteLine ($"Program changed: Channel:{e.Channel} Instrument:{e.Msb}");
-    };
-  player.PlayAsync();
-  Console.WriteLine("Type [CR] to stop.");
-  Console.ReadLine();
-  player.Dispose();
-
-
+var access = MidiAccessManager.Default;
+var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
+var music = MidiMusic.Read(System.IO.File.OpenRead("mysong.mid"));
+var player = new MidiPlayer(music, output);
+player.EventReceived += (MidiEvent e) => {
+  if (e.EventType == MidiEvent.Program)
+    Console.WriteLine ($"Program changed: Channel:{e.Channel} Instrument:{e.Msb}");
+  };
+player.PlayAsync();
+Console.WriteLine("Type [CR] to stop.");
+Console.ReadLine();
+player.Dispose();
+```
 
 ## HACKING
 
