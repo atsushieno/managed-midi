@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.0.0.4</version>
+    <version>1.1.0.0</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
@@ -11,8 +11,8 @@
     <summary>Cross-platform MIDI access API for Mono and .NET</summary>
     <description>Cross-platform MIDI access API for Mono and .NET</description>
     <releaseNotes>See github commit logs, there isn't a lot of commits.</releaseNotes>
-    <copyright>(C) 2010-2017, Atsushi Eno</copyright> 
-    <tags>midi mono</tags>
+    <copyright>(C) 2010-2018, Atsushi Eno</copyright> 
+    <tags>midi mono linux alsa winmm audio</tags>
     <dependencies>
     </dependencies>
   </metadata>
@@ -21,6 +21,8 @@
     <file src="LICENSE" target="LICENSE" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.dll" target="lib/net45" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/Commons.Music.Midi.pdb" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/alsa-sharp.dll" target="lib/net45" />
+    <file src="Commons.Music.Midi.Desktop/bin/Debug/alsa-sharp.pdb" target="lib/net45" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.so" target="lib/net45" />
     <file src="Commons.Music.Midi.Desktop/bin/Debug/librtmidi.dylib" target="lib/net45" />
     <file src="Commons.Music.Midi.Android/bin/Debug/Commons.Music.Midi.dll" target="lib/MonoAndroid" />
