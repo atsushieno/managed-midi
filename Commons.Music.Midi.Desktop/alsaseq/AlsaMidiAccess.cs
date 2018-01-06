@@ -140,7 +140,8 @@ namespace Commons.Music.Midi.Alsa {
 
 		public Task CloseAsync ()
 		{
-			throw new NotImplementedException ();
+			Dispose ();
+			return Task.FromResult (string.Empty);
 		}
 
 		public void Dispose ()
@@ -171,7 +172,8 @@ namespace Commons.Music.Midi.Alsa {
 
 		public Task CloseAsync ()
 		{
-			throw new NotImplementedException ();
+			Dispose ();
+			return Task.FromResult (string.Empty);
 		}
 
 		public void Dispose ()
