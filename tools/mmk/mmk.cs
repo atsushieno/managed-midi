@@ -123,7 +123,7 @@ namespace Commons.Music.Midi
 				output = null;
 			}
 			output = access.OpenOutputAsync (deviceId).Result;
-			output.SendAsync (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0, 0);
+			output.Send (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0, 0);
 
 			SetupBankSelector (deviceId);
 		}
@@ -141,9 +141,9 @@ namespace Commons.Music.Midi
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
 						mi.Select += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
-							output.SendAsync (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
-							output.SendAsync (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
-							output.SendAsync (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}
@@ -185,7 +185,7 @@ namespace Commons.Music.Midi
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
 				mi.Select += delegate {
-					output.SendAsync (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0, 0);
+					output.Send (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}
@@ -359,7 +359,7 @@ namespace Commons.Music.Midi
 				note = (octave + (low ? 0 : 1)) * 12 - 4 + transpose + nid;
 
 			if (0 <= note && note <= 128)
-				output.SendAsync (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0, 0);
+				output.Send (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0, 0);
 		}
 
 		class KeyMap

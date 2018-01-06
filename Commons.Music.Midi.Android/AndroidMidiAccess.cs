@@ -240,11 +240,9 @@ namespace Commons.Music.Midi.AndroidExtensions
 			this.port = port;
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
-			// We could return Task.Run (), but it is stupid to create a Task instance for that on every call to this method.
 			port.Send (mevent, offset, length, timestamp);
-			return Task.FromResult (string.Empty);
 		}
 	}
 }

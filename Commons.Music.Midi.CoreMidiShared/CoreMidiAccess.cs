@@ -175,7 +175,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		}
 
 		MidiPacket[] arr = new MidiPacket[1];
-		public Task SendAsync(byte[] mevent, int offset, int length, long timestamp)
+		public void Send (byte[] mevent, int offset, int length, long timestamp)
 		{
 			unsafe {
 				fixed (byte* ptr = mevent) {
@@ -183,7 +183,6 @@ namespace Commons.Music.Midi.CoreMidiApi
 					port.Send (details.Endpoint, arr);
 				}
 			}
-			return Task.CompletedTask;
 		}
 	}
 }

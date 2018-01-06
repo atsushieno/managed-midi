@@ -156,28 +156,24 @@ namespace Commons.Music.Midi.WinMM
 			CloseAsync ().RunSynchronously ();
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			foreach (var evt in MidiEvent.Convert (mevent, offset, length)) {
-                if (evt.StatusByte < 0xF0)
-                    WinMMNatives.midiOutShortMsg(handle, (uint)(evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16)));
-                else
-                {
-                    MidiHdr sysex = default (MidiHdr);
-                    unsafe
-                    {
-                        fixed (void* ptr = evt.Data)
-                        {
-                            sysex.Data = (IntPtr) ptr;
-                            sysex.BufferLength = evt.Data.Length;
-                            sysex.Flags = 0;
-                            WinMMNatives.midiOutPrepareHeader (handle, ref sysex, (uint) Marshal.SizeOf (typeof (MidiHdr)));
-                            WinMMNatives.midiOutLongMsg (handle, ref sysex, evt.Data.Length);
-                        }
-                    }
-                }
+				if (evt.StatusByte < 0xF0)
+					WinMMNatives.midiOutShortMsg (handle, (uint)(evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16)));
+				else {
+					MidiHdr sysex = default (MidiHdr);
+					unsafe {
+						fixed (void* ptr = evt.Data) {
+							sysex.Data = (IntPtr)ptr;
+							sysex.BufferLength = evt.Data.Length;
+							sysex.Flags = 0;
+							WinMMNatives.midiOutPrepareHeader (handle, ref sysex, (uint)Marshal.SizeOf (typeof (MidiHdr)));
+							WinMMNatives.midiOutLongMsg (handle, ref sysex, evt.Data.Length);
+						}
+					}
+				}
 			}
-			return Task.FromResult<int> (0);
 		}
 	}
 }

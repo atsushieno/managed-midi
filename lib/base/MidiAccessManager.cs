@@ -69,7 +69,7 @@ namespace Commons.Music.Midi
 
 	public interface IMidiOutput : IMidiPort, IDisposable
 	{
-		Task SendAsync (byte [] mevent, int offset, int length, long timestamp);
+		void Send (byte [] mevent, int offset, int length, long timestamp);
 	}
 
 	public class MidiReceivedEventArgs : EventArgs
@@ -104,8 +104,10 @@ namespace Commons.Music.Midi
 			return Task.FromResult<IMidiOutput> (EmptyMidiOutput.Instance);
 		}
 
+		#pragma warning disable 0067
 		// it will never be fired.
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
+		#pragma warning restore 0067
 	}
 
 	abstract class EmptyMidiPort : IMidiPort
@@ -156,8 +158,10 @@ namespace Commons.Music.Midi
 
 		public static EmptyMidiInput Instance { get; private set; }
 
+		#pragma warning disable 0067
 		// will never be fired.
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
+		#pragma warning restore 0067
 
 		internal override IMidiPortDetails CreateDetails ()
 		{
@@ -176,10 +180,9 @@ namespace Commons.Music.Midi
 
 		public static EmptyMidiOutput Instance { get; private set; }
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			// do nothing.
-			return completed_task;
 		}
 
 		internal override IMidiPortDetails CreateDetails ()

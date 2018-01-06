@@ -264,7 +264,7 @@ namespace Commons.Music.Midi
 						buffer = new byte [buffer.Length * 2];
 					buffer [0] = m.StatusByte;
 					Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
-					output.SendAsync (buffer, 0, m.Data.Length + 1, 0);
+					output.Send (buffer, 0, m.Data.Length + 1, 0);
 					break;
 				case MidiEvent.Meta:
 					// do nothing.
@@ -274,7 +274,7 @@ namespace Commons.Music.Midi
 					buffer [0] = m.StatusByte;
 					buffer [1] = m.Msb;
 					buffer [2] = m.Lsb;
-					output.SendAsync (buffer, 0, size + 1, 0);
+					output.Send (buffer, 0, size + 1, 0);
 					break;
 				}
 			};

@@ -140,12 +140,12 @@ namespace Commons.Music.Midi.PortMidi
 			return completed_task;
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			if (mevent == null)
 				throw new ArgumentNullException ("mevent");
 			if (mevent.Length == 0)
-				return completed_task; // do nothing
+				return; // do nothing
 			var events = PortMidiStream.Convert (mevent, 0, length);
 			if (events.Any ()) {
 				var first = events.First ();
@@ -154,7 +154,6 @@ namespace Commons.Music.Midi.PortMidi
 				foreach (var evt in events.Skip (1))
 					impl.Write (evt);
 			}
-			return completed_task;
 		}
 	}
 }

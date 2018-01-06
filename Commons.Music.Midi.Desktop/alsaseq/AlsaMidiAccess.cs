@@ -185,10 +185,9 @@ namespace Commons.Music.Midi.Alsa {
 			seq.DeleteSimplePort (port.PortInfo.Port);
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			seq.Send (port.PortInfo.Port, mevent, offset, length);
-			return Task.FromResult ("done");
 		}
 	}
 }

@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.XamMacFu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alsa-sharp", "external\alsa-sharp\alsa-sharp\alsa-sharp.csproj", "{D8537EB3-C573-43D6-914A-455D6AC5AA11}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.UwpShared", "Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.shproj", "{222D4115-A616-45E4-82BC-AC0BC62113C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

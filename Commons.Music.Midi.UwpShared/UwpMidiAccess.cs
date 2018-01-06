@@ -6,10 +6,8 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Midi;
 using Windows.Storage.Streams;
 
-namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
-{
-	public class UwpMidiAccess : IMidiAccess
-	{
+namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
+	public class UwpMidiAccess : IMidiAccess {
 		public UwpMidiAccess ()
 		{
 		}
@@ -17,7 +15,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		public async Task<IEnumerable<IMidiPortDetails>> GetInputsAsync ()
 		{
 			return DeviceInformation.FindAllAsync (MidiInPort.GetDeviceSelector ())
-				                .GetResults ().Select (i => new UwpMidiPortDetails (i));
+						.GetResults ().Select (i => new UwpMidiPortDetails (i));
 		}
 
 		public async Task<IEnumerable<IMidiPortDetails>> GetOutputsAsync ()
@@ -53,8 +51,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		}
 	}
 
-	public class UwpMidiPortDetails : IMidiPortDetails
-	{
+	public class UwpMidiPortDetails : IMidiPortDetails {
 		private DeviceInformation i;
 
 		public UwpMidiPortDetails (DeviceInformation i)
@@ -73,8 +70,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		public string Version => throw new NotImplementedException ();
 	}
 
-	public class UwpMidiInput : IMidiInput
-	{
+	public class UwpMidiInput : IMidiInput {
 		internal UwpMidiInput (MidiInPort input, UwpMidiPortDetails details)
 		{
 			this.input = input;
@@ -94,7 +90,6 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		{
 			Connection = MidiPortConnectionState.Pending;
 			await Task.Run (() => {
-				input.Close ();
 				input.Dispose ();
 				Connection = MidiPortConnectionState.Closed;
 			});
@@ -106,16 +101,15 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		}
 	}
 
-	public class UwpMidiOutput : IMidiOutput
-	{
-		internal UwpMidiOutput (MidiOutPort output, UwpMidiPortDetails details)
+	public class UwpMidiOutput : IMidiOutput {
+		internal UwpMidiOutput (IMidiOutPort output, UwpMidiPortDetails details)
 		{
 			this.output = output;
 			Details = details;
 			Connection = MidiPortConnectionState.Open;
 		}
 
-		MidiOutPort output;
+		IMidiOutPort output;
 
 		public IMidiPortDetails Details { get; private set; }
 
@@ -125,8 +119,9 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 		{
 			Connection = MidiPortConnectionState.Pending;
 			await Task.Run (() => {
-				output.Close ();
-				output.Dispose ();
+				var d = output as IDisposable;
+				if (d != null)
+					d.Dispose ();
 				Connection = MidiPortConnectionState.Closed;
 			});
 		}
@@ -136,16 +131,14 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 			CloseAsync ().RunSynchronously ();
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			var events = Convert (mevent, offset, length, timestamp);
 			foreach (var e in events)
 				output.SendMessage (e);
-			return Task.CompletedTask;
 		}
 
-		struct Buffer : IBuffer
-		{
+		struct Buffer : IBuffer {
 			byte [] array;
 			uint offset;
 			uint length;
@@ -153,8 +146,8 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 			public Buffer (byte [] array, int offset, int length)
 			{
 				this.array = array;
-				this.offset = (uint) offset;
-				this.length = (uint) length;
+				this.offset = (uint)offset;
+				this.length = (uint)length;
 			}
 
 			public uint Capacity => length;

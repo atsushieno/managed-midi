@@ -138,16 +138,15 @@ namespace Commons.Music.Midi.RtMidi
 			return completed_task;
 		}
 
-		public Task SendAsync (byte [] mevent, int offset, int length, long timestamp)
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			if (timestamp > 0)
 				throw new InvalidOperationException ("non-zero timestamp is not supported");
 			if (mevent == null)
 				throw new ArgumentNullException ("mevent");
 			if (mevent.Length == 0)
-				return completed_task; // do nothing
+				return; // do nothing
 			impl.SendMessage (mevent, length);
-			return completed_task;
 		}
 	}
 }
