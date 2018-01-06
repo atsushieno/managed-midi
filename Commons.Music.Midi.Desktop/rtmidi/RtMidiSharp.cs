@@ -36,7 +36,7 @@ namespace Commons.Music.Midi.RtMidi
 		ThreadError,
 	}
 
-	public delegate void RtMidiCallback (double timestamp,string message,IntPtr userData);
+	public unsafe delegate void RtMidiCCallback (double timestamp, byte* message, long size, IntPtr userData);
 
 	public static class RtMidi
 	{
@@ -83,7 +83,7 @@ namespace Commons.Music.Midi.RtMidi
 		static extern internal RtMidiApi rtmidi_in_get_current_api (RtMidiPtr device);
 
 		[DllImport (RtMidiLibrary, CallingConvention = CallingConvention.Cdecl)]
-		static extern internal void rtmidi_in_set_callback (RtMidiInPtr device, RtMidiCallback callback, IntPtr userData);
+		static extern internal void rtmidi_in_set_callback (RtMidiInPtr device, RtMidiCCallback callback, IntPtr userData);
 
 		[DllImport (RtMidiLibrary, CallingConvention = CallingConvention.Cdecl)]
 		static extern internal void rtmidi_in_cancel_callback (RtMidiInPtr device);
@@ -239,7 +239,7 @@ namespace Commons.Music.Midi.RtMidi
 			RtMidi.rtmidi_in_free (Handle);
 		}
 
-		public void SetCallback (RtMidiCallback callback, IntPtr userData)
+		public void SetCallback (RtMidiCCallback callback, IntPtr userData)
 		{
 			RtMidi.rtmidi_in_set_callback (Handle, callback, userData);
 		}

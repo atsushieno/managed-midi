@@ -98,10 +98,15 @@ namespace Commons.Music.Midi.RtMidi
 			return completed_task;
 		}
 
-		public override Task OpenAsync ()
+		public unsafe override Task OpenAsync ()
 		{
 			Connection = MidiPortConnectionState.Pending;
-			impl = MidiDeviceManager.OpenInput (((RtMidiPortDetails) Details).RawId);
+			impl = MidiDeviceManager.OpenInput (((RtMidiPortDetails)Details).RawId);
+			impl.SetCallback ((timestamp, message, size, userData) => {
+				var bytes = new byte [size];
+				System.Runtime.InteropServices.Marshal.Copy ((IntPtr) message, bytes, 0, (int) size);
+				MessageReceived (this, new MidiReceivedEventArgs { Data = bytes, Timestamp = (long) timestamp });
+			}, IntPtr.Zero);
 			Connection = MidiPortConnectionState.Open;
 			return completed_task;
 		}
