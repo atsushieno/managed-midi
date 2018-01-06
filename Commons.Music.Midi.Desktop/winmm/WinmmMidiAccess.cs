@@ -106,12 +106,9 @@ namespace Commons.Music.Midi.WinMM
 
 		public IMidiPortDetails Details { get; private set; }
 
-		public MidiPortDeviceState State => throw new NotImplementedException();
-
 		public MidiPortConnectionState Connection { get; private set; }
 
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
-		public event EventHandler StateChanged;
 
 		public Task CloseAsync()
 		{
@@ -142,11 +139,7 @@ namespace Commons.Music.Midi.WinMM
 
 		public IMidiPortDetails Details { get; private set; }
 
-		public MidiPortDeviceState State => throw new NotImplementedException();
-
 		public MidiPortConnectionState Connection { get; private set; }
-
-		public event EventHandler StateChanged;
 
 		public Task CloseAsync()
 		{

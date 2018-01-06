@@ -48,12 +48,6 @@ namespace Commons.Music.Midi
 		string Version { get; }
 	}
 
-	public enum MidiPortDeviceState
-	{
-		Disconnected,
-		Connected
-	}
-
 	public enum MidiPortConnectionState
 	{
 		Open,
@@ -64,9 +58,7 @@ namespace Commons.Music.Midi
 	public interface IMidiPort
 	{
 		IMidiPortDetails Details { get; }
-		MidiPortDeviceState State { get; }
 		MidiPortConnectionState Connection { get; }
-		event EventHandler StateChanged;
 		Task CloseAsync ();
 	}
 
@@ -126,11 +118,7 @@ namespace Commons.Music.Midi
 		}
 		internal abstract IMidiPortDetails CreateDetails ();
 
-		public MidiPortDeviceState State { get; private set; }
 		public MidiPortConnectionState Connection { get; private set; }
-
-		// will never be fired.
-		public event EventHandler StateChanged;
 
 		public Task CloseAsync ()
 		{

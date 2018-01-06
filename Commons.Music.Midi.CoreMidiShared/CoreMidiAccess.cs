@@ -114,12 +114,9 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public IMidiPortDetails Details => details;
 
-		public MidiPortDeviceState State => throw new NotImplementedException();
-
 		public MidiPortConnectionState Connection => throw new NotImplementedException();
 
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
-		public event EventHandler StateChanged;
 
 		byte[] dispatch_bytes = new byte[100];
 
@@ -163,11 +160,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public IMidiPortDetails Details => details;
 
-		public MidiPortDeviceState State => throw new NotImplementedException();
-
 		public MidiPortConnectionState Connection => throw new NotImplementedException();
-
-		public event EventHandler StateChanged;
 
 		public Task CloseAsync()
 		{

@@ -53,27 +53,9 @@ Basically, these features with raw MIDI access implementation makes up this mana
 
 ## MIDI Access API implementations
 
-### RtMidiSharp
+### ALSA
 
-RtMidi is a cross-platform C and C++ library for raw MIDI access: https://github.com/thestk/rtmidi
-
-managed-midi supports rtmidi through a component called RtMidiSharp (and wrapper around our own common API called RtMidiAccess).
-
-Having said that, Windows build is known to work only on 32bit environment.
-It is most likely because of the native dependencies (portmidi or rtmidi).
-Any contribution to get it working on 64bit Windows environment is welcome.
-
-And for OSX and Linux only 64bit binaries are included.
-
-(It used to be provided by a fork of rtmidi called rtmidi-c (https://github.com/atsushieno/rtmidi-c) but it is now merged to the upstream.)
-
-### PortMidiSharp
-
-PortMidi is another cross-platform C library for raw MIDI access: http://portmedia.sourceforge.net/
-
-There are some binaries included, but we're not sure if it still works (it was built many years ago with old platforms). You are encouraged to build and provide your own version.
-
-It was actually the first MIDI API that managed-midi supported and almost untouched since then (except that we offer the common API called PortMidiAccess).
+This is the primary Linux MIDI support and the actual ALSA implementation is done by [alsa-sharp](https://github.com/atsushieno/alsa-sharp) project.
 
 ### WinMM
 
@@ -87,8 +69,29 @@ We needed this to create Xwt-based projects which depend on WPF.
 
 ### CoreMidiApi
 
-(Totally untested. We need some MIDI devices that work fine on our Mac environment.)
+Almost untested. We need some MIDI devices that work fine on our Mac environment.
 
+### RtMidiSharp
+
+RtMidi is a cross-platform C and C++ library for raw MIDI access: https://github.com/thestk/rtmidi
+
+managed-midi supports rtmidi through a component called RtMidiSharp (and wrapper around our own common API called RtMidiAccess).
+
+Having said that, managed-midi for Windows is only known to work on 32bit environment.
+It is most likely because of the native dependencies (portmidi or rtmidi).
+Any contribution to get it working on 64bit Windows environment is welcome.
+
+For OSX and Linux only 64bit binaries are included.
+
+(It used to be provided by a fork of rtmidi called rtmidi-c (https://github.com/atsushieno/rtmidi-c) but it is now merged to the upstream.)
+
+### PortMidiSharp
+
+PortMidi is another cross-platform C library for raw MIDI access: http://portmedia.sourceforge.net/
+
+There are some binaries included, but we're not sure if it still works (it was built many years ago with old platforms). You are encouraged to build and provide your own version.
+
+It was actually the first MIDI API that managed-midi supported and almost untouched since then (except that we offer the common API called PortMidiAccess).
 
 
 ## Quick Examples

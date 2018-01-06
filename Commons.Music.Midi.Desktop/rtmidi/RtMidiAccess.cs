@@ -63,14 +63,10 @@ namespace Commons.Music.Midi.RtMidi
 				throw new ArgumentNullException ("portDetails");
 			Details = portDetails;
 			Connection = MidiPortConnectionState.Closed;
-			State = MidiPortDeviceState.Connected; // there is no way to check that...
 		}
 
 		public MidiPortConnectionState Connection { get; internal set; }
 		public IMidiPortDetails Details { get; private set; }
-		public MidiPortDeviceState State { get; internal set; }
-
-		public event EventHandler StateChanged;
 
 		public abstract Task CloseAsync ();
 		public abstract Task OpenAsync ();

@@ -5,7 +5,7 @@ namespace Commons.Music.Midi
 	{
 		partial void InitializeDefault ()
 		{
-			Default = Environment.OSVersion.Platform != PlatformID.Unix ? (IMidiAccess)new WinMM.WinMMMidiAccess() : new RtMidi.RtMidiAccess();
+			Default = Environment.OSVersion.Platform != PlatformID.Unix ? (IMidiAccess)new WinMM.WinMMMidiAccess() : new Alsa.AlsaMidiAccess();
 		}
 	}
 }

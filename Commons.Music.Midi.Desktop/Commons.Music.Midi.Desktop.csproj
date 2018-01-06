@@ -58,6 +58,7 @@
     <Compile Include="winmm\WinMMNatives.cs" />
     <Compile Include="winmm\WinMMMidiPlayer.cs" />
     <Compile Include="MidiAccessManager.cs" />
+    <Compile Include="alsaseq\AlsaMidiAccess.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="librtmidi.dylib">
@@ -73,6 +74,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\external\alsa-sharp\alsa-sharp\alsa-sharp.csproj">
+      <Project>{D8537EB3-C573-43D6-914A-455D6AC5AA11}</Project>
+      <Name>alsa-sharp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

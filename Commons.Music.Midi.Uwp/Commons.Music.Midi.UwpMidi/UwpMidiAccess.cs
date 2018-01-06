@@ -86,13 +86,9 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 
 		public IMidiPortDetails Details { get; private set; }
 
-		public MidiPortDeviceState State => throw new NotImplementedException ();
-
 		public MidiPortConnectionState Connection { get; private set; }
 
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
-
-		public event EventHandler StateChanged;
 
 		public async Task CloseAsync ()
 		{
@@ -122,11 +118,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 
 		public IMidiPortDetails Details { get; private set; }
 
-		public MidiPortDeviceState State => throw new NotImplementedException ();
-
 		public MidiPortConnectionState Connection { get; private set; }
-
-		public event EventHandler StateChanged;
 
 		public async Task CloseAsync ()
 		{

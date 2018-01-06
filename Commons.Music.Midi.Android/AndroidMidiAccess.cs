@@ -173,12 +173,6 @@ namespace Commons.Music.Midi.AndroidExtensions
 			get { return details; }
 		}
 
-		public MidiPortDeviceState State {
-			get { return MidiPortDeviceState.Connected; }
-		}
-		
-		public event EventHandler StateChanged;
-
 		public Task CloseAsync ()
 		{
 			return Task.Run (() => { Close (); });
@@ -193,7 +187,6 @@ namespace Commons.Music.Midi.AndroidExtensions
 		{
 			on_close ();
 			connection = MidiPortConnectionState.Closed;
-			StateChanged (this, EventArgs.Empty);
 		}
 	}
 	
