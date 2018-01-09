@@ -106,7 +106,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Commons.Music.Midi.UwpMidi\UwpMidiAccess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Commons.Music.Midi.Uwp.rd.xml" />
   </ItemGroup>

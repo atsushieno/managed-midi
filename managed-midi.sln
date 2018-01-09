@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27205.2004
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{CBA77B3D-26A5-47D4-ABE0-0357F42C2787}"
 EndProject
@@ -37,6 +37,23 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.UwpShared", "Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.shproj", "{222D4115-A616-45E4-82BC-AC0BC62113C1}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{1f06e431-ef07-4161-8c74-5dbb80537f3e}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{1f06e431-ef07-4161-8c74-5dbb80537f3e}*SharedItemsImports = 4
+		Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.projitems*{222d4115-a616-45e4-82bc-ac0bc62113c1}*SharedItemsImports = 13
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{2a0a4aa1-d455-48b4-abd0-07217568264e}*SharedItemsImports = 4
+		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{48cf93cc-9b9d-4114-ad87-09bf4ad475dd}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{48cf93cc-9b9d-4114-ad87-09bf4ad475dd}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{59eefb0d-3957-43fc-8272-c3b460f7ff84}*SharedItemsImports = 4
+		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{6197a7ee-4469-4ffa-bc33-f180a2877580}*SharedItemsImports = 13
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{8742663d-9bb6-43d5-887d-0668e550652f}*SharedItemsImports = 13
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{8c6af32a-3692-43b3-a907-9395564db067}*SharedItemsImports = 4
+		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{9ced7e33-d8eb-43b2-a903-9e5d63b34f23}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{9ced7e33-d8eb-43b2-a903-9e5d63b34f23}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{ae949be1-6ba7-4edf-96ff-c5730eddf122}*SharedItemsImports = 4
+		Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.projitems*{ae949be1-6ba7-4edf-96ff-c5730eddf122}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{ddad7f20-40be-446c-bed1-e770dd7a0503}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -156,6 +173,9 @@ Global
 		{DF04BCD2-7A1B-40DB-AD5E-27AF300DA535} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
 		{13B39050-0AC2-431F-82E2-5502357B2E61} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
 		{E9A90B6B-89CF-4469-88F9-6E04CBDD3BE0} = {CBA77B3D-26A5-47D4-ABE0-0357F42C2787}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A67BE37D-F1D2-4C7E-B091-21C8006B0A5A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
