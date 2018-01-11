@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Midi;
 using Windows.Storage.Streams;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
 	public class UwpMidiAccess : IMidiAccess {
@@ -76,6 +77,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
 			this.input = input;
 			Details = details;
 			Connection = MidiPortConnectionState.Open;
+			input.MessageReceived += DispatchMessageReceived;
 		}
 
 		MidiInPort input;
@@ -85,6 +87,11 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
 		public MidiPortConnectionState Connection { get; private set; }
 
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
+
+		void DispatchMessageReceived (MidiInPort port, MidiMessageReceivedEventArgs args)
+		{
+			MessageReceived (this, new MidiReceivedEventArgs { Data = args.Message.RawData.ToArray (), Timestamp = (long)args.Message.Timestamp.TotalMilliseconds });
+		}
 
 		public async Task CloseAsync ()
 		{
@@ -97,6 +104,7 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
 
 		public void Dispose ()
 		{
+			input.MessageReceived -= DispatchMessageReceived;
 			CloseAsync ().RunSynchronously ();
 		}
 	}

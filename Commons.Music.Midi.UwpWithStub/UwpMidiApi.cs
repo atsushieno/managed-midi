@@ -6,6 +6,17 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 
+namespace System.Runtime.InteropServices.WindowsRuntime
+{
+	public static class SomethingIDunnoWhichClassItIs
+	{
+		public static byte [] ToArray (this IBuffer buffer)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+}
+
 namespace Windows.Devices.Enumeration
 {
 	public sealed class DeviceInformation// : IDeviceInformation, IDeviceInformation2
