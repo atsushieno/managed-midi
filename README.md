@@ -109,12 +109,12 @@ using Commons.Music.Midi;
 
 var access = MidiAccessManager.Default;
 var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
-output.SendAsync(new byte [] {0xC0, 0x0}, 0, 2, 0); // Piano
-output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
-output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
-output.SendAsync(new byte [] {0xC0, 0x30}, 3, 2, 0); // Strings Ensemble
-output.SendAsync(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
-output.SendAsync(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
+output.Send(new byte [] {0xC0, 0x0}, 0, 2, 0); // Piano
+output.Send(new byte [] {MidiEvent.NoteOn, 0x40, 0x70}, 0, 3, 0); // There are constant fields for each MIDI event
+output.Send(new byte [] {MidiEvent.NoteOff, 0x40, 0x70}, 0, 3, 0);
+output.Send(new byte [] {MidiEvent.Program, 0x30}, 0, 2, 0); // Strings Ensemble
+output.Send(new byte [] {0x90, 0x40, 0x70}, 0, 3, 0);
+output.Send(new byte [] {0x80, 0x40, 0x70}, 0, 3, 0);
 output.CloseAsync();
 ```
 
