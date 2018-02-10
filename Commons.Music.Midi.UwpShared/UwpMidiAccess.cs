@@ -90,7 +90,8 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
 
 		void DispatchMessageReceived (MidiInPort port, MidiMessageReceivedEventArgs args)
 		{
-			MessageReceived (this, new MidiReceivedEventArgs { Data = args.Message.RawData.ToArray (), Timestamp = (long)args.Message.Timestamp.TotalMilliseconds });
+			var data = args.Message.RawData.ToArray ();
+			MessageReceived (this, new MidiReceivedEventArgs { Data = data, Start = 0, Length = data.Length, Timestamp = (long)args.Message.Timestamp.TotalMilliseconds });
 		}
 
 		public async Task CloseAsync ()

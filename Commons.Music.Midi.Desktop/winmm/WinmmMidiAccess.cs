@@ -100,7 +100,7 @@ namespace Commons.Music.Midi.WinMM
 				data[1] = msb;
 				if (data.Length == 3)
 					data[2] = lsb;
-				MessageReceived(this, new MidiReceivedEventArgs() { Data = data, Timestamp = 0 });
+				MessageReceived(this, new MidiReceivedEventArgs() { Data = data, Start = 0, Length = data.Length, Timestamp = 0 });
 			}
 		}
 

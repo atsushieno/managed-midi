@@ -105,7 +105,7 @@ namespace Commons.Music.Midi.RtMidi
 			impl.SetCallback ((timestamp, message, size, userData) => {
 				var bytes = new byte [size];
 				System.Runtime.InteropServices.Marshal.Copy ((IntPtr) message, bytes, 0, (int) size);
-				MessageReceived (this, new MidiReceivedEventArgs { Data = bytes, Timestamp = (long) timestamp });
+				MessageReceived (this, new MidiReceivedEventArgs { Data = bytes, Start = 0, Length = bytes.Length, Timestamp = (long) timestamp });
 			}, IntPtr.Zero);
 			Connection = MidiPortConnectionState.Open;
 			return completed_task;

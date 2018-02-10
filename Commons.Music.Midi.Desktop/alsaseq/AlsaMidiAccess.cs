@@ -9,25 +9,17 @@ namespace Commons.Music.Midi.Alsa {
 	public class AlsaMidiAccess : IMidiAccess {
 		const AlsaPortType midi_port_type = AlsaPortType.MidiGeneric | AlsaPortType.Application;
 
-		AlsaSequencer input, output, system_announcement;
+		AlsaSequencer system_watcher;
 
 		public AlsaMidiAccess ()
 		{
-			input = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
-			input_client_id = input.CurrentClientId;
-			output = new AlsaSequencer (AlsaIOType.Output, AlsaIOMode.NonBlocking);
-			output_client_id = output.CurrentClientId;
-			system_announcement = new AlsaSequencer (AlsaIOType.Input, AlsaIOMode.NonBlocking);
+			system_watcher = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
 		}
-		int input_client_id, output_client_id;
-
-		public AlsaSequencer Input => input;
-		public AlsaSequencer Output => output;
 
 		readonly AlsaPortCapabilities input_requirements = AlsaPortCapabilities.Read | AlsaPortCapabilities.SubsRead;
 		readonly AlsaPortCapabilities output_requirements = AlsaPortCapabilities.Write | AlsaPortCapabilities.SubsWrite;
 		readonly AlsaPortCapabilities output_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
-		readonly AlsaPortCapabilities input_connected_cap = AlsaPortCapabilities.Read | AlsaPortCapabilities.NoExport;
+		readonly AlsaPortCapabilities input_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
 
 		IEnumerable<AlsaPortInfo> EnumerateMatchingPorts (AlsaSequencer seq, AlsaPortCapabilities cap)
 		{
@@ -43,38 +35,38 @@ namespace Commons.Music.Midi.Alsa {
 
 		IEnumerable<AlsaPortInfo> EnumerateAvailableInputPorts ()
 		{
-			return EnumerateMatchingPorts (input, input_requirements);
+			return EnumerateMatchingPorts (system_watcher, input_requirements);
 		}
 
 		IEnumerable<AlsaPortInfo> EnumerateAvailableOutputPorts ()
 		{
-			return EnumerateMatchingPorts (output, output_requirements);
+			return EnumerateMatchingPorts (system_watcher, output_requirements);
 		}
 
 		// [input device port] --> [RETURNED PORT] --> app handles messages
-		AlsaPortInfo CreateInputConnectedPort (AlsaPortInfo pinfo, string portName = "alsa-sharp input")
+		AlsaPortInfo CreateInputConnectedPort (AlsaSequencer seq, AlsaPortInfo pinfo, string portName = "alsa-sharp input")
 		{
-			var portId = input.CreateSimplePort (portName, input_connected_cap, midi_port_type);
+			var portId = seq.CreateSimplePort (portName, input_connected_cap, midi_port_type);
 			var sub = new AlsaPortSubscription ();
-			sub.Destination.Client = (byte)input_client_id;
+			sub.Destination.Client = (byte)seq.CurrentClientId;
 			sub.Destination.Port = (byte)portId;
 			sub.Sender.Client = (byte)pinfo.Client;
 			sub.Sender.Port = (byte)pinfo.Port;
-			input.SubscribePort (sub);
-			return input.GetPort (sub.Destination.Client, sub.Destination.Port);
+			seq.SubscribePort (sub);
+			return seq.GetPort (sub.Destination.Client, sub.Destination.Port);
 		}
 
 		// app generates messages --> [RETURNED PORT] --> [output device port]
-		AlsaPortInfo CreateOutputConnectedPort (AlsaPortInfo pinfo, string portName = "alsa-sharp output")
+		AlsaPortInfo CreateOutputConnectedPort (AlsaSequencer seq, AlsaPortInfo pinfo, string portName = "alsa-sharp output")
 		{
-			var portId = output.CreateSimplePort (portName, output_connected_cap, midi_port_type);
+			var portId = seq.CreateSimplePort (portName, output_connected_cap, midi_port_type);
 			var sub = new AlsaPortSubscription ();
-			sub.Sender.Client = (byte)output_client_id;
+			sub.Sender.Client = (byte)seq.CurrentClientId;
 			sub.Sender.Port = (byte)portId;
 			sub.Destination.Client = (byte)pinfo.Client;
 			sub.Destination.Port = (byte)pinfo.Port;
-			output.SubscribePort (sub);
-			return output.GetPort (sub.Sender.Client, sub.Sender.Port);
+			seq.SubscribePort (sub);
+			return seq.GetPort (sub.Sender.Client, sub.Sender.Port);
 		}
 
 		public IEnumerable<IMidiPortDetails> Inputs => EnumerateAvailableInputPorts ().Select (p => new AlsaMidiPortDetails (p));
@@ -88,8 +80,9 @@ namespace Commons.Music.Midi.Alsa {
 			var sourcePort = (AlsaMidiPortDetails) Inputs.FirstOrDefault (p => p.Id == portId);
 			if (sourcePort == null)
 				throw new ArgumentException ($"Port '{portId}' does not exist.");
-			var appPort = CreateInputConnectedPort (sourcePort.PortInfo, "ManagedMidiAlsaMidiInput");
-			return Task.FromResult<IMidiInput> (new AlsaMidiInput (input, new AlsaMidiPortDetails (appPort)));
+			var seq = new AlsaSequencer (AlsaIOType.Input, AlsaIOMode.NonBlocking);
+			var appPort = CreateInputConnectedPort (seq, sourcePort.PortInfo);
+			return Task.FromResult<IMidiInput> (new AlsaMidiInput (seq, new AlsaMidiPortDetails (appPort), sourcePort));
 		}
 
 		public Task<IMidiOutput> OpenOutputAsync (string portId)
@@ -97,8 +90,9 @@ namespace Commons.Music.Midi.Alsa {
 			var destPort = (AlsaMidiPortDetails) Outputs.FirstOrDefault (p => p.Id == portId);
 			if (destPort == null)
 				throw new ArgumentException ($"Port '{portId}' does not exist.");
-			var appPort = CreateOutputConnectedPort (destPort.PortInfo, "ManagedMidiAlsaMidiOutput");
-			return Task.FromResult<IMidiOutput> (new AlsaMidiOutput (output, new AlsaMidiPortDetails (appPort)));
+			var seq = new AlsaSequencer (AlsaIOType.Output, AlsaIOMode.None);
+			var appPort = CreateOutputConnectedPort (seq, destPort.PortInfo);
+			return Task.FromResult<IMidiOutput> (new AlsaMidiOutput (seq, destPort, new AlsaMidiPortDetails (appPort)));
 		}
 	}
 
@@ -126,10 +120,15 @@ namespace Commons.Music.Midi.Alsa {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port;
 
-		public AlsaMidiInput (AlsaSequencer seq, AlsaMidiPortDetails port)
+		public AlsaMidiInput (AlsaSequencer seq, AlsaMidiPortDetails appPort, AlsaMidiPortDetails sourcePort)
 		{
 			this.seq = seq;
-			this.port = port;
+			this.port = appPort;
+			byte [] buffer = new byte [0x200];
+			seq.StartListening (port.PortInfo.Port, buffer, (buf, start, len) => {
+				var args = new MidiReceivedEventArgs () { Data = buf, Start = start, Length = len, Timestamp = 0 };
+				MessageReceived (this, args);
+			});
 		}
 
 		public IMidiPortDetails Details => port;
@@ -160,10 +159,11 @@ namespace Commons.Music.Midi.Alsa {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port;
 
-		public AlsaMidiOutput (AlsaSequencer seq, AlsaMidiPortDetails port)
+		public AlsaMidiOutput (AlsaSequencer seq, AlsaMidiPortDetails appPort, AlsaMidiPortDetails targetPort)
 		{
 			this.seq = seq;
-			this.port = port;
+			this.port = appPort;
+			seq.ConnectTo (appPort.PortInfo.Port, targetPort.PortInfo.Client, targetPort.PortInfo.Port);
 		}
 
 		public IMidiPortDetails Details => port;

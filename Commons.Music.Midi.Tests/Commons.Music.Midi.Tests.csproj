@@ -36,7 +36,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmptyMidiAccessTest.cs">
+    <Compile Include="MidiAccessTest.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="MidiPlayerTest.cs" />
