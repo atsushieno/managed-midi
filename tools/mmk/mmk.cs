@@ -11,11 +11,7 @@ namespace Commons.Music.Midi
 	{
 		static readonly List<string> tone_list;
 
-#if CHROMA_TONE
-		public const bool ChromaTone = true;
-#else
-		public const bool ChromaTone = false;
-#endif
+		public bool ChromaTone = false;
 
 		IMidiAccess access;
 
@@ -41,7 +37,14 @@ namespace Commons.Music.Midi
 			this.Height = 300;
 			this.Text = "MMK: MIDI Keyboard";
 
+			ResetControls ();
+		}
+
+		void ResetControls ()
+		{
 			SetupMenus ();
+
+			Controls.Clear ();
 
 			var statusBar = new StatusBar ();
 			Controls.Add (statusBar);
@@ -86,7 +89,9 @@ namespace Commons.Music.Midi
 			var menu = new MainMenu ();
 			var file = new MenuItem ("&File");
 			menu.MenuItems.Add (file);
+			var toggleChromaTone = new MenuItem ("&Toggle ChromaTone mode", delegate { ChromaTone = !ChromaTone; ResetControls (); }, Shortcut.CtrlT);
 			var exit = new MenuItem ("&Exit", delegate { QuitApplication (); }, Shortcut.CtrlQ);
+			file.MenuItems.Add (toggleChromaTone);
 			file.MenuItems.Add (exit);
 			this.Menu = menu;
 		}
@@ -123,7 +128,7 @@ namespace Commons.Music.Midi
 				output = null;
 			}
 			output = access.OpenOutputAsync (deviceId).Result;
-			output.Send (new byte[] { (byte) (0xC0 + channel), 0, 0 }, 0, 0, 0);
+			output.Send (new byte [] { (byte) (MidiEvent.Program + channel), GeneralMidi.Instruments.AcousticGrandPiano }, 0, 2, 0);
 
 			SetupBankSelector (deviceId);
 		}
@@ -141,9 +146,9 @@ namespace Commons.Music.Midi
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
 						mi.Select += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
-							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 0, 0);
-							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 0, 0);
-							output.Send (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 0, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 3, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 3, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 3, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}
@@ -185,17 +190,15 @@ namespace Commons.Music.Midi
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
 				mi.Select += delegate {
-					output.Send (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 0, 0);
+					output.Send (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 3, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}
 		}
 
-#if CHROMA_TONE
-		static readonly string [] key_labels = {"c", "c+", "d", "d+", "e", "f", "f+", "g", "g+", "a", "a+", "b"};
-#else
-		static readonly string [] key_labels = {"c", "c+", "d", "d+", "e", "", "f", "f+", "g", "g+", "a", "a+", "b", ""};
-#endif
+		static readonly string [] key_labels_chromatone = {"c", "c+", "d", "d+", "e", "f", "f+", "g", "g+", "a", "a+", "b"};
+		static readonly string [] key_labels_default = {"c", "c+", "d", "d+", "e", "", "f", "f+", "g", "g+", "a", "a+", "b", ""};
+		string [] key_labels => ChromaTone ? key_labels_chromatone : key_labels_default;
 
 		void SetupKeyboardLayout (KeyMap map)
 		{
@@ -359,7 +362,7 @@ namespace Commons.Music.Midi
 				note = (octave + (low ? 0 : 1)) * 12 - 4 + transpose + nid;
 
 			if (0 <= note && note <= 128)
-				output.Send (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 0, 0);
+				output.Send (new byte[] { (byte) ((down ? 0x90 : 0x80) + channel), (byte) note, 100 }, 0, 3, 0);
 		}
 
 		class KeyMap
