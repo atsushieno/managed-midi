@@ -79,7 +79,12 @@ namespace Commons.Music.Midi.WinMM
 		public WinMMMidiInput(IMidiPortDetails details)
 		{
 			Details = details;
-			WinMMNatives.midiInOpen(out handle, uint.Parse(Details.Id), HandleMidiInProc, IntPtr.Zero, MidiInOpenFlags.Function);
+			int ret = WinMMNatives.midiInOpen(out handle, uint.Parse(Details.Id), HandleMidiInProc, IntPtr.Zero, MidiInOpenFlags.Function);
+			if (ret != 0)
+				throw new Win32Exception(ret);
+			ret = WinMMNatives.midiInStart(handle);
+			if (ret != 0)
+				throw new Win32Exception(ret);
 			Connection = MidiPortConnectionState.Open;
 		}
 
@@ -88,13 +93,13 @@ namespace Commons.Music.Midi.WinMM
 		byte[] data3b = new byte[3];
 
 		// How does it dispatch SYSEX mesasges...
-		void HandleMidiInProc(IntPtr midiIn, uint msg, ref int instance, ref int param1, ref int param2)
+		void HandleMidiInProc(IntPtr midiIn, uint msg, IntPtr instance, IntPtr param1, IntPtr param2)
 		{
 			if (MessageReceived != null)
 			{
-				var status = (byte)(param1 & 0xFF);
-				var msb = (byte)((param1 & 0xFF00) >> 8);
-				var lsb = (byte)((param1 & 0xFF0000) >> 16);
+				var status = (byte)((int) param1 & 0xFF);
+				var msb = (byte)(((int) param1 & 0xFF00) >> 8);
+				var lsb = (byte)(((int) param1 & 0xFF0000) >> 16);
 				var data = MidiEvent.FixedDataSize(status) == 3 ? data3b : data2b;
 				data[0] = status;
 				data[1] = msb;
@@ -115,6 +120,7 @@ namespace Commons.Music.Midi.WinMM
 			return Task.Run(() =>
 			{
 				Connection = MidiPortConnectionState.Pending;
+				WinMMNatives.midiInStop(handle);
 				WinMMNatives.midiInClose(handle);
 				Connection = MidiPortConnectionState.Closed;
 			});

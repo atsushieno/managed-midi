@@ -3,8 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace Commons.Music.Midi.WinMM
 {
-    [StructLayout (LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    struct MidiInCaps
+	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+	struct MidiInCaps
 	{
 		public short Mid;
 		public short Pid;
@@ -45,11 +45,10 @@ namespace Commons.Music.Midi.WinMM
 
 	public enum MidiInOpenFlags
 	{
-		Null,
-		Function,
-		Thread,
-		Window,
-		MidiIOStatus,
+		Null = 0,
+		Window = 0x10000,
+		Task = 0x20000,
+		Function = 0x30000,
 	}
 
 	public enum MidiOutOpenFlags
@@ -61,8 +60,8 @@ namespace Commons.Music.Midi.WinMM
 		Event,
 	}
 
-	public delegate void MidiInProc (IntPtr midiIn, uint msg, ref int instance, ref int param1, ref int param2);
-	public delegate void MidiOutProc (IntPtr midiOut, uint msg, ref int instance, ref int param1, ref int param2);
+	public delegate void MidiInProc (IntPtr midiIn, uint msg, IntPtr instance, IntPtr param1, IntPtr param2);
+	public delegate void MidiOutProc (IntPtr midiOut, uint msg, IntPtr instance, IntPtr param1, IntPtr param2);
 
 	public static class WinMMNatives
 	{
@@ -86,6 +85,12 @@ namespace Commons.Music.Midi.WinMM
 
 		[DllImport(LibraryName)]
 		internal static extern int midiOutOpen (out IntPtr midiIn, uint deviceID, MidiOutProc callback, IntPtr callbackInstance, MidiOutOpenFlags flags);
+
+		[DllImport(LibraryName)]
+		internal static extern int midiInStart (IntPtr midiIn);
+
+		[DllImport(LibraryName)]
+		internal static extern int midiInStop (IntPtr midiIn);
 
 		[DllImport(LibraryName)]
 		internal static extern int midiInClose (IntPtr midiIn);
