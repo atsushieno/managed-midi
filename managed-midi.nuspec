@@ -31,9 +31,11 @@
     <file src="Commons.Music.Midi.iOS/bin/Debug/Commons.Music.Midi.pdb" target="lib/XamariniOS" />
     <file src="Commons.Music.Midi.XamMac/bin/Debug/Commons.Music.Midi.dll" target="lib/XamarinMac" />
     <file src="Commons.Music.Midi.XamMac/bin/Debug/Commons.Music.Midi.pdb" target="lib/XamarinMac" />
+    <!--
     <file src="Commons.Music.Midi.Uwp/bin/Debug/Commons.Music.Midi.dll" target="lib/uap10.0" />
     <file src="Commons.Music.Midi.Uwp/bin/Debug/Commons.Music.Midi.pdb" target="lib/uap10.0" />
     <file src="Commons.Music.Midi.Uwp/bin/Debug/Commons.Music.Midi.pri" target="lib/uap10.0" />
+    -->
   </files>
 </package>
 
