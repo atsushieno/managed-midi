@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
+
+</Project>

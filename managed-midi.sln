@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Desktop", "Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj", "{59EEFB0D-3957-43FC-8272-C3B460F7FF84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Portable", "Commons.Music.Midi\Commons.Music.Midi.Portable.csproj", "{2A0A4AA1-D455-48B4-ABD0-07217568264E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.UwpWithStub", "Commons.Music.Midi.UwpWithStub\Commons.Music.Midi.UwpWithStub.csproj", "{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.Shared", "Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.shproj", "{8742663D-9BB6-43D5-887D-0668E550652F}"
@@ -37,6 +35,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "managed-midi-recorder", "tools\managed-midi-recorder\managed-midi-recorder.csproj", "{32173104-2069-44A7-B347-EEA6609A1E7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alsa-sharp.Tests", "external\alsa-sharp\alsa-sharp.Tests\alsa-sharp.Tests.csproj", "{CF9C9DC5-3F1A-4845-A365-7B792D52A9A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi", "Commons.Music.Midi\Commons.Music.Midi.csproj", "{7D9A799C-7724-4787-9F6D-61A76DC49F1F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -95,14 +95,6 @@ Global
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|x86.ActiveCfg = Release|Any CPU
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|x86.Build.0 = Release|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Debug|x86.Build.0 = Debug|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Release|x86.ActiveCfg = Release|Any CPU
-		{2A0A4AA1-D455-48B4-ABD0-07217568264E}.Release|x86.Build.0 = Release|Any CPU
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -175,6 +167,14 @@ Global
 		{CF9C9DC5-3F1A-4845-A365-7B792D52A9A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF9C9DC5-3F1A-4845-A365-7B792D52A9A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF9C9DC5-3F1A-4845-A365-7B792D52A9A7}.Release|x86.Build.0 = Release|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Debug|x86.Build.0 = Debug|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D9A799C-7724-4787-9F6D-61A76DC49F1F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
