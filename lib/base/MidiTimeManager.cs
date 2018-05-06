@@ -5,6 +5,7 @@ namespace Commons.Music.Midi
 {
 	public interface IMidiTimeManager
 	{
+		bool Counting { get; set; }
 		//void AdvanceByTicks (long addedTicks, int currentTempo, int smfDeltaTimeSpec, double speed = 1.0);
 		void AdvanceBy (int addedMilliseconds);
 		//void AdvanceTo (long targetMilliseconds);
@@ -22,6 +23,8 @@ namespace Commons.Music.Midi
 		}
 
 		//public virtual long TotalTicks { get; private set; }
+
+		public virtual bool Counting { get; set; }
 
 		public virtual void AdvanceBy (int addedMilliseconds)
 		{
@@ -52,10 +55,27 @@ namespace Commons.Music.Midi
 
 	public class SimpleMidiTimeManager : MidiTimeManagerBase
 	{
+		DateTime last_checked = default (DateTime);
+
+		public override bool Counting {
+			get { return base.Counting; }
+			set {
+				if (!value)
+					last_checked = default (DateTime); // reset
+				base.Counting = value;
+			}
+		}
+
 		public override void AdvanceBy (int addedMilliseconds)
 		{
-			var t = Task.Delay (addedMilliseconds);
-			t.Wait ();
+			long delta = addedMilliseconds;
+			if (last_checked != default (DateTime))
+				delta = addedMilliseconds - (DateTime.Now - last_checked).Milliseconds;
+			if (delta > 0) {
+				var t = Task.Delay ((int) delta);
+				t.Wait ();
+			}
+			last_checked = DateTime.Now;
 			base.AdvanceBy (addedMilliseconds);
 		}
 

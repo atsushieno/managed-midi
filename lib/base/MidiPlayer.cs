@@ -100,6 +100,7 @@ namespace Commons.Music.Midi
 
 		public void Play ()
 		{
+			time_manager.Counting = true;
 			pause_handle.Set ();
 			timer_resumed = DateTime.Now;
 			state = PlayerState.Playing;
@@ -119,6 +120,7 @@ namespace Commons.Music.Midi
 
 		public void Pause ()
 		{
+			time_manager.Counting = false;
 			do_pause = true;
 			playtime_delta += DateTime.Now - timer_resumed;
 			timer_resumed = DateTime.Now;
