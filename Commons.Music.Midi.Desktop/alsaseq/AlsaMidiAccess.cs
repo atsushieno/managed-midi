@@ -92,7 +92,7 @@ namespace Commons.Music.Midi.Alsa {
 				throw new ArgumentException ($"Port '{portId}' does not exist.");
 			var seq = new AlsaSequencer (AlsaIOType.Output, AlsaIOMode.None);
 			var appPort = CreateOutputConnectedPort (seq, destPort.PortInfo);
-			return Task.FromResult<IMidiOutput> (new AlsaMidiOutput (seq, destPort, new AlsaMidiPortDetails (appPort)));
+			return Task.FromResult<IMidiOutput> (new AlsaMidiOutput (seq, new AlsaMidiPortDetails (appPort), destPort));
 		}
 	}
 
@@ -163,7 +163,6 @@ namespace Commons.Music.Midi.Alsa {
 		{
 			this.seq = seq;
 			this.port = appPort;
-			seq.ConnectTo (appPort.PortInfo.Port, targetPort.PortInfo.Client, targetPort.PortInfo.Port);
 		}
 
 		public IMidiPortDetails Details => port;
