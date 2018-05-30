@@ -55,27 +55,40 @@ namespace Commons.Music.Midi
 
 	public class SimpleMidiTimeManager : MidiTimeManagerBase
 	{
-		DateTime last_checked = default (DateTime);
+		DateTime last_started = default (DateTime);
+		long nominal_total_mills = 0;
 
 		public override bool Counting {
 			get { return base.Counting; }
 			set {
 				if (!value)
-					last_checked = default (DateTime); // reset
+					ResetTimeStatus ();
 				base.Counting = value;
 			}
 		}
 
+		void ResetTimeStatus ()
+		{
+			last_started = default (DateTime); // reset
+			nominal_total_mills = 0;
+		}
+
 		public override void AdvanceBy (int addedMilliseconds)
 		{
-			long delta = addedMilliseconds;
-			if (last_checked != default (DateTime))
-				delta = addedMilliseconds - (DateTime.Now - last_checked).Milliseconds;
-			if (delta > 0) {
-				var t = Task.Delay ((int) delta);
-				t.Wait ();
+			if (addedMilliseconds > 0) {
+				long delta = addedMilliseconds;
+				if (last_started != default (DateTime)) {
+					var actualTotalMills = (long) (DateTime.Now - last_started).TotalMilliseconds;
+					delta -= actualTotalMills - nominal_total_mills;
+				} else {
+					last_started = DateTime.Now;
+				}
+				if (delta > 0) {
+					var t = Task.Delay ((int) delta);
+					t.Wait ();
+				}
+				nominal_total_mills += addedMilliseconds;
 			}
-			last_checked = DateTime.Now;
 			base.AdvanceBy (addedMilliseconds);
 		}
 
