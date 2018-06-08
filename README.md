@@ -27,6 +27,9 @@ managed-midi is truly cross-platform oriented. The true cross platform means it 
 - Check our github [issues](https://github.com/atsushieno/managed-midi/issues) for present issues.
 
 
+## API reference
+
+API metadata (assemblies, namespaces, types etc.) can be browsed at https://fuget.org/packages/managed-midi/ (thanks to fuget.org)
 
 ## Quick feature survey
 
