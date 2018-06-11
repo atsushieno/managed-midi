@@ -96,6 +96,12 @@ There are some binaries included, but we're not sure if it still works (it was b
 
 It was actually the first MIDI API that managed-midi supported and almost untouched since then (except that we offer the common API called PortMidiAccess).
 
+### Create your own MIDI Access API
+
+With IMidiAccess interface anyone can write own MIDI access implementation.
+
+For example, [nfluidsynth](https://github.com/atsushieno/nfluidsynth) is a .NET binding to `(lib)fluidsynth` and has an implementation that makes use of it.
+
 
 ## Quick Examples
 
