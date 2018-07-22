@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>Commons.Music.Midi</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj" />
+  </ItemGroup>
+  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
+  <Import Project="..\Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems')" />
+</Project>
