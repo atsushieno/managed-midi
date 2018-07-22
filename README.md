@@ -17,19 +17,24 @@ In particular, this library is used by these projects:
 
 managed-midi is truly cross-platform oriented. The true cross platform means it supports Linux, Mac, Windows classic and UWP, iOS and Android. There is no one else which actually tries to achieve that.
 
-(Mac, iOS and UWP are untested. They are just that the API implementations exist.)
+(iOS is untested. They are just that the API implementations exist. But it should be almost identical to Xamarin.Mac.)
+
+Mono, .NET Framework and .NET Core are the supported frameworks.
 
 
+## Issues
 
-## Notes
-
-- On API stability: The entire API is subject to change. Historically there has been a lot of breaking changes in very significant manner.
-- Check our github [issues](https://github.com/atsushieno/managed-midi/issues) for present issues.
+Check our github [issues](https://github.com/atsushieno/managed-midi/issues) for present issues. We appreciate your bug reports there too.
 
 
-## API reference
+## API
+
+On API stability: The entire API is still subject to change. Historically there has been a lot of breaking changes in very significant manner.
+
+We will start following semantic versioning 2.0.0 scheme at some point. For now minor version changes may result in incompatible API changes.
 
 API metadata (assemblies, namespaces, types etc.) can be browsed at https://fuget.org/packages/managed-midi/ (thanks to fuget.org)
+
 
 ## Quick feature survey
 
@@ -68,11 +73,11 @@ We needed this to create Xwt-based projects which depend on WPF.
 
 ### UWP
 
-(Totally untested. We don't have any app with this API that supports UWP yet.)
+Almost untested. We need some app beyond proof of concept SMF player.
 
 ### CoreMidiApi
 
-Almost untested. We need some MIDI devices that work fine on our Mac environment.
+Almost untested. We need some MIDI devices that work fine on our Mac environment. We never tried with iOS device yet.
 
 ### RtMidiSharp
 
