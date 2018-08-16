@@ -30,29 +30,30 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.UwpShare
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "managed-midi-recorder", "tools\managed-midi-recorder\managed-midi-recorder.csproj", "{32173104-2069-44A7-B347-EEA6609A1E7B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commons.Music.Midi", "Commons.Music.Midi\Commons.Music.Midi.csproj", "{7D9A799C-7724-4787-9F6D-61A76DC49F1F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi", "Commons.Music.Midi\Commons.Music.Midi.csproj", "{7D9A799C-7724-4787-9F6D-61A76DC49F1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commons.Music.Midi.DotNetCore", "Commons.Music.Midi.DotNetCore\Commons.Music.Midi.DotNetCore.csproj", "{6C5ADA98-CB52-4474-91A3-560FB08A33FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.DotNetCore", "Commons.Music.Midi.DotNetCore\Commons.Music.Midi.DotNetCore.csproj", "{6C5ADA98-CB52-4474-91A3-560FB08A33FF}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.DesktopShared", "Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.shproj", "{ACB7F202-3B4C-4859-B9BE-ADE6B6726DB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "alsa-sharp", "external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj", "{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alsa-sharp", "external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj", "{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "alsa-sharp.Tests", "external\alsa-sharp\dotnetcore\alsa-sharp.Tests\alsa-sharp.Tests.csproj", "{00ED561E-C46F-481A-8E51-0B31856972E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alsa-sharp.Tests", "external\alsa-sharp\dotnetcore\alsa-sharp.Tests\alsa-sharp.Tests.csproj", "{00ED561E-C46F-481A-8E51-0B31856972E9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{1f06e431-ef07-4161-8c74-5dbb80537f3e}*SharedItemsImports = 4
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{1f06e431-ef07-4161-8c74-5dbb80537f3e}*SharedItemsImports = 4
 		Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.projitems*{222d4115-a616-45e4-82bc-ac0bc62113c1}*SharedItemsImports = 13
+		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{2a0a4aa1-d455-48b4-abd0-07217568264e}*SharedItemsImports = 4
 		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{48cf93cc-9b9d-4114-ad87-09bf4ad475dd}*SharedItemsImports = 4
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{48cf93cc-9b9d-4114-ad87-09bf4ad475dd}*SharedItemsImports = 4
-		Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems*{59eefb0d-3957-43fc-8272-c3b460f7ff84}*SharedItemsImports = 4
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{59eefb0d-3957-43fc-8272-c3b460f7ff84}*SharedItemsImports = 4
 		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{6197a7ee-4469-4ffa-bc33-f180a2877580}*SharedItemsImports = 13
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{8742663d-9bb6-43d5-887d-0668e550652f}*SharedItemsImports = 13
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{8c6af32a-3692-43b3-a907-9395564db067}*SharedItemsImports = 4
 		Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems*{9ced7e33-d8eb-43b2-a903-9e5d63b34f23}*SharedItemsImports = 4
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{9ced7e33-d8eb-43b2-a903-9e5d63b34f23}*SharedItemsImports = 4
-		Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems*{acb7f202-3b4c-4859-b9be-ade6b6726db0}*SharedItemsImports = 13
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{ae949be1-6ba7-4edf-96ff-c5730eddf122}*SharedItemsImports = 4
 		Commons.Music.Midi.UwpShared\Commons.Music.Midi.UwpShared.projitems*{ae949be1-6ba7-4edf-96ff-c5730eddf122}*SharedItemsImports = 4
 		Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems*{ddad7f20-40be-446c-bed1-e770dd7a0503}*SharedItemsImports = 4
@@ -113,6 +114,7 @@ Global
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.ActiveCfg = Release|x86
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Release|x86.Build.0 = Release|x86
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Debug|x86.Build.0 = Debug|Any CPU
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -120,6 +122,7 @@ Global
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C6AF32A-3692-43B3-A907-9395564DB067}.Release|x86.Build.0 = Release|Any CPU
 		{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}.Debug|x86.Build.0 = Debug|Any CPU
 		{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}.Release|Any CPU.ActiveCfg = Release|Any CPU
