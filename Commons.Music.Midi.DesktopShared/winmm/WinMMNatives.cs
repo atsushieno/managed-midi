@@ -68,13 +68,13 @@ namespace Commons.Music.Midi.WinMM
 
     public enum MidiInMessage : uint
     {
-        MIM_OPEN = 0x3C1,
-        MIM_CLOSE = 0x3C2,
-        MIM_DATA = 0x3C3,
-        MIM_LONGDATA = 0x3C4,
-        MIM_ERROR = 0x3C5,
-        MIM_LONGERROR = 0x3C6,
-        MIM_MOREDATA = 0x3CC
+        Open = 0x3C1,
+        Close = 0x3C2,
+        Data = 0x3C3,
+        LongData = 0x3C4,
+        Error = 0x3C5,
+        LongError = 0x3C6,
+        MoreData = 0x3CC
     }
 
     public delegate void MidiInProc (IntPtr midiIn, MidiInMessage msg, IntPtr instance, IntPtr param1, IntPtr param2);

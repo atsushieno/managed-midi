@@ -160,22 +160,22 @@ namespace Commons.Music.Midi.WinMM
 			{
                 switch (msg)
                 {
-                    case MidiInMessage.MIM_DATA:
+                    case MidiInMessage.Data:
                         HandleData(param1, param2);
                         break;
 
-                    case MidiInMessage.MIM_LONGDATA:
+                    case MidiInMessage.LongData:
                         HandleLongData(param1, param2);
                         break;
 
-                    case MidiInMessage.MIM_MOREDATA:
-                        // TODO handling input too slow, handle.
+                    case MidiInMessage.MoreData:
+                        // TODO input too slow, handle.
                         break;
                     
-                    case MidiInMessage.MIM_ERROR:
+                    case MidiInMessage.Error:
                         throw new InvalidOperationException($"Invalid MIDI message: {param1}");
 
-                    case MidiInMessage.MIM_LONGERROR:
+                    case MidiInMessage.LongError:
                         throw new InvalidOperationException("Invalid SysEx message.");
 
                     default:
