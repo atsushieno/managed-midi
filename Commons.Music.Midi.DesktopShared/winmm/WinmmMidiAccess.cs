@@ -77,11 +77,16 @@ namespace Commons.Music.Midi.WinMM
 
 	class WinMMMidiInput : IMidiInput
 	{
+        MidiInProc midiInProc;
+
 		public WinMMMidiInput(IMidiPortDetails details)
 		{
 			Details = details;
 
-            DieOnError(WinMMNatives.midiInOpen(out handle, uint.Parse(Details.Id), HandleMidiInProc,
+            // prevent garbage collection of the delegate
+            midiInProc = HandleMidiInProc;
+
+            DieOnError(WinMMNatives.midiInOpen(out handle, uint.Parse(Details.Id), midiInProc,
                 IntPtr.Zero, MidiInOpenFlags.Function | MidiInOpenFlags.MidiIoStatus));
 
             DieOnError(WinMMNatives.midiInStart(handle));
@@ -134,14 +139,14 @@ namespace Commons.Music.Midi.WinMM
 
                 Marshal.Copy(buffer.Header.Data, data, 0, buffer.Header.BytesRecorded);
 
-                if (Connection != MidiPortConnectionState.Pending)
+                if (Connection == MidiPortConnectionState.Open)
                 {
                     buffer.Recycle();
                 }
                 else
                 {
-                    buffer.Dispose();
                     lmBuffers.Remove(buffer.Ptr);
+                    buffer.Dispose();
                 }
             }
 
@@ -196,6 +201,19 @@ namespace Commons.Music.Midi.WinMM
                     DieOnError(WinMMNatives.midiInReset(handle));
                     DieOnError(WinMMNatives.midiInStop(handle));
                     DieOnError(WinMMNatives.midiInClose(handle));
+
+                    // wait for the device driver to hand back the long buffers through HandleMidiInProc
+
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        lock (lockObject)
+                        {
+                            if (lmBuffers.Count < 1)
+                                break;
+                        }
+
+                        Thread.Sleep(10);
+                    }
 
                     Connection = MidiPortConnectionState.Closed;
                 }
