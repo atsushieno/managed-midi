@@ -38,7 +38,7 @@ namespace Commons.Music.Midi
 			this.Text = "MMK: MIDI Keyboard";
 
 			ResetControls ();
-		}
+        }
 
 		void ResetControls ()
 		{
@@ -81,7 +81,7 @@ namespace Commons.Music.Midi
 				return;
 			}
 
-			SwitchToDevice (access.Outputs.First ().Id);
+			SwitchToDevice (access.Outputs.First ().Id, false);
 		}
 
 		void SetupMenus ()
@@ -111,7 +111,7 @@ namespace Commons.Music.Midi
 					if (cb.SelectedIndex < 0)
 						return;
 					var d = access.Outputs.First (_ => _.Name == (string) cb.SelectedItem);
-					SwitchToDevice (d.Id);
+					SwitchToDevice (d.Id, true);
 				} finally {
 					this.Enabled = true;
 					cb.Focus ();
@@ -121,7 +121,7 @@ namespace Commons.Music.Midi
 			Controls.Add (cb);
 		}
 
-		void SwitchToDevice (string deviceId)
+		void SwitchToDevice (string deviceId, bool withUI)
 		{
 			if (output != null) {
 				output.Dispose ();
@@ -130,7 +130,8 @@ namespace Commons.Music.Midi
 			output = access.OpenOutputAsync (deviceId).Result;
 			output.Send (new byte [] { (byte) (MidiEvent.Program + channel), GeneralMidi.Instruments.AcousticGrandPiano }, 0, 2, 0);
 
-			SetupBankSelector (deviceId);
+			if (withUI)
+				SetupBankSelector (deviceId);
 		}
 
 		void SetupBankSelector (string deviceId)
