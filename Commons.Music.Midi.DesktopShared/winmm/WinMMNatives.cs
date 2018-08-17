@@ -42,7 +42,7 @@ namespace Commons.Music.Midi.WinMM
 		public IntPtr Reserved;
 		public int Offset;
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 4)]
-		private fixed byte reservedArray [4];
+		private fixed int reservedArray [4];
 	}
 
 	[Flags]
