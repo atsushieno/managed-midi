@@ -31,7 +31,7 @@ namespace Commons.Music.Midi.WinMM
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	unsafe struct MidiHdr
+	struct MidiHdr
 	{
 		public IntPtr Data;
 		public int BufferLength;
@@ -42,7 +42,7 @@ namespace Commons.Music.Midi.WinMM
 		public IntPtr Reserved;
 		public int Offset;
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 4)]
-		private fixed int reservedArray [4];
+		private int[] reservedArray;
 	}
 
 	[Flags]
