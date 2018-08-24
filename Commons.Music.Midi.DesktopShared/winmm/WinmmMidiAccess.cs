@@ -298,10 +298,10 @@ namespace Commons.Music.Midi.WinMM
             {
                 UnPrepareHeader();
 
-                Marshal.FreeHGlobal(Header.Data);
-
-                if (Ptr != IntPtr.Zero)
+                if (Ptr != IntPtr.Zero) {
+                    Marshal.FreeHGlobal(Header.Data);
                     Marshal.FreeHGlobal(Ptr);
+                }
             }
         }
     }
