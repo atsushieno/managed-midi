@@ -13,6 +13,9 @@
     <Folder Include="$(MSBuildThisFileDirectory)module-database\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\GeneralMidi.cs">
+      <Link>Commons.Music.Midi\GeneralMidi.cs</Link>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiAccessManager.cs">
       <Link>Commons.Music.Midi\MidiAccessManager.cs</Link>
     </Compile>
