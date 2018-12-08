@@ -34,7 +34,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\lib\module-database\MidiModuleDatabase.cs">
       <Link>Commons.Music.Midi\MidiModuleDatabase.cs</Link>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Commons.Music.Midi\GeneralMidi.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\ms_gs_wavetable_synth.midimod">
