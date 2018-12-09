@@ -128,7 +128,6 @@ namespace Commons.Music.Midi
 				output = null;
 			}
 			output = access.OpenOutputAsync (deviceId).Result;
-			output.Send (new byte [] { (byte) (MidiEvent.Program + channel), GeneralMidi.Instruments.AcousticGrandPiano }, 0, 2, 0);
 
 			if (withUI)
 				SetupBankSelector (deviceId);
@@ -145,11 +144,11 @@ namespace Commons.Music.Midi
 					mprg.MenuItems.Clear ();
 					foreach (var bank in prog.Banks) {
 						var mi = new MenuItem (String.Format ("{0}:{1} {2}", bank.Msb, bank.Lsb, bank.Name)) { Tag = bank };
-						mi.Select += delegate {
+						mi.Click += delegate {
 							var mbank = (MidiBankDefinition) mi.Tag;
 							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelect, (byte) mbank.Msb }, 0, 3, 0);
 							output.Send (new byte[] { (byte) (MidiEvent.CC + channel), MidiCC.BankSelectLsb, (byte) mbank.Lsb }, 0, 3, 0);
-							output.Send (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag, 0 }, 0, 3, 0);
+							output.Send (new byte[] { (byte) (MidiEvent.Program + channel), (byte) mi.Parent.Tag }, 0, 2, 0);
 						};
 						mprg.MenuItems.Add (mi);
 					}
@@ -190,8 +189,8 @@ namespace Commons.Music.Midi
 				}
 				var mi = new MenuItem (tone_list [i]);
 				mi.Tag = i;
-				mi.Select += delegate {
-					output.Send (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag, 0 }, 0, 3, 0);
+				mi.Click += delegate {
+					output.Send (new byte[] { (byte) (0xC0 + channel), (byte) (int) mi.Tag}, 0, 2, 0);
 				};
 				sub.MenuItems.Add (mi);
 			}
@@ -316,13 +315,13 @@ namespace Commons.Music.Midi
 					return;
 
 				if (idx >= 0)
-					ProcessNodeKey (down, true, idx);
+					ProcessNoteKey (down, true, idx);
 				else {
 					idx = keymap.HighKeys.IndexOf ((char) key);
 					if (!IsNotableIndex (idx))
 						return;
 					if (idx >= 0)
-						ProcessNodeKey (down, false, idx);
+						ProcessNoteKey (down, false, idx);
 					else
 						return;
 				}
@@ -331,7 +330,7 @@ namespace Commons.Music.Midi
 			e.Handled = true;
 		}
 
-		void ProcessNodeKey (bool down, bool low, int idx)
+		void ProcessNoteKey (bool down, bool low, int idx)
 		{
 			var fl = low ? low_button_states : high_button_states;
 			if (fl [idx] == down)
