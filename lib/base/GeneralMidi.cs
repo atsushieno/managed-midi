@@ -3,6 +3,26 @@ namespace Commons.Music.Midi
 {
 	public class GeneralMidi 
 	{
+		public static readonly string [] InstrumentCategories = new string []
+		{
+			"Piano",
+			"Chromatic Percussion",
+			"Organ",
+			"Guitar",
+			"Bass",
+			"Orchestra Solo",
+			"Orchestra Ensemble",
+			"Brass",
+			"Reed",
+			"Pipe",
+			"Synth Lead",
+			"Synth Pad",
+			"Synth Sound FX",
+			"Ethnic",
+			"Percussive",
+			"Sound Effect",
+		};
+
 		// Too lengthy to type "GeneralMidi.Instruments.AcousticGrandPiano" ?
 		// Use "using static": using static GMInst = Commons.Music.Midi.GeneralMidi.Instruments;
 		public static class Instruments 
