@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Commons.Music.Midi
@@ -56,7 +56,7 @@ namespace Commons.Music.Midi
 			if (moduleName == null)
 				throw new ArgumentNullException ("moduleName");
 			string name = ResolvePossibleAlias (moduleName);
-			return Modules.FirstOrDefault (m => m.Name == name) ?? Modules.FirstOrDefault (m => name.Contains (m.Name));
+			return Modules.FirstOrDefault (m => m.Name == name) ?? Modules.FirstOrDefault (m => m.Match != null && new Regex (m.Match).IsMatch (name) || name.Contains (m.Name));
 		}
 
 		public string ResolvePossibleAlias (string name)
@@ -81,6 +81,9 @@ namespace Commons.Music.Midi
 
 		[DataMember]
 		public string Name { get; set; }
+
+		[DataMember]
+		public string Match { get; set; }
 
 		[DataMember]
 		public MidiInstrumentDefinition Instrument { get; set; }
