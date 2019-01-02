@@ -118,12 +118,13 @@ namespace Commons.Music.Midi.Alsa {
 
 	public class AlsaMidiInput : IMidiInput {
 		AlsaSequencer seq;
-		AlsaMidiPortDetails port;
+		AlsaMidiPortDetails port, source_port;
 
 		public AlsaMidiInput (AlsaSequencer seq, AlsaMidiPortDetails appPort, AlsaMidiPortDetails sourcePort)
 		{
 			this.seq = seq;
 			this.port = appPort;
+			this.source_port = sourcePort;
 			byte [] buffer = new byte [0x200];
 			seq.StartListening (port.PortInfo.Port, buffer, (buf, start, len) => {
 				var args = new MidiReceivedEventArgs () { Data = buf, Start = start, Length = len, Timestamp = 0 };
@@ -131,7 +132,7 @@ namespace Commons.Music.Midi.Alsa {
 			});
 		}
 
-		public IMidiPortDetails Details => port;
+		public IMidiPortDetails Details => source_port;
 
 		public MidiPortConnectionState Connection { get; private set; }
 
@@ -157,15 +158,16 @@ namespace Commons.Music.Midi.Alsa {
 
 	public class AlsaMidiOutput : IMidiOutput {
 		AlsaSequencer seq;
-		AlsaMidiPortDetails port;
+		AlsaMidiPortDetails port, target_port;
 
 		public AlsaMidiOutput (AlsaSequencer seq, AlsaMidiPortDetails appPort, AlsaMidiPortDetails targetPort)
 		{
 			this.seq = seq;
 			this.port = appPort;
+			this.target_port = targetPort;
 		}
 
-		public IMidiPortDetails Details => port;
+		public IMidiPortDetails Details => target_port;
 
 		public MidiPortConnectionState Connection { get; private set; }
 
