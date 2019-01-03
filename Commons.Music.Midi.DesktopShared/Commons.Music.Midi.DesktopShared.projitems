@@ -9,17 +9,6 @@
     <Import_RootNamespace>Commons.Music.Midi.DesktopShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)librtmidi.dylib">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)librtmidi.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)rtmidi.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)MidiAccessManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)portmidi\PortMidiAccess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)portmidi\PortMidiPlayer.cs" />

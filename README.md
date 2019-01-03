@@ -85,13 +85,14 @@ RtMidi is a cross-platform C and C++ library for raw MIDI access: https://github
 
 managed-midi supports rtmidi through a component called RtMidiSharp (and wrapper around our own common API called RtMidiAccess).
 
-Having said that, managed-midi for Windows is only known to work on 32bit environment.
-It is most likely because of the native dependencies (portmidi or rtmidi).
-Any contribution to get it working on 64bit Windows environment is welcome.
+So far, managed-midi for Windows is only known to work on 32bit environment.
+It may or may not work.
+Any contribution to verify and possibly fix any issue on 64bit Windows is welcome.
 
-For OSX and Linux only 64bit binaries are included.
+Note that you need a working native build of rtmidi.dll, librtmidi.dylib or librtmidi.so (depending on the platform).
+We don't offer prebuilt binaries for that now.
 
-(It used to be provided by a fork of rtmidi called rtmidi-c (https://github.com/atsushieno/rtmidi-c) but it is now merged to the upstream.)
+(This driver used to be provided by a fork of rtmidi called rtmidi-c (https://github.com/atsushieno/rtmidi-c) but it is now merged to the upstream.)
 
 ### PortMidiSharp
 

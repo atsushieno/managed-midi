@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.3.3</version>
+    <version>1.4.0</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
@@ -26,8 +26,6 @@
     <file src="Commons.Music.Midi.Desktop\bin\Debug\Commons.Music.Midi.pdb" target="lib\net45" />
     <file src="Commons.Music.Midi.Desktop\bin\Debug\alsa-sharp.dll" target="lib\net45" />
     <file src="Commons.Music.Midi.Desktop\bin\Debug\alsa-sharp.pdb" target="lib\net45" />
-    <file src="Commons.Music.Midi.Desktop\bin\Debug\librtmidi.so" target="lib\net45" />
-    <file src="Commons.Music.Midi.Desktop\bin\Debug\librtmidi.dylib" target="lib\net45" />
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\Commons.Music.Midi.dll" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\Commons.Music.Midi.pdb" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.dll" target="lib\netcoreapp2.1" />
