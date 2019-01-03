@@ -30,8 +30,6 @@
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\Commons.Music.Midi.pdb" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.dll" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.pdb" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\librtmidi.so" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\librtmidi.dylib" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.dll" target="lib\MonoAndroid" />
     <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.pdb" target="lib\MonoAndroid" />
     <file src="Commons.Music.Midi.iOS\bin\Debug\Commons.Music.Midi.dll" target="lib\XamariniOS" />
