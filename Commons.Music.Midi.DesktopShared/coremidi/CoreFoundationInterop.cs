@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using CFStringRef = System.IntPtr;
 
 using CFAllocatorRef = System.IntPtr;
@@ -21,6 +22,6 @@ namespace CoreMidi {
 		internal static extern CFStringRef CFStringCreateWithCStringNoCopy (CFAllocatorRef alloc, string cStr, CFStringEncoding encoding, CFAllocatorRef contentsDeallocator);
 
 		[DllImport (LibraryName)]
-		internal static extern string CFStringGetCStringPtr (CFStringRef theString, CFStringEncoding encoding);
+		internal static extern IntPtr CFStringGetCStringPtr (CFStringRef theString, CFStringEncoding encoding);
 	}
 }

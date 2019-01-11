@@ -92,16 +92,29 @@ namespace CoreMidi {
 
 		public string EndpointName { get; private set; }
 
-		public string Name => GetStringProp (CoreMidiInterop.kMIDIPropertyName);
-		public string Manufacturer => GetStringProp (CoreMidiInterop.kMIDIPropertyManufacturer);
-		public string DisplayName => GetStringProp (CoreMidiInterop.kMIDIPropertyDisplayName);
-		public string DriverVersion => GetStringProp (CoreMidiInterop.kMIDIPropertyDriverVersion);
+		//public string Name => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName);
+		public string Name => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName);
+		public string Manufacturer => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyManufacturer);
+		public string DisplayName => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDisplayName);
+		public string DriverVersion => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion);
 
 		String GetStringProp (IntPtr id)
 		{
+			if (id == IntPtr.Zero)
+				return null;
+
 			CFStringRef str;
 			CoreMidiInterop.MIDIObjectGetStringProperty (Handle, id, out str);
-			return CoreFoundationInterop.CFStringGetCStringPtr (str, CoreFoundationInterop.kCFStringEncodingUTF8);
+			var cstr = CoreFoundationInterop.CFStringGetCStringPtr (str, CoreFoundationInterop.kCFStringEncodingUTF8);
+			unsafe {
+				if (cstr == IntPtr.Zero)
+					return null;
+				byte* p = (byte*) cstr;
+				int count = 0;
+				for (byte* i = p; *i != 0; i++)
+					count++;
+				return System.Text.Encoding.UTF8.GetString ((byte*)cstr, count);
+			}
 		}
 	}
 
@@ -244,38 +257,51 @@ namespace CoreMidi {
 		public MIDITimeStamp TimeStamp;
 	}
 
+	// I have no idea why it doesn't work if all these pieces go into CoreMidiInterop class...
+	internal class CoreMidiIntropWorkaround {
+		const string LibraryName = "/System/Library/Frameworks/CoreMIDI.framework/Resources/BridgeSupport/CoreMIDI.dylib";
+
+		static CoreMidiIntropWorkaround ()
+		{
+			var dl = dlopen (LibraryName);
+			try {
+				IntPtr ptr;
+				ptr = dlsym (dl, nameof (kMIDIPropertyName));
+				kMIDIPropertyName = ptr != IntPtr.Zero ? Marshal.ReadIntPtr (ptr) : ptr;
+				ptr = dlsym (dl, nameof (kMIDIPropertyDisplayName));
+				kMIDIPropertyDisplayName = ptr != IntPtr.Zero ? Marshal.ReadIntPtr (ptr) : ptr;
+				ptr = dlsym (dl, nameof (kMIDIPropertyManufacturer));
+				kMIDIPropertyManufacturer = ptr != IntPtr.Zero ? Marshal.ReadIntPtr (ptr) : ptr;
+				ptr = dlsym (dl, nameof (kMIDIPropertyDriverVersion));
+				kMIDIPropertyDriverVersion = ptr != IntPtr.Zero ? Marshal.ReadIntPtr (ptr) : ptr;
+			} catch (Exception ex) {
+				Console.WriteLine (ex);
+			}
+			dlclose (dl);
+		}
+
+		public static readonly IntPtr kMIDIPropertyName;
+		public static readonly IntPtr kMIDIPropertyDisplayName;
+		public static readonly IntPtr kMIDIPropertyManufacturer;
+		public static readonly IntPtr kMIDIPropertyDriverVersion;
+
+		[DllImport ("/usr/lib/libSystem.dylib")]
+		static extern IntPtr dlopen (string filename);
+		[DllImport ("/usr/lib/libSystem.dylib")]
+		static extern IntPtr dlsym (IntPtr dl, string symbol);
+		[DllImport ("/usr/lib/libSystem.dylib")]
+		static extern IntPtr dlclose (IntPtr dl);
+		[DllImport ("/usr/lib/libSystem.dylib")]
+		static extern int dlerror ();
+	}
+
 	internal class CoreMidiInterop
 	{
 		const string LibraryName = "/System/Library/Frameworks/CoreMIDI.framework/Resources/BridgeSupport/CoreMIDI.dylib";
 
 		static CoreMidiInterop ()
 		{
-			// FIXME: make it work...
-			/*
-			var dl = dlopen (LibraryName);
-			try {
-				kMIDIPropertyName = Marshal.ReadIntPtr (dlsym (dl, nameof (kMIDIPropertyName)));
-				kMIDIPropertyDisplayName = Marshal.ReadIntPtr (dlsym (dl, nameof (kMIDIPropertyDisplayName)));
-				kMIDIPropertyManufacturer = Marshal.ReadIntPtr (dlsym (dl, nameof (kMIDIPropertyManufacturer)));
-				kMIDIPropertyDriverVersion = Marshal.ReadIntPtr (dlsym (dl, nameof (kMIDIPropertyDriverVersion)));
-				dlclose (dl);
-			} catch (Exception ex) {
-				Console.WriteLine (ex);
-			}
-			*/
 		}
-
-		[DllImport ("/usr/lib/libSystm.dylib")]
-		static extern IntPtr dlopen (string filename);
-		[DllImport ("/usr/lib/libSystm.dylib")]
-		static extern IntPtr dlsym (IntPtr dl, string symbol);
-		[DllImport ("/usr/lib/libSystm.dylib")]
-		static extern IntPtr dlclose (IntPtr dl);
-
-		public static readonly IntPtr kMIDIPropertyName;
-		public static readonly IntPtr kMIDIPropertyDisplayName;
-		public static readonly IntPtr kMIDIPropertyManufacturer;
-		public static readonly IntPtr kMIDIPropertyDriverVersion;
 
 		public delegate void MIDICompletionProc (MIDISysexSendRequestPtr request);
 		public delegate void MIDINotifyProc (MIDINotificationPtr message, IntPtr refCon);
