@@ -4,16 +4,62 @@ using System.Linq;
 using System.Threading.Tasks;
 using Commons.Music.Midi;
 using AlsaSharp;
+using System.Text;
 
 namespace Commons.Music.Midi.Alsa {
 	public class AlsaMidiAccess : IMidiAccess {
 		const AlsaPortType midi_port_type = AlsaPortType.MidiGeneric | AlsaPortType.Application;
 
-		AlsaSequencer system_watcher;
+		AlsaSequencer system_watcher, system_device_enumerator;
+		Task listener_task;
 
 		public AlsaMidiAccess ()
 		{
+			system_device_enumerator = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
+
 			system_watcher = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
+			system_watcher.SetClientName ("AlsaMidiAccess-SystemWatcher");
+
+			var recvPort = system_watcher.CreateSimplePort ("watcher-port", AlsaPortCapabilities.Write | AlsaPortCapabilities.SubsWrite | AlsaPortCapabilities.NoExport, AlsaPortType.Application | AlsaPortType.MidiGeneric);
+			system_watcher.SetClientEventFilter (AlsaSequencerEventType.PortSubscribed | AlsaSequencerEventType.PortUnsubscribed);
+
+			/*
+			var sub = new AlsaPortSubscription ();
+			sub.Destination.Client = (byte) system_watcher.CurrentClientId;
+			sub.Destination.Port = (byte) recvPort;
+			sub.Sender.Client = 0;
+			sub.Sender.Port = 1;
+			system_watcher.SubscribePort (sub);
+			*/
+			system_watcher.ConnectFrom (recvPort, 0, 1);
+			system_watcher.SetNonBlockingMode (true);
+
+			system_watcher.StartListening (recvPort, etype => {
+				if (etype != AlsaSequencerEventType.System)
+					Console.WriteLine ("!!! " + etype);
+			});
+
+			/*
+			listener_task = Task.Run (() => {
+				var evt = new AlsaSequencerEvent ();
+				while (true) {
+					system_watcher.Input (evt, recvPort);
+					if (evt.EventType != AlsaSequencerEventType.System)
+						Console.WriteLine ("!!! " + evt.EventType);
+				}
+			});
+			*/
+
+			/*
+			try {
+				system_listener = OpenInputInternalAsync (
+					"0_1",
+					EnumerateMatchingPorts (system_watcher, default (AlsaPortCapabilities), default (AlsaPortType))
+						.Select (pi => new AlsaMidiPortDetails (pi))
+		    			).Result;
+			} catch (Exception ex) {
+				Console.WriteLine (ex);
+			}*/
 		}
 
 		readonly AlsaPortCapabilities input_requirements = AlsaPortCapabilities.Read | AlsaPortCapabilities.SubsRead;
@@ -21,13 +67,13 @@ namespace Commons.Music.Midi.Alsa {
 		readonly AlsaPortCapabilities output_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
 		readonly AlsaPortCapabilities input_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
 
-		IEnumerable<AlsaPortInfo> EnumerateMatchingPorts (AlsaSequencer seq, AlsaPortCapabilities cap)
+		IEnumerable<AlsaPortInfo> EnumerateMatchingPorts (AlsaSequencer seq, AlsaPortCapabilities cap, AlsaPortType portType = midi_port_type)
 		{
 			var cinfo = new AlsaClientInfo { Client = -1 };
 			while (seq.QueryNextClient (cinfo)) {
 				var pinfo = new AlsaPortInfo { Client = cinfo.Client, Port = -1 };
 				while (seq.QueryNextPort (pinfo))
-					if ((pinfo.PortType & midi_port_type) != 0 &&
+					if ((pinfo.PortType == portType || (pinfo.PortType & portType) != 0) &&
 					    (pinfo.Capabilities & cap) == cap)
 						yield return pinfo.Clone ();
 			}
@@ -35,12 +81,12 @@ namespace Commons.Music.Midi.Alsa {
 
 		IEnumerable<AlsaPortInfo> EnumerateAvailableInputPorts ()
 		{
-			return EnumerateMatchingPorts (system_watcher, input_requirements);
+			return EnumerateMatchingPorts (system_device_enumerator, input_requirements);
 		}
 
 		IEnumerable<AlsaPortInfo> EnumerateAvailableOutputPorts ()
 		{
-			return EnumerateMatchingPorts (system_watcher, output_requirements);
+			return EnumerateMatchingPorts (system_device_enumerator, output_requirements);
 		}
 
 		// [input device port] --> [RETURNED PORT] --> app handles messages
@@ -77,7 +123,12 @@ namespace Commons.Music.Midi.Alsa {
 
 		public Task<IMidiInput> OpenInputAsync (string portId)
 		{
-			var sourcePort = (AlsaMidiPortDetails) Inputs.FirstOrDefault (p => p.Id == portId);
+			return OpenInputInternalAsync (portId, Inputs);
+		}
+
+		Task<IMidiInput> OpenInputInternalAsync (string portId, IEnumerable<IMidiPortDetails> ports)
+		{
+			var sourcePort = (AlsaMidiPortDetails) ports.FirstOrDefault (p => p.Id == portId);
 			if (sourcePort == null)
 				throw new ArgumentException ($"Port '{portId}' does not exist.");
 			var seq = new AlsaSequencer (AlsaIOType.Input, AlsaIOMode.NonBlocking);
