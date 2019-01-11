@@ -20,6 +20,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)winmm\WinMMMidiPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)winmm\WinMMNatives.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)alsaseq\AlsaMidiAccess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)coremidi\CoreMidiInterop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)coremidi\CoreFoundationInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)portmidi\README" />
@@ -29,5 +31,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)rtmidi\" />
     <Folder Include="$(MSBuildThisFileDirectory)winmm\" />
     <Folder Include="$(MSBuildThisFileDirectory)alsaseq\" />
+    <Folder Include="$(MSBuildThisFileDirectory)coremidi\" />
   </ItemGroup>
 </Project>

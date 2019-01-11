@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 using CoreMidi;
 
 using MIDI = CoreMidi.Midi;
+#if !__IOS__ && !__MACOS__
+using nint = System.Int64;
+#endif
 
+#if __IOS__ || __MACOS__
 namespace Commons.Music.Midi
 {
 	public partial class MidiAccessManager
@@ -17,6 +21,7 @@ namespace Commons.Music.Midi
 		}
 	}
 }
+#endif
 
 namespace Commons.Music.Midi.CoreMidiApi
 {
@@ -137,7 +142,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public Task CloseAsync()
 		{
 			port.Disconnect(details.Endpoint);
-			port.Client.Dispose();
+			//port.Client.Dispose();
 			return Task.CompletedTask;
 		}
 
@@ -165,7 +170,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public Task CloseAsync()
 		{
 			port.Disconnect(details.Endpoint);
-			port.Client.Dispose();
+			//port.Client.Dispose();
 			return Task.CompletedTask;
 		}
 
