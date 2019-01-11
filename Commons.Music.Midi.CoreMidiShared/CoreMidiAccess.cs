@@ -82,7 +82,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public CoreMidiPortDetails (MidiEndpoint src)
 		{
 			Endpoint = src;
-			Id = src.EndpointName + "__" + src.Name;
+			Id = src.Name + "__" + src.EndpointName;
 			Manufacturer = src.Manufacturer;
 			Name = src.DisplayName;
 
