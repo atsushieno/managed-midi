@@ -38,25 +38,9 @@ namespace Commons.Music.Midi.CoreMidiApi
 			}
 		}
 
-		public IEnumerable<IMidiPortDetails> Inputs {
-			get {
-				foreach (var ent in EnumerateMidiEntities ()) {
-					var scount = ent.Sources;
-					for (nint s = 0; s < scount; s++)
-						yield return new CoreMidiPortDetails (ent.GetSource (s));
-				}
-			}
-		}
+		public IEnumerable<IMidiPortDetails> Inputs => Enumerable.Range (0, (int) MIDI.SourceCount).Select (i => (IMidiPortDetails) new CoreMidiPortDetails (MidiEndpoint.GetSource (i)));
 
-		public IEnumerable<IMidiPortDetails> Outputs {
-			get {
-				foreach (var ent in EnumerateMidiEntities ()) {
-					var dcount = ent.Destinations;
-					for (nint d = 0; d < dcount; d++)
-						yield return new CoreMidiPortDetails (ent.GetDestination (d));
-				}
-			}
-		}
+		public IEnumerable<IMidiPortDetails> Outputs => Enumerable.Range (0, (int)MIDI.DestinationCount).Select (i => (IMidiPortDetails)new CoreMidiPortDetails (MidiEndpoint.GetDestination (i)));
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
 

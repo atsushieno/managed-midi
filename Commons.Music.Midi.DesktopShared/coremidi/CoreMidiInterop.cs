@@ -36,6 +36,10 @@ namespace CoreMidi {
 
 		public static MidiDevice GetDevice (nint d) => new MidiDevice (CoreMidiInterop.MIDIGetDevice (d));
 
+		public static nint SourceCount => CoreMidiInterop.MIDIGetNumberOfSources ();
+
+		public static nint DestinationCount => CoreMidiInterop.MIDIGetNumberOfDestinations ();
+
 		internal static CFStringRef ToCFStringRef (string s)
 		{
 			return CoreFoundationInterop.CFStringCreateWithCString (IntPtr.Zero, s, CoreFoundationInterop.kCFStringEncodingUTF8);
@@ -71,14 +75,15 @@ namespace CoreMidi {
 		public nint Sources => CoreMidiInterop.MIDIEntityGetNumberOfSources (entity);
 
 		public nint Destinations => CoreMidiInterop.MIDIEntityGetNumberOfDestinations (entity);
-
-		public MidiEndpoint GetSource (nint s) => new MidiEndpoint (CoreMidiInterop.MIDIEntityGetSource (entity, s), "Source" + s, false);
-
-		internal MidiEndpoint GetDestination (nint d) => new MidiEndpoint (CoreMidiInterop.MIDIEntityGetDestination (entity, d), "Destination" + d, false);
 	}
 
 	public class MidiEndpoint
 	{
+
+		public static MidiEndpoint GetSource (nint s) => new MidiEndpoint (CoreMidiInterop.MIDIGetSource (s), "Source" + s, false);
+
+		public static MidiEndpoint GetDestination (nint d) => new MidiEndpoint (CoreMidiInterop.MIDIGetDestination (d), "Destination" + d, false);
+
 		public MidiEndpoint (MIDIEndpointRef endpoint, string endpointName, bool shouldDispose)
 		{
 			Handle = endpoint;
