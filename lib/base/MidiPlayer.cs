@@ -11,8 +11,6 @@ namespace Commons.Music.Midi
 		Stopped,
 		Playing,
 		Paused,
-		FastForward,
-		Rewind,
 		Loading
 	}
 
@@ -85,7 +83,6 @@ namespace Commons.Music.Midi
 		{
 			switch (state) {
 			case PlayerState.Playing:
-			case PlayerState.FastForward:
 				return TimeSpan.FromMilliseconds ((DateTime.Now - timer_resumed).TotalMilliseconds * tempo_ratio);
 			}
 			return TimeSpan.Zero;
