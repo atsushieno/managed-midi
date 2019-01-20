@@ -2,7 +2,7 @@
 
 managed-midi aims to provide C#/.NET API For almost-raw access to MIDI devices in cross-platform manner with the greatest common measure so that it can be "commons" either on Mono or .NET, everywhere, as well as standard MIDI file manipulation and player functionality.
 
-In particular, this library is used by these projects:
+In particular, this library is used and tested by these projects:
 
 - https://github.com/atsushieno/mugene/ - music macro language (MML) compiler for SMF
 - https://github.com/atsushieno/xmdsp - visual MIDI player for MML-based composers
@@ -154,11 +154,32 @@ player.Dispose();
 
 ## HACKING
 
-### The library structure
+### The library and project structures
 
 It is kind of a "bait-and-switch" nuget package. However there is no reference assembly; the netstandrd2.0 library is part of the package, which contains *no* raw MIDI API access implementation. It can still be used to implement platform-specific API on top of it.
 
-While there is netstandard2.0 version, there is a shared library version of the most of the common API and data set. netstandard2.0 version is just a project that wraps around it. Other assembllies such as Desktop, CoreMidi, Android and UWP versions use this shared project.
+There are many projects (in terms of `.csproj`) in `managed-midi.sln`:
+
+- managed-midi.sln
+  - Commons.Music.Midi.Shared.csproj - the most common shared library project
+  - Commons.Music.Midi.csproj - netstandard 2.0 **implementation**
+  - Commons.Music.Midi.DesktopShared.csproj - almost the same as desktop implementation, but shared library project. Used by the following projects
+    - Commons.Music.Midi.Desktop.csproj - .NET Framework (net4x) **implementation**
+    - Commons.Music.Midi.DotNetCore.csproj - .NET Core (netcoreapp2x) **implementation**
+  - Commons.Music.Midi.CoreMidiShared.csproj - shared library project used by iOS and XamMac (full).
+  - Commons.Music.Midi.iOS.csproj - Xamarin.iOS **implementation**
+  - Commons.Music.Midi.XamMac.csproj - Xamarin.Mac modern profile **implementation**
+  - Commons.Music.Midi.Android.csproj - Xamarin.Android **implementation**
+  - Commons.Music.Midi.UwpShared.csproj - almost the same as UWP implementation, byt shared library project. (Used by Uwp, and "UwpWithStub" which builds on Linux but implementation is useless)
+  - Commons.Music.Midi.Uwp.csproj - UWP **implementation**.
+
+Apart from managed-midi.sln, there is another consolidated project:
+
+- Commons.Music.Midi.XamMacFull.csproj - Xamarin.Mac full profile **implementation** (this cannot be unified with the above because it adds Xamarin.Mac references that cannot be resolved on Linux)
+
+(Note that all those implementation assemblies share the identical name `Commons.Music.Midi.dll` regardless of the project names, by nature of bait-and-switch NuGet package.)
+
+While there is a netstandard2.0 version, there is a shared library version of the most of the common API and data set. netstandard2.0 version is a project that wraps around it. Other assembllies such as .NET Core (netcoreapp2.0), .NET Desktop (net4x), CoreMidi, Android and UWP versions use this shared project.
 
 This project structure is done so that we can easily hack any part on any platform (especially on Linux).
 
