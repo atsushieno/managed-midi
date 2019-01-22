@@ -58,7 +58,9 @@ namespace Commons.Music.Midi
 		}
 		public int PlayDeltaTime { get; set; }
 		public TimeSpan PositionInTime {
+			// FIXME: this is not exact after seek operation.
 			get { return GetTimerOffsetWithTempoRatio () + playtime_delta; }
+			// get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
 		}
 		public int Tempo {
 			get { return current_tempo; }
@@ -155,6 +157,7 @@ namespace Commons.Music.Midi
 					if (Finished != null)
 						Finished ();
 				event_idx = 0;
+				PlayDeltaTime = 0;
 			}
 		}
 
@@ -181,10 +184,26 @@ namespace Commons.Music.Midi
 
 		public virtual void HandleEvent (MidiMessage m)
 		{
-			if (m.DeltaTime != 0) {
+			if (seek_processor != null) {
+				var result = seek_processor.FilterMessage (m);
+				switch (result) {
+				case SeekFilterResult.PassAndTerminate:
+				case SeekFilterResult.BlockAndTerminate:
+					seek_processor = null;
+					break;
+				}
+
+				switch (result) {
+				case SeekFilterResult.Block:
+				case SeekFilterResult.BlockAndTerminate:
+					return; // ignore this event
+				}
+			}
+			else if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.AdvanceBy (ms);
 			}
+			
 			if (m.Event.StatusByte == 0xFF) {
 				if (m.Event.Msb == MidiMetaType.Tempo)
 					current_tempo = MidiMetaType.GetTempo (m.Event.Data);
@@ -211,6 +230,17 @@ namespace Commons.Music.Midi
 				if (pause_handle != null)
 					pause_handle.Set ();
 			}
+		}
+
+		private ISeekProcessor seek_processor;
+
+		// not sure about the interface, so make it non-public yet.
+		internal void Seek (ISeekProcessor seekProcessor, int ticks)
+		{
+			var state = State;
+			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
+			event_idx = 0;
+			PlayDeltaTime = 0;
 		}
 	}
 
@@ -367,6 +397,46 @@ namespace Commons.Music.Midi
 			default: // do nothing
 				return;
 			}
+		}
+
+		public void SeekAsync (int ticks)
+		{
+			player.Seek (null, ticks);
+		}
+	}
+
+	interface ISeekProcessor
+	{
+		SeekFilterResult FilterMessage (MidiMessage message);
+	}
+
+	enum SeekFilterResult
+	{
+		Pass,
+		Block,
+		PassAndTerminate,
+		BlockAndTerminate,
+	}
+	
+	class SimpleSeekProcessor : ISeekProcessor
+	{
+		public SimpleSeekProcessor (int ticks)
+		{
+			this.seek_to = ticks;
+		}
+
+		private int seek_to, current;
+		public SeekFilterResult FilterMessage (MidiMessage message)
+		{
+			current += message.DeltaTime;
+			if (current >= seek_to)
+				return SeekFilterResult.PassAndTerminate;
+			switch (message.Event.EventType) {
+			case MidiEvent.NoteOn:
+			case MidiEvent.NoteOff:
+				return SeekFilterResult.Block;
+			}
+			return SeekFilterResult.Pass;
 		}
 	}
 }
