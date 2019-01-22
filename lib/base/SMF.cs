@@ -41,7 +41,7 @@ namespace Commons.Music.Midi
 		public int GetTotalPlayTimeMilliseconds ()
 		{
 			if (Format != 0)
-				throw new NotSupportedException ("Format 1 is not suitable to compute total play time within a song");
+				return SmfTrackMerger.Merge (this).GetTotalPlayTimeMilliseconds ();
 			return GetTotalPlayTimeMilliseconds (Tracks [0].Messages, DeltaTimeSpec);
 		}
 		
