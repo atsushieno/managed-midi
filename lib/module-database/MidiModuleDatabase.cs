@@ -13,6 +13,8 @@ namespace Commons.Music.Midi
 	public abstract class MidiModuleDatabase
 	{
 		public static readonly MidiModuleDatabase Default = new DefaultMidiModuleDatabase ();
+
+		public abstract IEnumerable<MidiModuleDefinition> All ();
 		
 		public abstract MidiModuleDefinition Resolve (string moduleName);
 	}
@@ -25,7 +27,9 @@ namespace Commons.Music.Midi
 		}
 		
 		public IList<MidiModuleDatabase> List { get; private set; }
-		
+
+		public override IEnumerable<MidiModuleDefinition> All () => List.SelectMany (d => d.All ());
+
 		public override MidiModuleDefinition Resolve (string moduleName)
 		{
 			return List.Select (d => d.Resolve (moduleName)).FirstOrDefault (m => m != null);
@@ -50,6 +54,8 @@ namespace Commons.Music.Midi
 				if (filename.Length > 0)
 					Modules.Add (MidiModuleDefinition.Load (GetResource (filename)));
 		}
+
+		public override IEnumerable<MidiModuleDefinition> All () => Modules;
 
 		public override MidiModuleDefinition Resolve (string moduleName)
 		{
