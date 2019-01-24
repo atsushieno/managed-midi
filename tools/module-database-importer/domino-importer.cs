@@ -28,7 +28,8 @@ namespace Commons.Music.Midi
 		{
 			var imp = new DominoModuleXmlImporter ();
 			foreach (string arg in args)
-				imp.Import (arg).Save (Path.ChangeExtension (arg, "midimod"));
+				using (var fs = File.OpenWrite (Path.ChangeExtension (arg, "midimod")))
+					imp.Import (arg).Save (fs);
 		}
 
 		public MidiModuleDefinition Import (string file)
@@ -36,10 +37,19 @@ namespace Commons.Music.Midi
 			var doc = XDocument.Load (file);
 			var mod = doc.Element ("ModuleData");
 			var mdd = new MidiModuleDefinition () { Name = mod.Attr ("Name") };
-			foreach (var ilist in mod.Elements ("InstrumentList"))
+			LoadMaps (mod, "InstrumentList", mdd.Instrument.Maps);
+			LoadMaps (mod, "DrumSetList", mdd.Instrument.DrumMaps);
+			return mdd;
+		}
+
+		void LoadMaps (XElement mod, string name, IList<MidiInstrumentMap> maps)
+		{
+			if (maps == null)
+				throw new ArgumentException ("null maps");
+			foreach (var ilist in mod.Elements (name))
 				foreach (var map in ilist.Elements ("Map")) {
 					var mad = new MidiInstrumentMap () { Name = map.Attr ("Name") };
-					mdd.Instrument.Maps.Add (mad);
+					maps.Add (mad);
 					foreach (var pc in map.Elements ("PC")) {
 						var pd = new MidiProgramDefinition () { Name = pc.Attr ("Name"), Index = pc.AttrAsInt ("PC") - 1 }; // the domino XML index begins with 1 up to 128, so decrease here.
 						mad.Programs.Add (pd);
@@ -51,8 +61,6 @@ namespace Commons.Music.Midi
 						}
 					}
 				}
-
-			return mdd;
 		}
 	}
 }
