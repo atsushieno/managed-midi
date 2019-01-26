@@ -289,9 +289,12 @@ namespace Commons.Music.Midi
 
 			player = new MidiSyncPlayer (music, timeManager);
 			EventReceived += (m) => {
-				if (channel_mask != null && channel_mask [m.Channel])
-					return; // ignore messages for the masked channel.
 				switch (m.EventType) {
+				case MidiEvent.NoteOn:
+				case MidiEvent.NoteOff:
+					if (channel_mask != null && channel_mask [m.Channel])
+						return; // ignore messages for the masked channel.
+					goto default;
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
 					if (buffer.Length <= m.Data.Length)
