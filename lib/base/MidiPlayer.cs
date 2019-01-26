@@ -289,6 +289,8 @@ namespace Commons.Music.Midi
 
 			player = new MidiSyncPlayer (music, timeManager);
 			EventReceived += (m) => {
+				if (channel_mask != null && channel_mask [m.Channel])
+					return; // ignore messages for the masked channel.
 				switch (m.EventType) {
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
@@ -315,6 +317,7 @@ namespace Commons.Music.Midi
 		IMidiOutput output;
 		bool should_dispose_output;
 		byte [] buffer = new byte [0x100];
+		bool [] channel_mask;
 
 		public event Action Finished {
 			add { player.Finished += value; }
@@ -402,6 +405,17 @@ namespace Commons.Music.Midi
 		public void SeekAsync (int ticks)
 		{
 			player.Seek (null, ticks);
+		}
+
+		public void SetChannelMask (bool [] channelMask)
+		{
+			if (channelMask != null && channelMask.Length != 16)
+				throw new ArgumentException ("Unexpected length of channelMask array; it must be an array of 16 elements.");
+			channel_mask = channelMask;
+			// additionally send all sound off for the muted channels.
+			for (int ch = 0; ch < channelMask.Length; ch++)
+				if (channelMask [ch])
+					output.Send (new byte[] {(byte) (0xB0 + ch), 120, 0}, 0, 3, 0);
 		}
 	}
 
