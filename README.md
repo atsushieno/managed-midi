@@ -113,7 +113,7 @@ For example, [nfluidsynth](https://github.com/atsushieno/nfluidsynth) is a .NET 
 
 Also, see [tools](https://github.com/atsushieno/managed-midi/tree/master/tools/) directory for live use cases.
 
-When trying them below, C# shell is useful: `csharp -r Commons.Music.Midi.Desktop.dll`
+When trying them below, C# shell is useful: `csharp -r Commons.Music.Midi.dll`
 
 ### Play notes
 
