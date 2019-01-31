@@ -1,8 +1,10 @@
 build/
 bin/
 obj/
+.vs/
 *.userprefs
 *.csproj.user
-.vs/
+.idea/
+*.DotSettings.user
 packages/
 .DS_Store
