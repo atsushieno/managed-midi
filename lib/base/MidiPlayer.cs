@@ -240,7 +240,9 @@ namespace Commons.Music.Midi
 			var state = State;
 			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
 			event_idx = 0;
-			PlayDeltaTime = 0;
+			PlayDeltaTime = ticks;
+			timer_resumed = DateTime.Now;
+			playtime_delta = TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (ticks));
 		}
 	}
 
