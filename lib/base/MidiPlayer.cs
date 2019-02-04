@@ -12,21 +12,15 @@ namespace Commons.Music.Midi
 		Playing,
 		Paused,
 		FastForward,
+		[Obsolete ("This will vanish in the next API-breaking update")]
 		Rewind,
+		[Obsolete ("This will vanish in the next API-breaking update")]
 		Loading
 	}
 
-	interface IMidiPlayerStatus
-	{
-		PlayerState State { get; }
-		int Tempo { get; }
-		int PlayDeltaTime { get; }
-		TimeSpan PositionInTime { get; }
-		int GetTotalPlayTimeMilliseconds ();
-	}
-
 	// Player implementation. Plays a MIDI song synchronously.
-	public class MidiSyncPlayer : IDisposable, IMidiPlayerStatus
+	[Obsolete ("This will vanish in the next API-breaking update")]
+	public class MidiSyncPlayer : IDisposable
 	{
 		public MidiSyncPlayer (MidiMusic music)
 			: this (music, new SimpleMidiTimeManager ())
@@ -135,30 +129,28 @@ namespace Commons.Music.Midi
 		{
 			AllControlReset ();
 			playtime_delta = TimeSpan.Zero;
-			{
-				while (true) {
-					pause_handle.WaitOne ();
-					if (do_stop)
-						break;
-					if (do_pause) {
-						pause_handle.Reset ();
-						do_pause = false;
-						state = PlayerState.Paused;
-						continue;
-					}
-					if (event_idx == messages.Count)
-						break;
-					HandleEvent (messages [event_idx++]);
+			event_idx = 0;
+			PlayDeltaTime = 0;
+			while (true) {
+				pause_handle.WaitOne ();
+				if (do_stop)
+					break;
+				if (do_pause) {
+					pause_handle.Reset ();
+					do_pause = false;
+					state = PlayerState.Paused;
+					continue;
 				}
-				do_stop = false;
-				Mute ();
-				state = PlayerState.Stopped;
 				if (event_idx == messages.Count)
-					if (Finished != null)
-						Finished ();
-				event_idx = 0;
-				PlayDeltaTime = 0;
+					break;
+				HandleEvent (messages [event_idx++]);
 			}
+			do_stop = false;
+			Mute ();
+			state = PlayerState.Stopped;
+			if (event_idx == messages.Count)
+				if (Finished != null)
+					Finished ();
 		}
 
 		int current_tempo = MidiMetaType.DefaultTempo;
@@ -172,14 +164,6 @@ namespace Commons.Music.Midi
 			if (music.DeltaTimeSpec < 0)
 				throw new NotSupportedException ("SMPTe-basd delta time is not implemented yet");
 			return (int) (current_tempo / 1000 * deltaTime / music.DeltaTimeSpec / tempo_ratio);
-		}
-
-		string ToBinHexString (byte [] bytes)
-		{
-			string s = "";
-			foreach (byte b in bytes)
-				s += String.Format ("{0:X02} ", b);
-			return s;
 		}
 
 		public virtual void HandleEvent (MidiMessage m)
@@ -247,7 +231,7 @@ namespace Commons.Music.Midi
 	}
 
 	// Provides asynchronous player control.
-	public class MidiPlayer : IDisposable, IMidiPlayerStatus
+	public class MidiPlayer : IDisposable
 	{
 		MidiSyncPlayer player;
 		Task sync_player_task;
