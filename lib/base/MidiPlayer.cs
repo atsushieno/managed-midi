@@ -227,6 +227,7 @@ namespace Commons.Music.Midi
 			PlayDeltaTime = ticks;
 			timer_resumed = DateTime.Now;
 			playtime_delta = TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (ticks));
+			Mute ();
 		}
 	}
 
