@@ -56,7 +56,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		{
 			var details = Outputs.Cast<CoreMidiPortDetails>().FirstOrDefault(i => i.Id == portId);
 			if (details == null)
-				throw new InvalidOperationException($"Device specified as port {portId}) is not found.");
+				throw new InvalidOperationException($"Device specified as port {portId} is not found.");
 			return Task.FromResult((IMidiOutput) new CoreMidiOutput (details));
 		}
 	}
