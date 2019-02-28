@@ -27,17 +27,6 @@ namespace Commons.Music.Midi.CoreMidiApi
 {
 	public class CoreMidiAccess : IMidiAccess
 	{
-		IEnumerable<MidiEntity> EnumerateMidiEntities ()
-		{
-			var dcount = MIDI.DeviceCount;
-			for (nint d = 0; d < dcount; d++) {
-				var dev = MIDI.GetDevice (d);
-				var ecount = dev.EntityCount;
-				for (nint e = 0; e < ecount; e++)
-					yield return dev.GetEntity (e);
-			}
-		}
-
 		public IEnumerable<IMidiPortDetails> Inputs => Enumerable.Range (0, (int) MIDI.SourceCount).Select (i => (IMidiPortDetails) new CoreMidiPortDetails (MidiEndpoint.GetSource (i)));
 
 		public IEnumerable<IMidiPortDetails> Outputs => Enumerable.Range (0, (int)MIDI.DestinationCount).Select (i => (IMidiPortDetails)new CoreMidiPortDetails (MidiEndpoint.GetDestination (i)));
