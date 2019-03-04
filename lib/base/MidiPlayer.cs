@@ -39,6 +39,7 @@ namespace Commons.Music.Midi
 		}
 
 		public event Action Finished;
+		public event Action PlaybackCompletedToEnd;
 
 		MidiMusic music;
 		IList<MidiMessage> messages;
@@ -149,8 +150,10 @@ namespace Commons.Music.Midi
 			Mute ();
 			state = PlayerState.Stopped;
 			if (event_idx == messages.Count)
-				if (Finished != null)
-					Finished ();
+				if (PlaybackCompletedToEnd != null)
+					PlaybackCompletedToEnd ();
+			if (Finished != null)
+				Finished ();
 		}
 
 		int current_tempo = MidiMetaType.DefaultTempo;
@@ -213,6 +216,8 @@ namespace Commons.Music.Midi
 				do_stop = true;
 				if (pause_handle != null)
 					pause_handle.Set ();
+				if (Finished != null)
+					Finished ();
 			}
 		}
 
@@ -314,6 +319,11 @@ namespace Commons.Music.Midi
 			remove { player.Finished -= value; }
 		}
 
+		public event Action PlaybackCompletedToEnd {
+			add { player.PlaybackCompletedToEnd += value; }
+			remove { player.PlaybackCompletedToEnd -= value; }
+		}
+
 		public PlayerState State {
 			get { return player.State; }
 		}
@@ -389,6 +399,16 @@ namespace Commons.Music.Midi
 				return;
 			default: // do nothing
 				return;
+			}
+		}
+
+		public void Stop ()
+		{
+			switch (State) {
+			case PlayerState.Paused:
+			case PlayerState.Playing:
+				player.Stop ();
+				break;
 			}
 		}
 
