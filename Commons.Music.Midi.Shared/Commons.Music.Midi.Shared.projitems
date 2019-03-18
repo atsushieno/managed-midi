@@ -28,9 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiPlayerTimeManager.cs">
       <Link>Commons.Music.Midi\MidiPlayerTimeManager.cs</Link>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiTimeManager.cs">
-      <Link>Commons.Music.Midi\MidiTimeManager.cs</Link>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\SMF.cs">
       <Link>Commons.Music.Midi\SMF.cs</Link>
     </Compile>

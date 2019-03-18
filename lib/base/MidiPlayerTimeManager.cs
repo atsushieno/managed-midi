@@ -11,20 +11,6 @@ namespace Commons.Music.Midi
 	{
 		void WaitBy (int addedMilliseconds);
 	}
-
-	class MidiTimeManagerWrapper : IMidiPlayerTimeManager
-	{
-		IMidiTimeManager m;
-		public MidiTimeManagerWrapper (IMidiTimeManager m)
-		{
-			this.m = m;
-		}
-
-		public void WaitBy (int addedMilliseconds)
-		{
-			m.AdvanceBy (addedMilliseconds);
-		}
-	}
 	
 	public class VirtualMidiPlayerTimeManager : IMidiPlayerTimeManager, IDisposable
 	{
