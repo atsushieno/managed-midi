@@ -96,6 +96,7 @@ namespace Commons.Music.Midi.Alsa {
 		}
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiPortDetails : IMidiPortDetails
 	{
 		AlsaPortInfo port;
@@ -116,6 +117,7 @@ namespace Commons.Music.Midi.Alsa {
 		public string Version => port.Version;
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiInput : IMidiInput {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port, source_port;
@@ -156,6 +158,7 @@ namespace Commons.Music.Midi.Alsa {
 		}
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiOutput : IMidiOutput {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port, target_port;
