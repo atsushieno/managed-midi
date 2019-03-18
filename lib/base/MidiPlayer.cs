@@ -17,12 +17,7 @@ namespace Commons.Music.Midi
 	class MidiSyncPlayer : IDisposable
 	{
 		public MidiSyncPlayer (MidiMusic music)
-			: this (music, new SimpleMidiTimeManager ())
-		{
-		}
-
-		public MidiSyncPlayer (MidiMusic music, IMidiTimeManager timeManager)
-			: this (music, new MidiTimeManagerWrapper (timeManager))
+			: this (music, new SimpleAdjustingMidiPlayerTimeManager ())
 		{
 		}
 		
@@ -81,7 +76,6 @@ namespace Commons.Music.Midi
 		{
 			switch (state) {
 			case PlayerState.Playing:
-			case PlayerState.FastForward:
 				return TimeSpan.FromMilliseconds ((DateTime.Now - timer_resumed).TotalMilliseconds * tempo_ratio);
 			}
 			return TimeSpan.Zero;
