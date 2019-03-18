@@ -9,77 +9,14 @@
     <Import_RootNamespace>Commons.Music.Midi.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Commons.Music.Midi\" />
     <Folder Include="$(MSBuildThisFileDirectory)module-database\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\GeneralMidi.cs">
-      <Link>Commons.Music.Midi\GeneralMidi.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiAccessManager.cs">
-      <Link>Commons.Music.Midi\MidiAccessManager.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiMachine.cs">
-      <Link>Commons.Music.Midi\MidiMachine.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiPlayer.cs">
-      <Link>Commons.Music.Midi\MidiPlayer.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\MidiPlayerTimeManager.cs">
-      <Link>Commons.Music.Midi\MidiPlayerTimeManager.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\base\SMF.cs">
-      <Link>Commons.Music.Midi\SMF.cs</Link>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)..\lib\module-database\MidiModuleDatabase.cs">
-      <Link>Commons.Music.Midi\MidiModuleDatabase.cs</Link>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\ms_gs_wavetable_synth.midimod">
-      <LogicalName>module-database/data/ms_gs_wavetable_synth.midimod</LogicalName>
-      <Link>module-database\ms_gs_wavetable_synth.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\roland_sc-55.midimod">
-      <LogicalName>module-database/data/roland_sc-55.midimod</LogicalName>
-      <Link>module-database\roland_sc-55.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\roland_sc-55mk2.midimod">
-      <LogicalName>module-database/data/roland_sc-55mk2.midimod</LogicalName>
-      <Link>module-database\roland_sc-55mk2.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\roland_sc-88.midimod">
-      <LogicalName>module-database/data/roland_sc-88.midimod</LogicalName>
-      <Link>module-database\roland_sc-88.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\roland_sc-8820.midimod">
-      <LogicalName>module-database/data/roland_sc-8820.midimod</LogicalName>
-      <Link>module-database\roland_sc-8820.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\roland_sc-88pro.midimod">
-      <LogicalName>module-database/data/roland_sc-88pro.midimod</LogicalName>
-      <Link>module-database\roland_sc-88pro.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\yamaha_mu2000ex.midimod">
-      <LogicalName>module-database/data/yamaha_mu2000ex.midimod</LogicalName>
-      <Link>module-database\yamaha_mu2000ex.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\yamaha_motif.midimod">
-      <LogicalName>module-database/data/yamaha_motif.midimod</LogicalName>
-      <Link>module-database\yamaha_motif.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\yamaha_motif-rack.midimod">
-      <LogicalName>module-database/data/yamaha_motif-rack.midimod</LogicalName>
-      <Link>module-database\yamaha_motif-rack.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\yamaha_motif-rack_es.midimod">
-      <LogicalName>module-database/data/yamaha_motif-rack_es.midimod</LogicalName>
-      <Link>module-database\yamaha_motif-rack_es.midimod</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\midi-module-catalog.txt">
-      <LogicalName>module-database/data/midi-module-catalog.txt</LogicalName>
-      <Link>module-database\midi-module-catalog.txt</Link>
-    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)module-database\*\*.midimod" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)module-database\*\midi-module-catalog.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\lib\module-database\data\README">
