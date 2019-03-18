@@ -28,6 +28,11 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiSyncPlayer (MidiMusic music, IMidiTimeManager timeManager)
+			: this (music, new MidiTimeManagerWrapper (timeManager))
+		{
+		}
+		
+		public MidiSyncPlayer (MidiMusic music, IMidiPlayerTimeManager timeManager)
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");
@@ -46,7 +51,7 @@ namespace Commons.Music.Midi
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
 		PlayerState state;
 		bool do_pause, do_stop;
-		IMidiTimeManager time_manager;
+		IMidiPlayerTimeManager time_manager;
 		
 		public PlayerState State {
 			get { return state; }
@@ -97,7 +102,6 @@ namespace Commons.Music.Midi
 
 		public void Play ()
 		{
-			time_manager.Counting = true;
 			pause_handle.Set ();
 			timer_resumed = DateTime.Now;
 			state = PlayerState.Playing;
@@ -117,7 +121,6 @@ namespace Commons.Music.Midi
 
 		public void Pause ()
 		{
-			time_manager.Counting = false;
 			do_pause = true;
 			playtime_delta += DateTime.Now - timer_resumed;
 			timer_resumed = DateTime.Now;
@@ -188,7 +191,7 @@ namespace Commons.Music.Midi
 			}
 			else if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
-				time_manager.AdvanceBy (ms);
+				time_manager.WaitBy (ms);
 			}
 			
 			if (m.Event.StatusByte == 0xFF) {
@@ -257,18 +260,37 @@ namespace Commons.Music.Midi
 		{
 		}
 
+		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
 		public MidiPlayer (MidiMusic music, IMidiTimeManager timeManager)
 			: this (music, MidiAccessManager.Empty, timeManager)
 		{
 		}
+		
+		public MidiPlayer (MidiMusic music, IMidiPlayerTimeManager timeManager)
+			: this (music, MidiAccessManager.Empty, timeManager)
+		{
+		}
 
+		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
 		public MidiPlayer (MidiMusic music, IMidiAccess access, IMidiTimeManager timeManager)
 			: this (music, access.OpenOutputAsync (access.Outputs.First ().Id).Result, timeManager)
 		{
 			should_dispose_output = true;
 		}
 
+		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
 		public MidiPlayer (MidiMusic music, IMidiOutput output, IMidiTimeManager timeManager)
+			: this (music, output, new MidiTimeManagerWrapper (timeManager))
+		{
+		}
+		
+		public MidiPlayer (MidiMusic music, IMidiAccess access, IMidiPlayerTimeManager timeManager)
+			: this (music, access.OpenOutputAsync (access.Outputs.First ().Id).Result, timeManager)
+		{
+			should_dispose_output = true;
+		}
+		
+		public MidiPlayer (MidiMusic music, IMidiOutput output, IMidiPlayerTimeManager timeManager)
 		{
 			if (music == null)
 				throw new ArgumentNullException ("music");

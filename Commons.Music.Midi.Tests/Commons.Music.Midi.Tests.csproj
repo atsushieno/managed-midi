@@ -43,6 +43,7 @@
     <Compile Include="MidiPlayerTest.cs" />
     <Compile Include="RtMidiTest.cs" />
     <Compile Include="PortMidiTest.cs" />
+    <Compile Include="SMFTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\testmidi.mid" />

@@ -24,10 +24,10 @@ namespace Commons.Music.Midi.Tests
 		public void PlayRtMidi ()
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new AlmostVirtualMidiTimeManager ();
+			var vt = new AlmostVirtualMidiPlayerTimeManager ();
 			var player = new MidiPlayer (MidiMusic.Read (stream), new RtMidi.RtMidiAccess (), vt);
 			player.PlayAsync ();
-			vt.AdvanceBy (10000);
+			vt.WaitBy (10000);
 			player.PauseAsync ();
 			player.Dispose ();
 		}
@@ -36,10 +36,10 @@ namespace Commons.Music.Midi.Tests
 		public void PlayPortMidi ()
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new AlmostVirtualMidiTimeManager ();
+			var vt = new AlmostVirtualMidiPlayerTimeManager ();
 			var player = new MidiPlayer (MidiMusic.Read (stream), new PortMidi.PortMidiAccess (), vt);
 			player.PlayAsync ();
-			vt.AdvanceBy (10000);
+			vt.WaitBy (10000);
 			player.PauseAsync ();
 			player.Dispose ();
 		}
@@ -47,34 +47,50 @@ namespace Commons.Music.Midi.Tests
 		[Test]
 		public void PlaybackCompletedToEnd ()
 		{
-			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new AlmostVirtualMidiTimeManager ();
-			var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
-			bool completed = false, finished = false;
-			player.PlaybackCompletedToEnd += () => completed = true;
-			player.Finished += () => finished = true;
-			Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
-			Assert.IsTrue (!finished, "2 Finished already fired");
-			player.PlayAsync ();
-			// FIXME: we have to "sanitize" TimeManager API and behavior.
-			// In particular, the player must "wait" until the timer actually proceeds to the point of time (by "Advance_Something_By()" method, can't name appropriately now) where the player already ran.
-			//vt.AdvanceBy (100);
-			//vt.AdvanceBy (1);
-			Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
-			Assert.IsTrue (!finished, "4 Finished already fired");
-			vt.AdvanceBy (100000);
-			vt.AdvanceBy (1);
-			player.PauseAsync ();
-			player.Dispose ();
-			Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
-			Assert.IsTrue (finished, "6 Finished not fired");
+			var stream = GetType ().Assembly
+				.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
+			using (var vt = new VirtualMidiPlayerTimeManager ()) {
+				var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
+				bool completed = false, finished = false;
+				player.PlaybackCompletedToEnd += () => completed = true;
+				player.Finished += () => finished = true;
+				Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
+				Assert.IsTrue (!finished, "2 Finished already fired");
+				player.PlayAsync ();
+				vt.ProceedBy (100);
+				Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
+				Assert.IsTrue (!finished, "4 Finished already fired");
+				vt.ProceedBy (199900);
+				player.PauseAsync ();
+				player.Dispose ();
+				Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
+				Assert.IsTrue (finished, "6 Finished not fired");
+			}
+		}
+		[Test]
+		public void PlaybackCompletedToEndAbort ()
+		{
+			var stream = GetType ().Assembly
+				.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
+			// abort case
+			using (var vt = new VirtualMidiPlayerTimeManager ()) {
+				var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
+				bool completed = false, finished = false;
+				player.PlaybackCompletedToEnd += () => completed = true;
+				player.Finished += () => finished = true;
+				player.PlayAsync ();
+				vt.ProceedBy (100000);
+				player.PauseAsync ();
+				player.Dispose (); // abort in the middle
+				Assert.IsFalse( completed, "1 PlaybackCompletedToEnd fired");
+				Assert.IsTrue (finished, "2 Finished not fired");
+			}
 		}
 
-		public class AlmostVirtualMidiTimeManager : MidiTimeManagerBase
+		public class AlmostVirtualMidiPlayerTimeManager : IMidiPlayerTimeManager
 		{
-			public override void AdvanceBy (int addedMilliseconds)
+			public void WaitBy (int addedMilliseconds)
 			{
-				base.AdvanceBy (addedMilliseconds);
 				Thread.Sleep (50);
 			}
 		}

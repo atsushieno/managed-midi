@@ -264,6 +264,11 @@ namespace Commons.Music.Midi
 		{
 			return (data [0] << 16) + (data [1] << 8) + data [2];
 		}
+
+		public static double GetBpm (byte [] data)
+		{
+			return 60000000.0 / GetTempo (data);
+		}
 	}
 
 	public struct MidiEvent
@@ -628,7 +633,7 @@ namespace Commons.Music.Midi
 			    || ReadByte ()  != 'd')
 				throw ParseError ("MThd is expected");
 			if (ReadInt32 () != 6)
-				throw ParseError ("Unexpeted data size (should be 6)");
+				throw ParseError ("Unexpected data size (should be 6)");
 			data.Format = (byte) ReadInt16 ();
 			int tracks = ReadInt16 ();
 			data.DeltaTimeSpec = ReadInt16 ();

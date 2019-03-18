@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
-{
+{	
+	[Obsolete ("This will be removed in the next API-breaking update. Please use IMidiPlayerTimeManager instead")]
 	public interface IMidiTimeManager
 	{
 		bool Counting { get; set; }
@@ -13,6 +14,7 @@ namespace Commons.Music.Midi
 		//long TicksToMilliseconds (long ticks)
 	}
 
+	[Obsolete ("This will be removed in the next API-breaking update. Please use IMidiPlayerTimeManager implementations instead")]
 	public abstract class MidiTimeManagerBase : IMidiTimeManager
 	{
 		public static int GetDeltaTimeInMilliseconds (int deltaTime, int currentTempo, int smfDeltaTimeSpec, double speed = 1.0)
@@ -44,6 +46,7 @@ namespace Commons.Music.Midi
 	}
 
 
+	[Obsolete ("This will be removed in the next API-breaking update. Please use VirtualMidiPlayerTimeManager instead")]
 	public class VirtualMidiTimeManager : MidiTimeManagerBase
 	{
 		public override void AdvanceBy (int addedMilliseconds)
@@ -53,6 +56,7 @@ namespace Commons.Music.Midi
 		//void AdvanceTo (long targetTicks);
 	}
 
+	[Obsolete ("This will be removed in the next API-breaking update. Please use SimpleAdjustingMidiPlayerTimeManager instead")]
 	public class SimpleMidiTimeManager : MidiTimeManagerBase
 	{
 		DateTime last_started = default (DateTime);
