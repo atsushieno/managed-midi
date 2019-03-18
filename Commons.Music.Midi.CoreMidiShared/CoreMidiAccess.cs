@@ -27,17 +27,6 @@ namespace Commons.Music.Midi.CoreMidiApi
 {
 	public class CoreMidiAccess : IMidiAccess
 	{
-		IEnumerable<MidiEntity> EnumerateMidiEntities ()
-		{
-			var dcount = MIDI.DeviceCount;
-			for (nint d = 0; d < dcount; d++) {
-				var dev = MIDI.GetDevice (d);
-				var ecount = dev.EntityCount;
-				for (nint e = 0; e < ecount; e++)
-					yield return dev.GetEntity (e);
-			}
-		}
-
 		public IEnumerable<IMidiPortDetails> Inputs => Enumerable.Range (0, (int) MIDI.SourceCount).Select (i => (IMidiPortDetails) new CoreMidiPortDetails (MidiEndpoint.GetSource (i)));
 
 		public IEnumerable<IMidiPortDetails> Outputs => Enumerable.Range (0, (int)MIDI.DestinationCount).Select (i => (IMidiPortDetails)new CoreMidiPortDetails (MidiEndpoint.GetDestination (i)));
@@ -56,7 +45,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		{
 			var details = Outputs.Cast<CoreMidiPortDetails>().FirstOrDefault(i => i.Id == portId);
 			if (details == null)
-				throw new InvalidOperationException($"Device specified as port {portId}) is not found.");
+				throw new InvalidOperationException($"Device specified as port {portId} is not found.");
 			return Task.FromResult((IMidiOutput) new CoreMidiOutput (details));
 		}
 	}

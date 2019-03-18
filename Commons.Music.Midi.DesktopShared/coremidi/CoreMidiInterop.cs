@@ -21,6 +21,7 @@ using MIDITimeStamp = System.Int64;
 using MIDIUniqueID = System.Int32;
 using OSStatus = System.Int32;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using nint = System.Int64;
 using ItemCount = System.Int64;
 
@@ -43,6 +44,29 @@ namespace CoreMidi {
 		internal static CFStringRef ToCFStringRef (string s)
 		{
 			return CoreFoundationInterop.CFStringCreateWithCString (IntPtr.Zero, s, CoreFoundationInterop.kCFStringEncodingUTF8);
+		}
+	}
+
+	public class MidiException : Exception
+	{
+		public MidiException ()
+			: this ("MIDI error")
+		{
+		}
+
+		public MidiException (string message)
+			: this(message, null)
+		{
+		}
+
+		public MidiException (string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+
+		protected MidiException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
 		}
 	}
 
@@ -97,11 +121,10 @@ namespace CoreMidi {
 
 		public string EndpointName { get; private set; }
 
-		//public string Name => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName);
 		public string Name => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName);
 		public string Manufacturer => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyManufacturer);
 		public string DisplayName => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDisplayName);
-		public string DriverVersion => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion);
+		public int DriverVersion => GetIntegerProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion);
 
 		String GetStringProp (IntPtr id)
 		{
@@ -120,6 +143,13 @@ namespace CoreMidi {
 					count++;
 				return System.Text.Encoding.UTF8.GetString ((byte*)cstr, count);
 			}
+		}
+
+		int GetIntegerProp(IntPtr id)
+		{
+			int ret;
+			CoreMidiInterop.MIDIObjectGetIntegerProperty(Handle, id, out ret);
+			return ret;
 		}
 	}
 
@@ -196,7 +226,9 @@ namespace CoreMidi {
 		{
 			IntPtr h;
 			name_string = Midi.ToCFStringRef (name);
-			CoreMidiInterop.MIDIClientCreate (name_string, OnNotify, IntPtr.Zero, out h);
+			int ret = CoreMidiInterop.MIDIClientCreate (name_string, OnNotify, IntPtr.Zero, out h);
+			if (ret != 0)
+				throw new MidiException ($"Failed to create MIDI client for {name}: error code {ret}");
 			Handle = h;
 		}
 
@@ -264,7 +296,8 @@ namespace CoreMidi {
 
 	// I have no idea why it doesn't work if all these pieces go into CoreMidiInterop class...
 	internal class CoreMidiIntropWorkaround {
-		const string LibraryName = "/System/Library/Frameworks/CoreMIDI.framework/Resources/BridgeSupport/CoreMIDI.dylib";
+		//const string LibraryName = "/System/Library/Frameworks/CoreMIDI.framework/Resources/BridgeSupport/CoreMIDI.dylib";
+		const string LibraryName = "/System/Library/Frameworks/CoreMIDI.framework/Versions/A/CoreMIDI";
 
 		static CoreMidiIntropWorkaround ()
 		{

@@ -11,20 +11,16 @@ namespace Commons.Music.Midi
 		Stopped,
 		Playing,
 		Paused,
+		FastForward,
+		[Obsolete ("This will vanish in the next API-breaking update")]
+		Rewind,
+		[Obsolete ("This will vanish in the next API-breaking update")]
 		Loading
 	}
 
-	interface IMidiPlayerStatus
-	{
-		PlayerState State { get; }
-		int Tempo { get; }
-		int PlayDeltaTime { get; }
-		TimeSpan PositionInTime { get; }
-		int GetTotalPlayTimeMilliseconds ();
-	}
-
 	// Player implementation. Plays a MIDI song synchronously.
-	public class MidiSyncPlayer : IDisposable, IMidiPlayerStatus
+	[Obsolete ("This will vanish in the next API-breaking update")]
+	public class MidiSyncPlayer : IDisposable
 	{
 		public MidiSyncPlayer (MidiMusic music)
 			: this (music, new SimpleMidiTimeManager ())
@@ -43,6 +39,7 @@ namespace Commons.Music.Midi
 		}
 
 		public event Action Finished;
+		public event Action PlaybackCompletedToEnd;
 
 		MidiMusic music;
 		IList<MidiMessage> messages;
@@ -56,7 +53,9 @@ namespace Commons.Music.Midi
 		}
 		public int PlayDeltaTime { get; set; }
 		public TimeSpan PositionInTime {
+			// FIXME: this is not exact after seek operation.
 			get { return GetTimerOffsetWithTempoRatio () + playtime_delta; }
+			// get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
 		}
 		public int Tempo {
 			get { return current_tempo; }
@@ -130,29 +129,30 @@ namespace Commons.Music.Midi
 		{
 			AllControlReset ();
 			playtime_delta = TimeSpan.Zero;
-			{
-				while (true) {
-					pause_handle.WaitOne ();
-					if (do_stop)
-						break;
-					if (do_pause) {
-						pause_handle.Reset ();
-						do_pause = false;
-						state = PlayerState.Paused;
-						continue;
-					}
-					if (event_idx == messages.Count)
-						break;
-					HandleEvent (messages [event_idx++]);
+			event_idx = 0;
+			PlayDeltaTime = 0;
+			while (true) {
+				pause_handle.WaitOne ();
+				if (do_stop)
+					break;
+				if (do_pause) {
+					pause_handle.Reset ();
+					do_pause = false;
+					state = PlayerState.Paused;
+					continue;
 				}
-				do_stop = false;
-				Mute ();
-				state = PlayerState.Stopped;
 				if (event_idx == messages.Count)
-					if (Finished != null)
-						Finished ();
-				event_idx = 0;
+					break;
+				HandleEvent (messages [event_idx++]);
 			}
+			do_stop = false;
+			Mute ();
+			state = PlayerState.Stopped;
+			if (event_idx == messages.Count)
+				if (PlaybackCompletedToEnd != null)
+					PlaybackCompletedToEnd ();
+			if (Finished != null)
+				Finished ();
 		}
 
 		int current_tempo = MidiMetaType.DefaultTempo;
@@ -168,20 +168,28 @@ namespace Commons.Music.Midi
 			return (int) (current_tempo / 1000 * deltaTime / music.DeltaTimeSpec / tempo_ratio);
 		}
 
-		string ToBinHexString (byte [] bytes)
-		{
-			string s = "";
-			foreach (byte b in bytes)
-				s += String.Format ("{0:X02} ", b);
-			return s;
-		}
-
 		public virtual void HandleEvent (MidiMessage m)
 		{
-			if (m.DeltaTime != 0) {
+			if (seek_processor != null) {
+				var result = seek_processor.FilterMessage (m);
+				switch (result) {
+				case SeekFilterResult.PassAndTerminate:
+				case SeekFilterResult.BlockAndTerminate:
+					seek_processor = null;
+					break;
+				}
+
+				switch (result) {
+				case SeekFilterResult.Block:
+				case SeekFilterResult.BlockAndTerminate:
+					return; // ignore this event
+				}
+			}
+			else if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.AdvanceBy (ms);
 			}
+			
 			if (m.Event.StatusByte == 0xFF) {
 				if (m.Event.Msb == MidiMetaType.Tempo)
 					current_tempo = MidiMetaType.GetTempo (m.Event.Data);
@@ -207,12 +215,28 @@ namespace Commons.Music.Midi
 				do_stop = true;
 				if (pause_handle != null)
 					pause_handle.Set ();
+				if (Finished != null)
+					Finished ();
 			}
+		}
+
+		private ISeekProcessor seek_processor;
+
+		// not sure about the interface, so make it non-public yet.
+		internal void Seek (ISeekProcessor seekProcessor, int ticks)
+		{
+			var state = State;
+			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
+			event_idx = 0;
+			PlayDeltaTime = ticks;
+			timer_resumed = DateTime.Now;
+			playtime_delta = TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (ticks));
+			Mute ();
 		}
 	}
 
 	// Provides asynchronous player control.
-	public class MidiPlayer : IDisposable, IMidiPlayerStatus
+	public class MidiPlayer : IDisposable
 	{
 		MidiSyncPlayer player;
 		Task sync_player_task;
@@ -257,6 +281,11 @@ namespace Commons.Music.Midi
 			player = new MidiSyncPlayer (music, timeManager);
 			EventReceived += (m) => {
 				switch (m.EventType) {
+				case MidiEvent.NoteOn:
+				case MidiEvent.NoteOff:
+					if (channel_mask != null && channel_mask [m.Channel])
+						return; // ignore messages for the masked channel.
+					goto default;
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
 					if (buffer.Length <= m.Data.Length)
@@ -282,10 +311,16 @@ namespace Commons.Music.Midi
 		IMidiOutput output;
 		bool should_dispose_output;
 		byte [] buffer = new byte [0x100];
+		bool [] channel_mask;
 
 		public event Action Finished {
 			add { player.Finished += value; }
 			remove { player.Finished -= value; }
+		}
+
+		public event Action PlaybackCompletedToEnd {
+			add { player.PlaybackCompletedToEnd += value; }
+			remove { player.PlaybackCompletedToEnd -= value; }
 		}
 
 		public PlayerState State {
@@ -364,6 +399,67 @@ namespace Commons.Music.Midi
 			default: // do nothing
 				return;
 			}
+		}
+
+		public void Stop ()
+		{
+			switch (State) {
+			case PlayerState.Paused:
+			case PlayerState.Playing:
+				player.Stop ();
+				break;
+			}
+		}
+
+		public void SeekAsync (int ticks)
+		{
+			player.Seek (null, ticks);
+		}
+
+		public void SetChannelMask (bool [] channelMask)
+		{
+			if (channelMask != null && channelMask.Length != 16)
+				throw new ArgumentException ("Unexpected length of channelMask array; it must be an array of 16 elements.");
+			channel_mask = channelMask;
+			// additionally send all sound off for the muted channels.
+			for (int ch = 0; ch < channelMask.Length; ch++)
+				if (channelMask [ch])
+					output.Send (new byte[] {(byte) (0xB0 + ch), 120, 0}, 0, 3, 0);
+		}
+	}
+
+	interface ISeekProcessor
+	{
+		SeekFilterResult FilterMessage (MidiMessage message);
+	}
+
+	enum SeekFilterResult
+	{
+		Pass,
+		Block,
+		PassAndTerminate,
+		BlockAndTerminate,
+	}
+	
+	class SimpleSeekProcessor : ISeekProcessor
+	{
+		public SimpleSeekProcessor (int ticks)
+		{
+			this.seek_to = ticks;
+		}
+
+		private int seek_to, current;
+		public SeekFilterResult FilterMessage (MidiMessage message)
+		{
+			current += message.DeltaTime;
+			if (current >= seek_to)
+				return SeekFilterResult.PassAndTerminate;
+			switch (message.Event.EventType) {
+			case MidiEvent.NoteOn:
+			case MidiEvent.NoteOff:
+				return SeekFilterResult.Block;
+			}
+			return SeekFilterResult.Pass;
 		}
 	}
 }
