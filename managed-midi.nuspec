@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
