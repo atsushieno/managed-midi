@@ -11,7 +11,6 @@ namespace Commons.Music.Midi
 		Stopped,
 		Playing,
 		Paused,
-		FastForward,
 	}
 
 	// Player implementation. Plays a MIDI song synchronously.
