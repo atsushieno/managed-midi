@@ -47,7 +47,7 @@ namespace Commons.Music.Midi
 			disposed = true;
 		}
 		
-		public void WaitBy (int addedMilliseconds)
+		public virtual void WaitBy (int addedMilliseconds)
 		{
 			while (!should_terminate && total_waited_milliseconds + addedMilliseconds > total_proceeded_milliseconds) {
 				wait_handle.WaitOne ();
@@ -55,7 +55,7 @@ namespace Commons.Music.Midi
 			total_waited_milliseconds += addedMilliseconds;
 		}
 
-		public void ProceedBy (int addedMilliseconds)
+		public virtual void ProceedBy (int addedMilliseconds)
 		{
 			if (addedMilliseconds < 0)
 				throw new ArgumentOutOfRangeException ("addedMilliseconds",

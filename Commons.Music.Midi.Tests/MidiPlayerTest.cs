@@ -12,26 +12,28 @@ namespace Commons.Music.Midi.Tests
 		public void PlaySimple ()
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new VirtualMidiTimeManager ();
+			var vt = new VirtualMidiPlayerTimeManager ();
 			var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
 			player.PlayAsync ();
-			vt.AdvanceBy (10000);
+			vt.ProceedBy (200000);
 			player.PauseAsync ();
 			player.Dispose ();
 		}
 
+		[Ignore ("rtmidi may not be runnable depending on the test runner platform")]
 		[Test]
 		public void PlayRtMidi ()
 		{
 			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new AlmostVirtualMidiPlayerTimeManager ();
+			var vt = new VirtualMidiPlayerTimeManager ();
 			var player = new MidiPlayer (MidiMusic.Read (stream), new RtMidi.RtMidiAccess (), vt);
 			player.PlayAsync ();
-			vt.WaitBy (10000);
+			vt.ProceedBy (200000);
 			player.PauseAsync ();
 			player.Dispose ();
 		}
 
+		[Ignore ("portmidi may not be runnable depending on the test runner platform")]
 		[Test]
 		public void PlayPortMidi ()
 		{
@@ -39,7 +41,7 @@ namespace Commons.Music.Midi.Tests
 			var vt = new AlmostVirtualMidiPlayerTimeManager ();
 			var player = new MidiPlayer (MidiMusic.Read (stream), new PortMidi.PortMidiAccess (), vt);
 			player.PlayAsync ();
-			vt.WaitBy (10000);
+			vt.ProceedBy (200000);
 			player.PauseAsync ();
 			player.Dispose ();
 		}
@@ -87,11 +89,12 @@ namespace Commons.Music.Midi.Tests
 			}
 		}
 
-		public class AlmostVirtualMidiPlayerTimeManager : IMidiPlayerTimeManager
+		public class AlmostVirtualMidiPlayerTimeManager : VirtualMidiPlayerTimeManager
 		{
-			public void WaitBy (int addedMilliseconds)
+			public override void WaitBy (int addedMilliseconds)
 			{
 				Thread.Sleep (50);
+				base.WaitBy (addedMilliseconds);
 			}
 		}
 	}

@@ -12,15 +12,10 @@ namespace Commons.Music.Midi
 		Playing,
 		Paused,
 		FastForward,
-		[Obsolete ("This will vanish in the next API-breaking update")]
-		Rewind,
-		[Obsolete ("This will vanish in the next API-breaking update")]
-		Loading
 	}
 
 	// Player implementation. Plays a MIDI song synchronously.
-	[Obsolete ("This will vanish in the next API-breaking update")]
-	public class MidiSyncPlayer : IDisposable
+	class MidiSyncPlayer : IDisposable
 	{
 		public MidiSyncPlayer (MidiMusic music)
 			: this (music, new SimpleMidiTimeManager ())
@@ -251,36 +246,17 @@ namespace Commons.Music.Midi
 		}
 
 		public MidiPlayer (MidiMusic music, IMidiAccess access)
-			: this (music, access, new SimpleMidiTimeManager ())
+			: this (music, access, new SimpleAdjustingMidiPlayerTimeManager ())
 		{
 		}
 
 		public MidiPlayer (MidiMusic music, IMidiOutput output)
-			: this (music, output, new SimpleMidiTimeManager ())
-		{
-		}
-
-		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
-		public MidiPlayer (MidiMusic music, IMidiTimeManager timeManager)
-			: this (music, MidiAccessManager.Empty, timeManager)
+			: this (music, output, new SimpleAdjustingMidiPlayerTimeManager ())
 		{
 		}
 		
 		public MidiPlayer (MidiMusic music, IMidiPlayerTimeManager timeManager)
 			: this (music, MidiAccessManager.Empty, timeManager)
-		{
-		}
-
-		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
-		public MidiPlayer (MidiMusic music, IMidiAccess access, IMidiTimeManager timeManager)
-			: this (music, access.OpenOutputAsync (access.Outputs.First ().Id).Result, timeManager)
-		{
-			should_dispose_output = true;
-		}
-
-		[Obsolete ("IMidiTimeManager is being deprecated. Please use IMidiPlayerTimeManager instead")]
-		public MidiPlayer (MidiMusic music, IMidiOutput output, IMidiTimeManager timeManager)
-			: this (music, output, new MidiTimeManagerWrapper (timeManager))
 		{
 		}
 		
