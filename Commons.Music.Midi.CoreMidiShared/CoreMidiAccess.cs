@@ -82,12 +82,14 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public CoreMidiInput (CoreMidiPortDetails details)
 		{
 			this.details = details;
-			port = new MidiClient("inputclient").CreateInputPort("inputport");
-			port.ConnectSource(details.Endpoint);
+			client = new MidiClient ("inputclient");
+			port = client.CreateInputPort ("inputport");
+			port.ConnectSource (details.Endpoint);
 			port.MessageReceived += OnMessageReceived;
 		}
 
 		CoreMidiPortDetails details;
+		MidiClient client;
 		MidiPort port;
 
 		public IMidiPortDetails Details => details;
@@ -114,8 +116,9 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public Task CloseAsync()
 		{
-			port.Disconnect(details.Endpoint);
-			//port.Client.Dispose();
+			port.Disconnect (details.Endpoint);
+			port.Dispose ();
+			client.Dispose ();
 			return Task.CompletedTask;
 		}
 
@@ -130,9 +133,11 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public CoreMidiOutput (CoreMidiPortDetails details)
 		{
 			this.details = details;
-			port = new MidiClient("outputclient").CreateOutputPort("outputport");
+			client = new MidiClient ("outputclient");
+			port = client.CreateOutputPort ("outputport");
 		}
 
+		MidiClient client;
 		CoreMidiPortDetails details;
 		MidiPort port;
 
@@ -142,8 +147,9 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public Task CloseAsync()
 		{
-			port.Disconnect(details.Endpoint);
-			//port.Client.Dispose();
+			port.Disconnect (details.Endpoint);
+			port.Dispose ();
+			client.Dispose ();
 			return Task.CompletedTask;
 		}
 
