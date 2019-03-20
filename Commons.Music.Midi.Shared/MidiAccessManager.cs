@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,8 +33,35 @@ namespace Commons.Music.Midi
 
 		Task<IMidiInput> OpenInputAsync (string portId);
 		Task<IMidiOutput> OpenOutputAsync (string portId);
+		[Obsolete ("This will be removed in the next API-breaking change. It is not functional at this state anyways.")]
 		event EventHandler<MidiConnectionEventArgs> StateChanged;
 	}
+	
+	#region draft API
+
+	// In the future we could use default interface members, but we should target earlier frameworks in the meantime.
+	interface IMidiAccess2 : IMidiAccess
+	{
+		MidiAccessExtensionManager ExtensionManager { get; }
+	}
+
+	abstract class MidiAccessExtensionManager
+	{
+		public abstract T GetInstance<T> ();
+	}
+
+	class MidiConnectionStateDetectorExtension
+	{
+		public event EventHandler<MidiConnectionEventArgs> StateChanged;
+	}
+
+	abstract class MidiPortCreatorExtension
+	{
+		public abstract IMidiInput CreateInputPort (IMidiPortDetails details);
+		public abstract IMidiOutput CreateOutputPort (IMidiPortDetails details);
+	}
+	
+	#endregion
 
 	public class MidiConnectionEventArgs : EventArgs
 	{
