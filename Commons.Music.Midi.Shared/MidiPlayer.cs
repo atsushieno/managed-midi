@@ -35,28 +35,19 @@ namespace Commons.Music.Midi
 		public event Action Finished;
 		public event Action PlaybackCompletedToEnd;
 
-		MidiMusic music;
-		IList<MidiMessage> messages;
+		internal MidiMusic music;
+		internal IList<MidiMessage> messages;
 		ManualResetEvent pause_handle = new ManualResetEvent (false);
-		PlayerState state;
+		internal PlayerState state;
 		bool do_pause, do_stop;
 		IMidiPlayerTimeManager time_manager;
 		
-		public PlayerState State {
-			get { return state; }
-		}
 		public int PlayDeltaTime { get; set; }
+		
 		public TimeSpan PositionInTime {
 			// FIXME: this is not exact after seek operation.
 			get { return GetTimerOffsetWithTempoRatio () + playtime_delta; }
 			// get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
-		}
-		public int Tempo {
-			get { return current_tempo; }
-		}
-		// You can break the data at your own risk but I take performance precedence.
-		public byte [] TimeSignature {
-			get { return current_time_signature; }
 		}
 
 		public double TempoChangeRatio {
@@ -66,10 +57,6 @@ namespace Commons.Music.Midi
 				timer_resumed = DateTime.Now;
 				tempo_ratio = value;
 			}
-		}
-		public int GetTotalPlayTimeMilliseconds ()
-		{
-			return MidiMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
 		}
 		
 		TimeSpan GetTimerOffsetWithTempoRatio ()
@@ -147,8 +134,8 @@ namespace Commons.Music.Midi
 				Finished ();
 		}
 
-		int current_tempo = MidiMetaType.DefaultTempo;
-		byte [] current_time_signature = new byte [4];
+		internal int current_tempo = MidiMetaType.DefaultTempo;
+		internal byte [] current_time_signature = new byte [4];
 		double tempo_ratio = 1.0;
 		DateTime timer_resumed;
 		TimeSpan playtime_delta;
@@ -217,7 +204,6 @@ namespace Commons.Music.Midi
 		// not sure about the interface, so make it non-public yet.
 		internal void Seek (ISeekProcessor seekProcessor, int ticks)
 		{
-			var state = State;
 			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
 			event_idx = 0;
 			PlayDeltaTime = ticks;
@@ -316,7 +302,7 @@ namespace Commons.Music.Midi
 		}
 
 		public PlayerState State {
-			get { return player.State; }
+			get { return player.state; }
 		}
 
 		public double TempoChangeRatio {
@@ -325,15 +311,16 @@ namespace Commons.Music.Midi
 		}
 
 		public int Tempo {
-			get { return player.Tempo; }
+			get { return player.current_tempo; }
 		}
 		
 		public int Bpm {
 			get { return (int) (60.0 / Tempo * 1000000.0); }
 		}
 		
+		// You can break the data at your own risk but I take performance precedence.
 		public byte [] TimeSignature {
-			get { return player.TimeSignature; }
+			get { return player.current_time_signature; }
 		}
 
 		public int PlayDeltaTime {
@@ -344,9 +331,12 @@ namespace Commons.Music.Midi
 			get { return player.PositionInTime; }
 		}
 
+		IList<MidiMessage> messages => player.messages;
+		MidiMusic music => player.music;
+
 		public int GetTotalPlayTimeMilliseconds ()
 		{
-			return player.GetTotalPlayTimeMilliseconds ();
+			return MidiMusic.GetTotalPlayTimeMilliseconds (messages, music.DeltaTimeSpec);
 		}
 
 		public event MidiEventAction EventReceived {
