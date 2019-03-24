@@ -11,9 +11,8 @@ namespace Commons.Music.Midi.Tests
 		[Test]
 		public void PlaySimple ()
 		{
-			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
 			var vt = new VirtualMidiPlayerTimeManager ();
-			var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
+			var player = TestHelper.GetMidiPlayer (vt);
 			player.PlayAsync ();
 			vt.ProceedBy (200000);
 			player.PauseAsync ();
@@ -24,9 +23,8 @@ namespace Commons.Music.Midi.Tests
 		[Test]
 		public void PlayRtMidi ()
 		{
-			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			var vt = new VirtualMidiPlayerTimeManager ();
-			var player = new MidiPlayer (MidiMusic.Read (stream), new RtMidi.RtMidiAccess (), vt);
+			var vt = new AlmostVirtualMidiPlayerTimeManager ();
+			var player = TestHelper.GetMidiPlayer (vt, new RtMidi.RtMidiAccess ());
 			player.PlayAsync ();
 			vt.ProceedBy (200000);
 			player.PauseAsync ();
@@ -37,9 +35,8 @@ namespace Commons.Music.Midi.Tests
 		[Test]
 		public void PlayPortMidi ()
 		{
-			var stream = GetType ().Assembly.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
 			var vt = new AlmostVirtualMidiPlayerTimeManager ();
-			var player = new MidiPlayer (MidiMusic.Read (stream), new PortMidi.PortMidiAccess (), vt);
+			var player = TestHelper.GetMidiPlayer (vt, new PortMidi.PortMidiAccess ());
 			player.PlayAsync ();
 			vt.ProceedBy (200000);
 			player.PauseAsync ();
@@ -49,44 +46,38 @@ namespace Commons.Music.Midi.Tests
 		[Test]
 		public void PlaybackCompletedToEnd ()
 		{
-			var stream = GetType ().Assembly
-				.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			using (var vt = new VirtualMidiPlayerTimeManager ()) {
-				var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
-				bool completed = false, finished = false;
-				player.PlaybackCompletedToEnd += () => completed = true;
-				player.Finished += () => finished = true;
-				Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
-				Assert.IsTrue (!finished, "2 Finished already fired");
-				player.PlayAsync ();
-				vt.ProceedBy (100);
-				Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
-				Assert.IsTrue (!finished, "4 Finished already fired");
-				vt.ProceedBy (199900);
-				player.PauseAsync ();
-				player.Dispose ();
-				Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
-				Assert.IsTrue (finished, "6 Finished not fired");
-			}
+			var vt = new VirtualMidiPlayerTimeManager ();
+			var player = TestHelper.GetMidiPlayer (vt, null, "Commons.Music.Midi.Tests.Resources.testmidi.mid");
+			bool completed = false, finished = false;
+			player.PlaybackCompletedToEnd += () => completed = true;
+			player.Finished += () => finished = true;
+			Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
+			Assert.IsTrue (!finished, "2 Finished already fired");
+			player.PlayAsync ();
+			vt.ProceedBy (100);
+			Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
+			Assert.IsTrue (!finished, "4 Finished already fired");
+			vt.ProceedBy (199900);
+			player.PauseAsync ();
+			player.Dispose ();
+			Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
+			Assert.IsTrue (finished, "6 Finished not fired");
 		}
+		
 		[Test]
 		public void PlaybackCompletedToEndAbort ()
 		{
-			var stream = GetType ().Assembly
-				.GetManifestResourceStream ("Commons.Music.Midi.Tests.Resources.testmidi.mid");
-			// abort case
-			using (var vt = new VirtualMidiPlayerTimeManager ()) {
-				var player = new MidiPlayer (MidiMusic.Read (stream), MidiAccessManager.Empty, vt);
-				bool completed = false, finished = false;
-				player.PlaybackCompletedToEnd += () => completed = true;
-				player.Finished += () => finished = true;
-				player.PlayAsync ();
-				vt.ProceedBy (100000);
-				player.PauseAsync ();
-				player.Dispose (); // abort in the middle
-				Assert.IsFalse( completed, "1 PlaybackCompletedToEnd fired");
-				Assert.IsTrue (finished, "2 Finished not fired");
-			}
+			var vt = new VirtualMidiPlayerTimeManager ();
+			var player = TestHelper.GetMidiPlayer (vt);
+			bool completed = false, finished = false;
+			player.PlaybackCompletedToEnd += () => completed = true;
+			player.Finished += () => finished = true;
+			player.PlayAsync ();
+			vt.ProceedBy (100000);
+			player.PauseAsync ();
+			player.Dispose (); // abort in the middle
+			Assert.IsFalse( completed, "1 PlaybackCompletedToEnd fired");
+			Assert.IsTrue (finished, "2 Finished not fired");
 		}
 
 		public class AlmostVirtualMidiPlayerTimeManager : VirtualMidiPlayerTimeManager

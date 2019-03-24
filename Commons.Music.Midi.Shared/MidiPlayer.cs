@@ -45,9 +45,7 @@ namespace Commons.Music.Midi
 		public int PlayDeltaTime { get; set; }
 		
 		public TimeSpan PositionInTime {
-			// FIXME: this is not exact after seek operation.
-			get { return GetTimerOffsetWithTempoRatio () + playtime_delta; }
-			// get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
+			get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
 		}
 
 		public double TempoChangeRatio {
@@ -167,6 +165,7 @@ namespace Commons.Music.Midi
 			else if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.WaitBy (ms);
+				PlayDeltaTime += m.DeltaTime;
 			}
 			
 			if (m.Event.StatusByte == 0xFF) {
@@ -177,7 +176,6 @@ namespace Commons.Music.Midi
 			}
 
 			OnEvent (m.Event);
-			PlayDeltaTime += m.DeltaTime;
 		}
 
 		public MidiEventAction EventReceived;
@@ -327,9 +325,7 @@ namespace Commons.Music.Midi
 			get { return player.PlayDeltaTime; }
 		}
 		
-		public TimeSpan PositionInTime {
-			get { return player.PositionInTime; }
-		}
+		public TimeSpan PositionInTime => player.PositionInTime;
 
 		IList<MidiMessage> messages => player.messages;
 		MidiMusic music => player.music;
