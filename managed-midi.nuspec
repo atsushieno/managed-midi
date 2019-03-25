@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>managed-midi</id>
-    <version>1.8.0</version>
+    <version>1.9.0</version>
     <authors>Atsushi Eno</authors>
     <owners>Atsushi Eno</owners>
     <licenseUrl>https://github.com/atsushieno/managed-midi/LICENSE</licenseUrl>
@@ -11,7 +11,7 @@
     <summary>Cross-platform MIDI access API for Mono and .NET</summary>
     <description>managed-midi aims to provide C#/.NET API For almost-raw access to MIDI devices in cross-platform manner with the greatest common measure so that it can be "commons" either on Mono or .NET, everywhere, as well as standard MIDI file manipulation and player functionality.</description>
     <releaseNotes>See github commit logs, there isn't a lot of commits.</releaseNotes>
-    <copyright>(C) 2010-2019, Atsushi Eno</copyright> 
+    <copyright>(C) 2010-2019, Atsushi Eno and contributors</copyright> 
     <tags>midi mono linux alsa winmm audio</tags>
     <dependencies>
     </dependencies>
