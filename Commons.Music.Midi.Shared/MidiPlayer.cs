@@ -49,21 +49,8 @@ namespace Commons.Music.Midi
 		}
 
 		public double TempoChangeRatio {
-			get { return tempo_ratio; }
-			set {
-				playtime_delta += GetTimerOffsetWithTempoRatio ();
-				timer_resumed = DateTime.Now;
-				tempo_ratio = value;
-			}
-		}
-		
-		TimeSpan GetTimerOffsetWithTempoRatio ()
-		{
-			switch (state) {
-			case PlayerState.Playing:
-				return TimeSpan.FromMilliseconds ((DateTime.Now - timer_resumed).TotalMilliseconds * tempo_ratio);
-			}
-			return TimeSpan.Zero;
+			get => tempo_ratio;
+			set => tempo_ratio = value;
 		}
 
 		public virtual void Dispose ()
@@ -76,7 +63,6 @@ namespace Commons.Music.Midi
 		public void Play ()
 		{
 			pause_handle.Set ();
-			timer_resumed = DateTime.Now;
 			state = PlayerState.Playing;
 		}
 
@@ -95,8 +81,6 @@ namespace Commons.Music.Midi
 		public void Pause ()
 		{
 			do_pause = true;
-			playtime_delta += DateTime.Now - timer_resumed;
-			timer_resumed = DateTime.Now;
 			Mute ();
 		}
 
@@ -105,7 +89,6 @@ namespace Commons.Music.Midi
 		public void PlayerLoop ()
 		{
 			AllControlReset ();
-			playtime_delta = TimeSpan.Zero;
 			event_idx = 0;
 			PlayDeltaTime = 0;
 			while (true) {
@@ -135,8 +118,6 @@ namespace Commons.Music.Midi
 		internal int current_tempo = MidiMetaType.DefaultTempo;
 		internal byte [] current_time_signature = new byte [4];
 		double tempo_ratio = 1.0;
-		DateTime timer_resumed;
-		TimeSpan playtime_delta;
 
 		int GetDeltaTimeInMilliseconds (int deltaTime)
 		{
@@ -205,8 +186,6 @@ namespace Commons.Music.Midi
 			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
 			event_idx = 0;
 			PlayDeltaTime = ticks;
-			timer_resumed = DateTime.Now;
-			playtime_delta = TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (ticks));
 			Mute ();
 		}
 	}

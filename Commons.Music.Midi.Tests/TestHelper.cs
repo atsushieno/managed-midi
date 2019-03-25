@@ -25,7 +25,15 @@ namespace Commons.Music.Midi.Tests
 			using (var stream = typeof (TestHelper).Assembly.GetManifestResourceStream (resourceId))
 				return MidiMusic.Read (stream);
 		}
-		
+
+		public static MidiPlayer GetMidiPlayer (IMidiPlayerTimeManager timeManager, MidiMusic midiMusic, IMidiAccess midiAccess = null)
+		{
+			var access = midiAccess ?? MidiAccessManager.Empty;
+			var music = midiMusic ?? GetMidiMusic ();
+			var tm = timeManager ?? new VirtualMidiPlayerTimeManager ();
+			return new MidiPlayer (music, access, tm);
+		}
+
 		public static MidiPlayer GetMidiPlayer (IMidiPlayerTimeManager timeManager = null, IMidiAccess midiAccess = null, string resourceId = null)
 		{
 			var access = midiAccess ?? MidiAccessManager.Empty;

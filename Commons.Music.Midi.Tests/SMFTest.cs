@@ -27,7 +27,7 @@ namespace Commons.Music.Midi.Tests
 			Assert.AreEqual (12, (int) player.PositionInTime.TotalSeconds, "1 PositionInTime");
 			vt.ProceedBy (100);
 			// FIXME: this is ugly.
-			Task.Delay (10);
+			Task.Delay (100);
 			// FIXME: not working
 			//Assert.AreEqual (5100, player.PlayDeltaTime, "2 PlayDeltaTime");
 			Assert.AreEqual (12, (int) player.PositionInTime.TotalSeconds, "2 PositionInTime");
@@ -36,7 +36,7 @@ namespace Commons.Music.Midi.Tests
 			Assert.AreEqual (5, (int) player.PositionInTime.TotalSeconds, "3 PositionInTime");
 			vt.ProceedBy (100);
 			// FIXME: this is ugly.
-			Task.Delay (10);
+			Task.Delay (100);
 			// FIXME: not working
 			//Assert.AreEqual (2100, player.PlayDeltaTime, "4 PlayDeltaTime");
 			Assert.AreEqual (5, (int) player.PositionInTime.TotalSeconds, "4 PositionInTime");

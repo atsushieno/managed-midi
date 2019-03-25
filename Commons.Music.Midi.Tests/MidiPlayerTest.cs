@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Commons.Music.Midi.Tests
@@ -47,8 +48,11 @@ namespace Commons.Music.Midi.Tests
 		public void PlaybackCompletedToEnd ()
 		{
 			var vt = new VirtualMidiPlayerTimeManager ();
-			var player = TestHelper.GetMidiPlayer (vt, null, "Commons.Music.Midi.Tests.Resources.testmidi.mid");
+			var music = TestHelper.GetMidiMusic ();
+			var qmsec = MidiMusic.GetPlayTimeMillisecondsAtTick (music.Tracks [0].Messages, 4998, 192);
+			var player = TestHelper.GetMidiPlayer (vt, music);
 			bool completed = false, finished = false;
+			
 			player.PlaybackCompletedToEnd += () => completed = true;
 			player.Finished += () => finished = true;
 			Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
@@ -57,7 +61,12 @@ namespace Commons.Music.Midi.Tests
 			vt.ProceedBy (100);
 			Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
 			Assert.IsTrue (!finished, "4 Finished already fired");
-			vt.ProceedBy (199900);
+			vt.ProceedBy (qmsec);
+			Assert.AreEqual (12889, qmsec, "qmsec");
+			// FIXME: this is ugly
+			while (player.PlayDeltaTime < 4988)
+				Task.Delay (100);
+			Assert.AreEqual (4988, player.PlayDeltaTime, "PlayDeltaTime");
 			player.PauseAsync ();
 			player.Dispose ();
 			Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
@@ -73,10 +82,13 @@ namespace Commons.Music.Midi.Tests
 			player.PlaybackCompletedToEnd += () => completed = true;
 			player.Finished += () => finished = true;
 			player.PlayAsync ();
-			vt.ProceedBy (100000);
+			vt.ProceedBy (1000);
+			// FIXME: this is ugly
+			while (player.PlayDeltaTime == 0)
+				Task.Delay (100);
 			player.PauseAsync ();
 			player.Dispose (); // abort in the middle
-			Assert.IsFalse( completed, "1 PlaybackCompletedToEnd fired");
+			Assert.IsFalse( completed, "1 PlaybackCompletedToEnd unexpectedly fired");
 			Assert.IsTrue (finished, "2 Finished not fired");
 		}
 
