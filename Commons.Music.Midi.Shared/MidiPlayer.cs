@@ -104,7 +104,7 @@ namespace Commons.Music.Midi
 			Finished?.Invoke ();
 		}
 
-		int GetDeltaTimeInMilliseconds (int deltaTime) => (int) (current_tempo / 1000 * deltaTime / delta_time_spec / tempo_ratio);
+		int GetContextDeltaTimeInMilliseconds (int deltaTime) => (int) (current_tempo / 1000 * deltaTime / delta_time_spec / tempo_ratio);
 
 		void ProcessMessage (MidiMessage m)
 		{
@@ -124,7 +124,7 @@ namespace Commons.Music.Midi
 				}
 			}
 			else if (m.DeltaTime != 0) {
-				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
+				var ms = GetContextDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.WaitBy (ms);
 				play_delta_time += m.DeltaTime;
 			}
@@ -315,12 +315,16 @@ namespace Commons.Music.Midi
 				output.Dispose ();
 		}
 
+		[Obsolete ("This should not be callable externally. It will be removed in the next API-breaking update.")]
 		public void StartLoop ()
 		{
 			sync_player_task = Task.Run (() => { player.PlayerLoop (); });
 		}
 
-		public void PlayAsync ()
+		[Obsolete ("Its naming is misleading. It starts playing asynchronously, but won't return any results unlike typical async API. Use new Play() method instead")]
+		public void PlayAsync () => Play ();
+
+		public void Play ()
 		{
 			switch (State) {
 			case PlayerState.Playing:
@@ -336,7 +340,10 @@ namespace Commons.Music.Midi
 			}
 		}
 
-		public void PauseAsync ()
+		[Obsolete ("Its naming is misleading. It starts playing asynchronously, but won't return any results unlike typical async API. Use new Pause() method instead")]
+		public void PauseAsync () => Pause ();
+
+		public void Pause ()
 		{
 			switch (State) {
 			case PlayerState.Playing:
@@ -357,7 +364,10 @@ namespace Commons.Music.Midi
 			}
 		}
 
-		public void SeekAsync (int ticks)
+		[Obsolete ("Its naming is misleading. It starts seeking asynchronously, but won't return any results unlike typical async API. Use new Seek() method instead")]
+		public void SeekAsync (int ticks) => Seek (ticks);
+		
+		public void Seek (int ticks)
 		{
 			player.Seek (null, ticks);
 		}

@@ -121,6 +121,7 @@ namespace Commons.Music.Midi
 
 		List<MidiMessage> messages;
 
+		[Obsolete ("No need to use this method, simply use Messages.Add")]
 		public void AddMessage (MidiMessage msg)
 		{
 			messages.Add (msg);
