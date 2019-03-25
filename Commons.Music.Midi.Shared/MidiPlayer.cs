@@ -14,44 +14,42 @@ namespace Commons.Music.Midi
 	}
 
 	// Player implementation. Plays a MIDI song synchronously.
-	class MidiSyncPlayer : IDisposable
+	class MidiEventLooper : IDisposable
 	{
-		public MidiSyncPlayer (MidiMusic music)
-			: this (music, new SimpleAdjustingMidiPlayerTimeManager ())
+		public MidiEventLooper (IList<MidiMessage> messages, IMidiPlayerTimeManager timeManager, int deltaTimeSpec)
 		{
-		}
-		
-		public MidiSyncPlayer (MidiMusic music, IMidiPlayerTimeManager timeManager)
-		{
-			if (music == null)
-				throw new ArgumentNullException ("music");
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+			if (deltaTimeSpec < 0)
+				throw new NotSupportedException ("SMPTe-basd delta time is not implemented in this player.");
+			
+			delta_time_spec = deltaTimeSpec;
 			time_manager = timeManager;
 
-			this.music = music;
-			messages = SmfTrackMerger.Merge (music).Tracks [0].Messages;
+			this.messages = messages;
 			state = PlayerState.Stopped;
 		}
 
+		public MidiEventAction EventReceived;
+
+		public event Action Starting;
 		public event Action Finished;
 		public event Action PlaybackCompletedToEnd;
 
-		internal MidiMusic music;
-		internal IList<MidiMessage> messages;
-		ManualResetEvent pause_handle = new ManualResetEvent (false);
-		internal PlayerState state;
-		bool do_pause, do_stop;
-		IMidiPlayerTimeManager time_manager;
+		readonly IMidiPlayerTimeManager time_manager;
+		readonly IList<MidiMessage> messages;
+		readonly int delta_time_spec;
 		
-		public int PlayDeltaTime { get; set; }
-		
-		public TimeSpan PositionInTime {
-			get { return TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime)); }
-		}
+		readonly ManualResetEvent pause_handle = new ManualResetEvent (false);
 
-		public double TempoChangeRatio {
-			get => tempo_ratio;
-			set => tempo_ratio = value;
-		}
+		bool do_pause, do_stop;
+		internal double tempo_ratio = 1.0;
+
+		internal PlayerState state;
+		int event_idx = 0;
+		internal int current_tempo = MidiMetaType.DefaultTempo;
+		internal byte [] current_time_signature = new byte [4];
+		internal int play_delta_time;
 
 		public virtual void Dispose ()
 		{
@@ -66,12 +64,6 @@ namespace Commons.Music.Midi
 			state = PlayerState.Playing;
 		}
 
-		void AllControlReset ()
-		{
-			for (int i = 0; i < 16; i++)
-				OnEvent (new MidiEvent ((byte) (i + 0xB0), 0x79, 0, null));
-		}
-
 		void Mute ()
 		{
 			for (int i = 0; i < 16; i++)
@@ -84,13 +76,11 @@ namespace Commons.Music.Midi
 			Mute ();
 		}
 
-		int event_idx = 0;
-
 		public void PlayerLoop ()
 		{
-			AllControlReset ();
+			Starting?.Invoke ();
 			event_idx = 0;
-			PlayDeltaTime = 0;
+			play_delta_time = 0;
 			while (true) {
 				pause_handle.WaitOne ();
 				if (do_stop)
@@ -103,30 +93,19 @@ namespace Commons.Music.Midi
 				}
 				if (event_idx == messages.Count)
 					break;
-				HandleEvent (messages [event_idx++]);
+				ProcessMessage (messages [event_idx++]);
 			}
 			do_stop = false;
 			Mute ();
 			state = PlayerState.Stopped;
 			if (event_idx == messages.Count)
-				if (PlaybackCompletedToEnd != null)
-					PlaybackCompletedToEnd ();
-			if (Finished != null)
-				Finished ();
+				PlaybackCompletedToEnd?.Invoke ();
+			Finished?.Invoke ();
 		}
 
-		internal int current_tempo = MidiMetaType.DefaultTempo;
-		internal byte [] current_time_signature = new byte [4];
-		double tempo_ratio = 1.0;
+		int GetDeltaTimeInMilliseconds (int deltaTime) => (int) (current_tempo / 1000 * deltaTime / delta_time_spec / tempo_ratio);
 
-		int GetDeltaTimeInMilliseconds (int deltaTime)
-		{
-			if (music.DeltaTimeSpec < 0)
-				throw new NotSupportedException ("SMPTe-basd delta time is not implemented yet");
-			return (int) (current_tempo / 1000 * deltaTime / music.DeltaTimeSpec / tempo_ratio);
-		}
-
-		public virtual void HandleEvent (MidiMessage m)
+		void ProcessMessage (MidiMessage m)
 		{
 			if (seek_processor != null) {
 				var result = seek_processor.FilterMessage (m);
@@ -146,7 +125,7 @@ namespace Commons.Music.Midi
 			else if (m.DeltaTime != 0) {
 				var ms = GetDeltaTimeInMilliseconds (m.DeltaTime);
 				time_manager.WaitBy (ms);
-				PlayDeltaTime += m.DeltaTime;
+				play_delta_time += m.DeltaTime;
 			}
 			
 			if (m.Event.StatusByte == 0xFF) {
@@ -159,9 +138,7 @@ namespace Commons.Music.Midi
 			OnEvent (m.Event);
 		}
 
-		public MidiEventAction EventReceived;
-
-		protected virtual void OnEvent (MidiEvent m)
+		void OnEvent (MidiEvent m)
 		{
 			if (EventReceived != null)
 				EventReceived (m);
@@ -185,7 +162,7 @@ namespace Commons.Music.Midi
 		{
 			seek_processor = seekProcessor ?? new SimpleSeekProcessor (ticks);
 			event_idx = 0;
-			PlayDeltaTime = ticks;
+			play_delta_time = ticks;
 			Mute ();
 		}
 	}
@@ -193,9 +170,6 @@ namespace Commons.Music.Midi
 	// Provides asynchronous player control.
 	public class MidiPlayer : IDisposable
 	{
-		MidiSyncPlayer player;
-		Task sync_player_task;
-
 		public MidiPlayer (MidiMusic music)
 			: this (music, MidiAccessManager.Empty)
 		{
@@ -230,10 +204,21 @@ namespace Commons.Music.Midi
 				throw new ArgumentNullException ("output");
 			if (timeManager == null)
 				throw new ArgumentNullException ("timeManager");
-			
+
+			this.music = music;
 			this.output = output;
 
-			player = new MidiSyncPlayer (music, timeManager);
+			messages = SmfTrackMerger.Merge (music).Tracks [0].Messages;
+			player = new MidiEventLooper (messages, timeManager, music.DeltaTimeSpec);
+			player.Starting += () => {
+				// all control reset on all channels.
+				for (int i = 0; i < 16; i++) {
+					buffer [0] = (byte) (i + 0xB0);
+					buffer [1] = 0x79;
+					buffer [2] = 0;
+					output.Send (buffer, 0, 3, 0);
+				}
+			};
 			EventReceived += (m) => {
 				switch (m.EventType) {
 				case MidiEvent.NoteOn:
@@ -263,7 +248,12 @@ namespace Commons.Music.Midi
 			};
 		}
 
+		MidiEventLooper player;
+		Task sync_player_task;
 		IMidiOutput output;
+		IList<MidiMessage> messages;
+		MidiMusic music;
+
 		bool should_dispose_output;
 		byte [] buffer = new byte [0x100];
 		bool [] channel_mask;
@@ -283,8 +273,8 @@ namespace Commons.Music.Midi
 		}
 
 		public double TempoChangeRatio {
-			get { return player.TempoChangeRatio; }
-			set { player.TempoChangeRatio = value; }
+			get => player.tempo_ratio;
+			set => player.tempo_ratio = value;
 		}
 
 		public int Tempo {
@@ -301,13 +291,10 @@ namespace Commons.Music.Midi
 		}
 
 		public int PlayDeltaTime {
-			get { return player.PlayDeltaTime; }
+			get { return player.play_delta_time; }
 		}
 		
-		public TimeSpan PositionInTime => player.PositionInTime;
-
-		IList<MidiMessage> messages => player.messages;
-		MidiMusic music => player.music;
+		public TimeSpan PositionInTime => TimeSpan.FromMilliseconds (music.GetTimePositionInMillisecondsForTick (PlayDeltaTime));
 
 		public int GetTotalPlayTimeMilliseconds ()
 		{

@@ -806,6 +806,9 @@ namespace Commons.Music.Midi
 		// over thousands of events.
 		MidiMusic GetMergedMessages ()
 		{
+			if (source.Format == 0)
+				return source;
+			
 			IList<MidiMessage> l = new List<MidiMessage> ();
 
 			foreach (var track in source.Tracks) {
@@ -819,13 +822,13 @@ namespace Commons.Music.Midi
 			if (l.Count == 0)
 				return new MidiMusic () { DeltaTimeSpec = source.DeltaTimeSpec }; // empty (why did you need to sort your song file?)
 
-			// Sort() does not always work as expected.
+			// Usual Sort() over simple list of MIDI events does not work as expected.
 			// For example, it does not always preserve event 
 			// orders on the same channels when the delta time
 			// of event B after event A is 0. It could be sorted
 			// either as A->B or B->A.
 			//
-			// To resolve this ieeue, we have to sort "chunk"
+			// To resolve this issue, we have to sort "chunk"
 			// of events, not all single events themselves, so
 			// that order of events in the same chunk is preserved
 			// i.e. [AB] at 48 and [CDE] at 0 should be sorted as
@@ -851,7 +854,6 @@ namespace Commons.Music.Midi
 			for (int i = 0; i < idxl.Count; i++)
 				for (idx = idxl [i], prev = l [idx].DeltaTime; idx < l.Count && l [idx].DeltaTime == prev; idx++)
 					l2.Add (l [idx]);
-//if (l.Count != l2.Count) throw new Exception (String.Format ("Internal eror: count mismatch: l1 {0} l2 {1}", l.Count, l2.Count));
 			l = l2;
 
 			// now messages should be sorted correctly.
