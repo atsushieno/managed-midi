@@ -13,7 +13,7 @@ namespace Commons.Music.Midi
 		Paused,
 	}
 
-	// Player implementation. Plays a MIDI song synchronously.
+	// Event loop implementation.
 	class MidiEventLooper : IDisposable
 	{
 		public MidiEventLooper (IList<MidiMessage> messages, IMidiPlayerTimeManager timeManager, int deltaTimeSpec)
@@ -39,7 +39,8 @@ namespace Commons.Music.Midi
 		readonly IMidiPlayerTimeManager time_manager;
 		readonly IList<MidiMessage> messages;
 		readonly int delta_time_spec;
-		
+
+		// FIXME: I prefer ManualResetEventSlim (but it causes some regressions)
 		readonly ManualResetEvent pause_handle = new ManualResetEvent (false);
 
 		bool do_pause, do_stop;
@@ -249,6 +250,7 @@ namespace Commons.Music.Midi
 		}
 
 		MidiEventLooper player;
+		// FIXME: it is still awkward to have it here. Move it into MidiEventLooper.
 		Task sync_player_task;
 		IMidiOutput output;
 		IList<MidiMessage> messages;
