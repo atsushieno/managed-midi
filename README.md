@@ -185,3 +185,7 @@ This project structure is done so that we can easily hack any part on any platfo
 
 NuGet packaging is manually done at https://atsushieno.visualstudio.com/managed-midi . I cannot locally do that due to Xamarin.Mac and UWP, which Microsoft never supported on Linux (that might change once Microsoft releases UWP sources).
 
+
+### Implementation notes
+
+There are couple of design note docs placed under [docs](./docs) directory.
