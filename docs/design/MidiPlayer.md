@@ -1,6 +1,34 @@
 
 # MidiPlayer API
 
+`MidiPlayer` provides fairly straightforward feature for SMF playback.
+
+The constructor takes `IMidiAccess` or `IMidiOutput` instance and a `MidiMusic` instance, which is then used to send MIDI messages in timely manner.
+
+## playback control
+
+There are `Play()`, `Pause()` and `Stop()` methods to control playback state.
+MidiPlayer can be used to play the song many times.
+
+There is also `Seek()` method that takes delta time ticks. The implementation is somewhat complicated, see design section later on this page.
+
+## tempo and time
+
+While playing the song, it keeps track of tempo and time signature information from META events.
+Raw `Tempo` property value is not very helpful to normal users, so there is also `Bpm` property.
+
+It also provides `PlayDeltaTime` which is the total amount of ticks.
+Raw delta time value is not very helpful either, so there is also `PositionInTime` property too of `TimeSpan` type.
+It actually involves complicated calculation from top of the song, because conversion from clock counts to TimeSpan requires information on when tempo changes happened.
+
+There is also `GetTotalPlayTimeMilliseconds()` method which returns the total play time of the song in milliseconds.
+
+MidiPlayer supports fast-forwarding, or slow playback via `TempoChangeRatio` property.
+
+## MIDI event notification
+
+MidiPlayer provides `EventReceived` property that can be used like an event.
+
 
 # Design notes
 
@@ -15,6 +43,12 @@ IMidiAccess and IMidiOutput are the interfaces that provides raw MIDI access, an
 Raw MIDI access separation makes it easy to test MIDI player functionality without any platform-specific hussle, especially with `MidiAccessManager.Empty` (NO-OP midi access implementation) and VirtualMidiPlayerTimeManager explained later.
 
 
+## Format 0
+
+When dealing with sequential MIDI messages, it is much easier if every MIDI events from all the tracks are unified in one sequence.
+Therefore MidiPlayer first converts the song to "Format 0" which has only one track.
+
+
 ## SMTPe vs. clock count
 
 MidiPlayer basically doesn't support SMTPe. It is primarily used for serializing MIDI device inputs in real time, not for structured music.
@@ -24,7 +58,7 @@ It affects tempo calculation, and so far MidiPlayer aims to provide features for
 ## IMidiPlayerTimeManager
 
 One of the annoyance with audio and MIDI API is that they involve real-world time.
-If you want to test any code that plays some song that lasts 3 minutes, you don7t want to actually wait for 3 minutes.
+If you want to test any code that plays some song that lasts 3 minutes, you don't want to actually wait for 3 minutes.
 There should be some fake timer when testing something.
 
 IMidiPlayerTimeManager is designed to make it happen. You can consider it similar to Reactive Extensions "schedulers", which is also designed to make (occasionally) timed streams easily testable.

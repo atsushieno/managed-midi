@@ -21,7 +21,7 @@ namespace Commons.Music.Midi
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 			if (deltaTimeSpec < 0)
-				throw new NotSupportedException ("SMPTe-basd delta time is not implemented in this player.");
+				throw new NotSupportedException ("SMPTe-based delta time is not implemented in this player.");
 			
 			delta_time_spec = deltaTimeSpec;
 			time_manager = timeManager;
