@@ -17,9 +17,10 @@ There is also `Seek()` method that takes delta time ticks. The implementation is
 While playing the song, it keeps track of tempo and time signature information from META events.
 Raw `Tempo` property value is not very helpful to normal users, so there is also `Bpm` property.
 
-It also provides `PlayDeltaTime` which is the total amount of ticks.
-Raw delta time value is not very helpful either, so there is also `PositionInTime` property too of `TimeSpan` type.
-It actually involves complicated calculation from top of the song, because conversion from clock counts to TimeSpan requires information on when tempo changes happened.
+It also provides `PlayDeltaTime` which is the amount of ticks as of current position.
+Raw delta time value is not very helpful either, so there is also `PositionInTime` property of `TimeSpan` type.
+`PositionInTime` actually involves contextual calculation regarding tempo changes and delta times in the past messages, because conversion from clock counts to TimeSpan requires information on when tempo changes happened.
+Therefore this property is not for casual consumption.
 
 There is also `GetTotalPlayTimeMilliseconds()` method which returns the total play time of the song in milliseconds.
 
