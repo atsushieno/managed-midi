@@ -1,8 +1,5 @@
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi
@@ -26,6 +23,7 @@ namespace Commons.Music.Midi
 		partial void InitializeDefault ();
 	}
 
+	[Obsolete ("There will be breaking change in this interface in the next API-breaking release. If you want to avoid API breakage, use IMidiAccess2 now. It will become identical to IMidiAccess2 and IMidiAccess2 will remain for a while.")]
 	public interface IMidiAccess
 	{
 		IEnumerable<IMidiPortDetails> Inputs { get; }
@@ -40,25 +38,95 @@ namespace Commons.Music.Midi
 	#region draft API
 
 	// In the future we could use default interface members, but we should target earlier frameworks in the meantime.
-	interface IMidiAccess2 : IMidiAccess
+	public interface IMidiAccess2 : IMidiAccess
 	{
 		MidiAccessExtensionManager ExtensionManager { get; }
 	}
 
-	abstract class MidiAccessExtensionManager
+	public class MidiAccessExtensionManager
 	{
-		public abstract T GetInstance<T> ();
+		public virtual bool Supports<T> () where T : class => GetInstance<T> () != default (T);
+
+		public virtual T GetInstance<T> () where T : class => null;
 	}
 
-	class MidiConnectionStateDetectorExtension
+	public class MidiConnectionStateDetectorExtension
 	{
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
 	}
 
-	abstract class MidiPortCreatorExtension
+	public abstract class MidiPortCreatorExtension
 	{
-		public abstract IMidiInput CreateInputPort (IMidiPortDetails details);
-		public abstract IMidiOutput CreateOutputPort (IMidiPortDetails details);
+		public abstract IMidiOutput CreateVirtualInputSender (PortCreatorContext context);
+		public abstract IMidiInput CreateVirtualOutputReceiver (PortCreatorContext context);
+
+		public delegate void SendDelegate (byte [] buffer, int index, int length, long timestamp);
+
+		public class PortCreatorContext
+		{
+			public string ApplicationName { get; set; }
+			public string PortName { get; set; }
+			public string Manufacturer { get; set; }
+			public string Version { get; set; }
+		}
+	}
+
+	public abstract class SimpleVirtualMidiPort : IMidiPort
+	{
+		IMidiPortDetails details;
+		Action on_dispose;
+		MidiPortConnectionState connection;
+
+		protected SimpleVirtualMidiPort (IMidiPortDetails details, Action onDispose)
+		{
+			this.details = details;
+			on_dispose = onDispose;
+			connection = MidiPortConnectionState.Open;
+		}
+
+		public IMidiPortDetails Details => details;
+		
+		public MidiPortConnectionState Connection => connection;
+
+		public Task CloseAsync ()
+		{
+			return Task.Run (() => {
+				if (on_dispose != null)
+					on_dispose ();
+				connection = MidiPortConnectionState.Closed;
+			});
+		}
+
+		public void Dispose ()
+		{
+			CloseAsync ().Wait ();
+		}
+	}
+
+	public class SimpleVirtualMidiInput : SimpleVirtualMidiPort, IMidiInput
+	{
+		public SimpleVirtualMidiInput (IMidiPortDetails details, Action onDispose)
+			: base (details, onDispose)
+		{
+		}
+
+		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
+	}
+
+	public class SimpleVirtualMidiOutput : SimpleVirtualMidiPort, IMidiOutput
+	{
+		public SimpleVirtualMidiOutput (IMidiPortDetails details, Action onDispose)
+		: base (details, onDispose)
+		{
+		}
+		
+		public MidiPortCreatorExtension.SendDelegate OnSend { get; set; }
+
+		public void Send (byte [] mevent, int offset, int length, long timestamp)
+		{
+			if (OnSend != null)
+				OnSend (mevent, offset, length, timestamp);
+		}
 	}
 	
 	#endregion
