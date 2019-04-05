@@ -22,6 +22,7 @@ using MIDIUniqueID = System.Int32;
 using OSStatus = System.Int32;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Commons.Music.Midi.PortMidi;
 using nint = System.Int64;
 using ItemCount = System.Int64;
 
@@ -68,6 +69,25 @@ namespace CoreMidi {
 			: base (info, context)
 		{
 		}
+	}
+	
+	public enum MidiError {
+		Ok = 0,
+		InvalidClient = -10830,
+		InvalidPort = -10831,
+		WrongEndpointType = -10832,
+		NoConnection = -10833,
+		UnknownEndpoint = -10834,
+		UnknownProperty = -10835,
+		WrongPropertyType = -10836,
+		NoCurrentSetup = -10837,
+		MessageSendErr = -10838,
+		ServerStartErr = -10839,
+		SetupFormatErr = -10840,
+		WrongThread = -10841,
+		ObjectNotFound = -10842,
+		IDNotUnique = -10843,
+		NotPermitted = -10844
 	}
 
 	public class MidiDevice 
@@ -121,10 +141,37 @@ namespace CoreMidi {
 
 		public string EndpointName { get; private set; }
 
-		public string Name => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName);
-		public string Manufacturer => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyManufacturer);
-		public string DisplayName => GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDisplayName);
-		public int DriverVersion => GetIntegerProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion);
+		public string Name
+		{
+			get { return GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName); }
+			set { SetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyName, value); }
+		}
+
+		public string Manufacturer
+		{
+			get { return GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyManufacturer); }
+			set { SetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyManufacturer, value); }
+		}
+
+		public string DisplayName
+		{
+			get { return GetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDisplayName); }
+			set { SetStringProp (CoreMidiIntropWorkaround.kMIDIPropertyDisplayName, value); }
+		}
+
+		public int DriverVersion
+		{
+			get { return GetIntegerProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion); }
+			set { SetIntegerProp (CoreMidiIntropWorkaround.kMIDIPropertyDriverVersion, value); }
+		}
+
+		void SetStringProp (IntPtr id, string value)
+		{
+			if (id == IntPtr.Zero)
+				return;
+			CFStringRef str;
+			CoreMidiInterop.MIDIObjectSetStringProperty (Handle, id, Midi.ToCFStringRef (value));
+		}
 
 		String GetStringProp (IntPtr id)
 		{
@@ -143,6 +190,11 @@ namespace CoreMidi {
 					count++;
 				return System.Text.Encoding.UTF8.GetString ((byte*)cstr, count);
 			}
+		}
+
+		void SetIntegerProp (IntPtr id, int value)
+		{
+			CoreMidiInterop.MIDIObjectSetIntegerProperty (Handle, id, value);
 		}
 
 		int GetIntegerProp(IntPtr id)
@@ -266,6 +318,22 @@ namespace CoreMidi {
 			MIDIPortRef port;
 			CoreMidiInterop.MIDIOutputPortCreate (Handle, Midi.ToCFStringRef (name), out port);
 			return new MidiPort (port, true);
+		}
+
+		public MidiEndpoint CreateVirtualSource (string name, out MidiError statusCode)
+		{
+			IntPtr ptr;
+			statusCode = (MidiError) CoreMidiInterop.MIDISourceCreate (Handle, Midi.ToCFStringRef (name), out ptr);
+			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true) : null;
+		}
+
+		public MidiEndpoint CreateVirtualDestination (string name, out MidiError statusCode)
+		{
+			IntPtr ptr;
+			var d = new ReadDispatcher ();
+			statusCode = (MidiError) CoreMidiInterop.MIDIDestinationCreate (Handle, Midi.ToCFStringRef (name),
+				d.DispatchRead, IntPtr.Zero, out ptr);
+			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true) : null;
 		}
 
 		public void Dispose ()

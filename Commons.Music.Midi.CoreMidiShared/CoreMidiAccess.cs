@@ -25,8 +25,50 @@ namespace Commons.Music.Midi
 
 namespace Commons.Music.Midi.CoreMidiApi
 {
-	public class CoreMidiAccess : IMidiAccess
+	public class CoreMidiAccess : IMidiAccess2
 	{
+		class CoreMidiAccessExtensionManager : MidiAccessExtensionManager
+		{
+			private CoreMidiPortCreatorExtension port_creator = new CoreMidiPortCreatorExtension ();
+			public override T GetInstance<T> ()
+			{
+				if (typeof(T) == typeof(MidiPortCreatorExtension))
+					return (T) (object) port_creator;
+				return null;
+			}
+		}
+
+		class CoreMidiPortCreatorExtension : MidiPortCreatorExtension
+		{
+			public override IMidiOutput CreateVirtualInputSender (PortCreatorContext context)
+			{
+				var nclient = new MidiClient (context.ApplicationName ?? "managed-midi virtual in");
+				MidiError error;
+				var portName = context.PortName ?? "managed-midi virtual in port";
+				var nendpoint = nclient.CreateVirtualSource (portName, out error);
+				nendpoint.Manufacturer = context.Manufacturer;
+				nendpoint.DisplayName = portName;
+				nendpoint.Name = portName;
+				var details = new CoreMidiPortDetails (nendpoint);
+				return new CoreMidiOutput (details);
+			}
+
+			public override IMidiInput CreateVirtualOutputReceiver (PortCreatorContext context)
+			{
+				var nclient = new MidiClient (context.ApplicationName ?? "managed-midi virtual out");
+				MidiError error;
+				var portName = context.PortName ?? "managed-midi virtual out port";
+				var nendpoint = nclient.CreateVirtualDestination (portName, out error);
+				nendpoint.Manufacturer = context.Manufacturer;
+				nendpoint.DisplayName = portName;
+				nendpoint.Name = portName;
+				var details = new CoreMidiPortDetails (nendpoint);
+				return new CoreMidiInput (details);
+			}
+		}
+		
+		public MidiAccessExtensionManager ExtensionManager { get; } = new CoreMidiAccessExtensionManager ();
+		
 		public IEnumerable<IMidiPortDetails> Inputs => Enumerable.Range (0, (int) MIDI.SourceCount).Select (i => (IMidiPortDetails) new CoreMidiPortDetails (MidiEndpoint.GetSource (i)));
 
 		public IEnumerable<IMidiPortDetails> Outputs => Enumerable.Range (0, (int)MIDI.DestinationCount).Select (i => (IMidiPortDetails)new CoreMidiPortDetails (MidiEndpoint.GetDestination (i)));
