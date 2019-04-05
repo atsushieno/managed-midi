@@ -138,11 +138,12 @@ namespace CoreMidi {
 			if (MessageReceived == null)
 				return;
 			var packets = new List<MidiPacket> ();
-			for (var p = CoreMidiInterop.MIDIPacketListInit (pktlist);
-				p != IntPtr.Zero;
-				p = CoreMidiInterop.MIDIPacketNext (p)) {
+			var list = Marshal.PtrToStructure<MidiPacketListNative> (pktlist);
+			var p = pktlist + 4;
+			for (int i = 0; i < list.NumPackets; i++) {
 				var packet = Marshal.PtrToStructure<MIDIPacketNative> (p);
-				packets.Add (new MidiPacket (packet.TimeStamp, packet.Length, packet.Data));
+				packets.Add (new MidiPacket (packet.TimeStamp, packet.Length, p + 10));
+				p = CoreMidiInterop.MIDIPacketNext (p);
 			}
 			MessageReceived (this, new MidiPacketsEventArgs { Packets = packets.ToArray () });
 		}
@@ -256,10 +257,10 @@ namespace CoreMidi {
 
 	[StructLayout (LayoutKind.Sequential)]
 	internal struct MIDIPacketNative {
-		[MarshalAs (UnmanagedType.LPArray, SizeConst = 256)]
-		public IntPtr Data;
-		public ushort Length;
 		public MIDITimeStamp TimeStamp;
+		public ushort Length;
+		//[MarshalAs (UnmanagedType.LPArray, SizeConst = 256)]
+		public IntPtr Data;
 	}
 
 	// I have no idea why it doesn't work if all these pieces go into CoreMidiInterop class...
