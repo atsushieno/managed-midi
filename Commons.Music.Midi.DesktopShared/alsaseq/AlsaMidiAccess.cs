@@ -1,26 +1,92 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using System.Threading.Tasks;
 using Commons.Music.Midi;
 using AlsaSharp;
 
 namespace Commons.Music.Midi.Alsa {
-	public class AlsaMidiAccess : IMidiAccess {
+	public class AlsaMidiAccess : IMidiAccess2 {
+
+		class AlsaMidiAccessExtensionManager : MidiAccessExtensionManager
+		{
+			AlsaMidiPortCreatorExtension port_creator;
+
+			public AlsaMidiAccessExtensionManager (AlsaMidiAccess access)
+			{
+				Access = access;
+				port_creator = new AlsaMidiPortCreatorExtension (this);
+			}
+			
+			public AlsaMidiAccess Access { get; private set; }
+
+			public override T GetInstance<T> ()
+			{
+				if (typeof (T) == typeof (MidiPortCreatorExtension))
+					return (T) (object) port_creator;
+				return null;
+			}
+		}
+
+		class AlsaMidiPortCreatorExtension : MidiPortCreatorExtension
+		{
+			AlsaMidiAccessExtensionManager manager;
+			
+			public AlsaMidiPortCreatorExtension (AlsaMidiAccessExtensionManager extensionManager)
+			{
+				manager = extensionManager;
+			}
+
+			public override IMidiOutput CreateVirtualInputSender (PortCreatorContext context)
+			{
+				var seq = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
+				var portNumber = seq.CreateSimplePort (
+					context.PortName ?? "managed-midi virtual in",
+					AlsaMidiAccess.virtual_input_connected_cap,
+					AlsaMidiAccess.midi_port_type);
+				seq.SetClientName (context.ApplicationName ?? "managed-midi input port creator");
+				var port = seq.GetPort (seq.CurrentClientId, portNumber);
+				var details = new AlsaMidiPortDetails (port);
+				SendDelegate send = (buffer, start, length, timestamp) =>
+					seq.Send (portNumber, buffer, start, length);
+				return new SimpleVirtualMidiOutput (details, () => seq.DeleteSimplePort (portNumber)) { OnSend = send };
+			}
+
+			public override IMidiInput CreateVirtualOutputReceiver (PortCreatorContext context)
+			{
+				var seq = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
+				var portNumber = seq.CreateSimplePort (
+					context.PortName ?? "managed-midi virtual out",
+					AlsaMidiAccess.virtual_output_connected_cap,
+					AlsaMidiAccess.midi_port_type);
+				seq.SetClientName (context.ApplicationName ?? "managed-midi output port creator");
+				var port = seq.GetPort (seq.CurrentClientId, portNumber);
+				var details = new AlsaMidiPortDetails (port);
+				return new SimpleVirtualMidiInput (details, () => seq.DeleteSimplePort (portNumber));
+			}
+		}
+
 		const AlsaPortType midi_port_type = AlsaPortType.MidiGeneric | AlsaPortType.Application;
 
 		AlsaSequencer system_watcher;
 
 		public AlsaMidiAccess ()
 		{
+			ExtensionManager = new AlsaMidiAccessExtensionManager (this);
 			system_watcher = new AlsaSequencer (AlsaIOType.Duplex, AlsaIOMode.NonBlocking);
 		}
 
-		readonly AlsaPortCapabilities input_requirements = AlsaPortCapabilities.Read | AlsaPortCapabilities.SubsRead;
-		readonly AlsaPortCapabilities output_requirements = AlsaPortCapabilities.Write | AlsaPortCapabilities.SubsWrite;
-		readonly AlsaPortCapabilities output_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
-		readonly AlsaPortCapabilities input_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
+		const AlsaPortCapabilities input_requirements = AlsaPortCapabilities.Read | AlsaPortCapabilities.SubsRead;
+		const AlsaPortCapabilities output_requirements = AlsaPortCapabilities.Write | AlsaPortCapabilities.SubsWrite;
+		const AlsaPortCapabilities output_connected_cap = AlsaPortCapabilities.Read | AlsaPortCapabilities.NoExport;
+		const AlsaPortCapabilities input_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.NoExport;
+		const AlsaPortCapabilities virtual_output_connected_cap = AlsaPortCapabilities.Write | AlsaPortCapabilities.SubsWrite;
+		const AlsaPortCapabilities virtual_input_connected_cap = AlsaPortCapabilities.Read | AlsaPortCapabilities.SubsRead;
 
+		public MidiAccessExtensionManager ExtensionManager { get; private set; }
+		
 		IEnumerable<AlsaPortInfo> EnumerateMatchingPorts (AlsaSequencer seq, AlsaPortCapabilities cap)
 		{
 			var cinfo = new AlsaClientInfo { Client = -1 };
@@ -96,6 +162,7 @@ namespace Commons.Music.Midi.Alsa {
 		}
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiPortDetails : IMidiPortDetails
 	{
 		AlsaPortInfo port;
@@ -116,6 +183,7 @@ namespace Commons.Music.Midi.Alsa {
 		public string Version => port.Version;
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiInput : IMidiInput {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port, source_port;
@@ -156,6 +224,7 @@ namespace Commons.Music.Midi.Alsa {
 		}
 	}
 
+	[Obsolete ("It will vanish from public API surface")]
 	public class AlsaMidiOutput : IMidiOutput {
 		AlsaSequencer seq;
 		AlsaMidiPortDetails port, target_port;

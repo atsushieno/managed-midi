@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Commons.Music.Midi
@@ -38,22 +40,63 @@ namespace Commons.Music.Midi
 			get { return tracks; }
 		}
 
+		public IEnumerable<MidiMessage> GetMetaEventsOfType (byte metaType)
+		{
+			if (Format != 0)
+				return SmfTrackMerger.Merge (this).GetMetaEventsOfType (metaType);
+			return GetMetaEventsOfType (tracks [0].Messages, metaType);
+		}
+
+		public static IEnumerable<MidiMessage> GetMetaEventsOfType (IEnumerable<MidiMessage> messages, byte metaType)
+		{
+			int v = 0;
+			foreach (var m in messages)
+			{
+				v += m.DeltaTime;
+				if (m.Event.EventType == MidiEvent.Meta && m.Event.Msb == metaType)
+					yield return new MidiMessage (v, m.Event);
+			}
+		}
+
+		public int GetTotalTicks ()
+		{
+			if (Format != 0)
+				return SmfTrackMerger.Merge (this).GetTotalTicks ();
+			return Tracks [0].Messages.Sum (m => m.DeltaTime);
+		}
+
 		public int GetTotalPlayTimeMilliseconds ()
 		{
 			if (Format != 0)
-				throw new NotSupportedException ("Format 1 is not suitable to compute total play time within a song");
+				return SmfTrackMerger.Merge (this).GetTotalPlayTimeMilliseconds ();
 			return GetTotalPlayTimeMilliseconds (Tracks [0].Messages, DeltaTimeSpec);
 		}
-		
+
+		public int GetTimePositionInMillisecondsForTick (int ticks)
+		{
+			if (Format != 0)
+				return SmfTrackMerger.Merge (this).GetTimePositionInMillisecondsForTick (ticks);
+			return GetPlayTimeMillisecondsAtTick (Tracks [0].Messages, ticks, DeltaTimeSpec);
+		}
+
 		public static int GetTotalPlayTimeMilliseconds (IList<MidiMessage> messages, int deltaTimeSpec)
+		{
+			return GetPlayTimeMillisecondsAtTick (messages, messages.Sum (m => m.DeltaTime), deltaTimeSpec);
+		}
+
+		public static int GetPlayTimeMillisecondsAtTick (IList<MidiMessage> messages, int ticks, int deltaTimeSpec)
 		{
 			if (deltaTimeSpec < 0)
 				throw new NotSupportedException ("non-tick based DeltaTime");
 			else {
 				int tempo = MidiMetaType.DefaultTempo;
-				int v = 0;
+				int v = 0, t = 0;
 				foreach (var m in messages) {
-					v += (int) (tempo / 1000 * m.DeltaTime / deltaTimeSpec);
+					var deltaTime = t + m.DeltaTime < ticks ? m.DeltaTime : ticks - t;
+					v += (int) (tempo / 1000 * deltaTime / deltaTimeSpec);
+					if (deltaTime != m.DeltaTime)
+						break;
+					t += m.DeltaTime;
 					if (m.Event.EventType == MidiEvent.Meta && m.Event.Msb == MidiMetaType.Tempo)
 						tempo = MidiMetaType.GetTempo (m.Event.Data);
 				}
@@ -78,6 +121,7 @@ namespace Commons.Music.Midi
 
 		List<MidiMessage> messages;
 
+		[Obsolete ("No need to use this method, simply use Messages.Add")]
 		public void AddMessage (MidiMessage msg)
 		{
 			messages.Add (msg);
@@ -220,6 +264,11 @@ namespace Commons.Music.Midi
 		public static int GetTempo (byte [] data)
 		{
 			return (data [0] << 16) + (data [1] << 8) + data [2];
+		}
+
+		public static double GetBpm (byte [] data)
+		{
+			return 60000000.0 / GetTempo (data);
 		}
 	}
 
@@ -585,7 +634,7 @@ namespace Commons.Music.Midi
 			    || ReadByte ()  != 'd')
 				throw ParseError ("MThd is expected");
 			if (ReadInt32 () != 6)
-				throw ParseError ("Unexpeted data size (should be 6)");
+				throw ParseError ("Unexpected data size (should be 6)");
 			data.Format = (byte) ReadInt16 ();
 			int tracks = ReadInt16 ();
 			data.DeltaTimeSpec = ReadInt16 ();
@@ -758,6 +807,9 @@ namespace Commons.Music.Midi
 		// over thousands of events.
 		MidiMusic GetMergedMessages ()
 		{
+			if (source.Format == 0)
+				return source;
+			
 			IList<MidiMessage> l = new List<MidiMessage> ();
 
 			foreach (var track in source.Tracks) {
@@ -771,13 +823,13 @@ namespace Commons.Music.Midi
 			if (l.Count == 0)
 				return new MidiMusic () { DeltaTimeSpec = source.DeltaTimeSpec }; // empty (why did you need to sort your song file?)
 
-			// Sort() does not always work as expected.
+			// Usual Sort() over simple list of MIDI events does not work as expected.
 			// For example, it does not always preserve event 
 			// orders on the same channels when the delta time
 			// of event B after event A is 0. It could be sorted
 			// either as A->B or B->A.
 			//
-			// To resolve this ieeue, we have to sort "chunk"
+			// To resolve this issue, we have to sort "chunk"
 			// of events, not all single events themselves, so
 			// that order of events in the same chunk is preserved
 			// i.e. [AB] at 48 and [CDE] at 0 should be sorted as
@@ -803,7 +855,6 @@ namespace Commons.Music.Midi
 			for (int i = 0; i < idxl.Count; i++)
 				for (idx = idxl [i], prev = l [idx].DeltaTime; idx < l.Count && l [idx].DeltaTime == prev; idx++)
 					l2.Add (l [idx]);
-//if (l.Count != l2.Count) throw new Exception (String.Format ("Internal eror: count mismatch: l1 {0} l2 {1}", l.Count, l2.Count));
 			l = l2;
 
 			// now messages should be sorted correctly.

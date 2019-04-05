@@ -79,26 +79,53 @@ Options:
 			
 			foreach (var arg in files) {
 				var parser = new SmfReader ();
-				parser.Read (File.OpenRead (arg));
+				using (var stream = File.OpenRead (arg))
+					parser.Read (stream);
 				var player = new MidiPlayer (parser.Music, api.OpenOutputAsync (output.Id).Result);
 				DateTimeOffset start = DateTimeOffset.Now;
-				if (diagnostic)
+				player.PlaybackCompletedToEnd += () =>
+					Console.WriteLine ("Completed to end.");
+				if (diagnostic) {
 					player.EventReceived += e => {
 						string type = null;
 						switch (e.EventType) {
-						case MidiEvent.NoteOn: type = "NOn"; break;
-						case MidiEvent.NoteOff: type = "NOff"; break;
-						case MidiEvent.PAf: type = "PAf"; break;
-						case MidiEvent.CC: type = "CC"; break;
-						case MidiEvent.Program: type = "@"; break;
-						case MidiEvent.CAf: type = "CAf"; break;
-						case MidiEvent.Pitch: type = "P"; break;
-						case MidiEvent.SysEx1: type = "SysEX"; break;
-						case MidiEvent.SysEx2: type = "SysEX2"; break;
-						case MidiEvent.Meta: type = "META"; break;
+						case MidiEvent.NoteOn:
+							type = "NOn";
+							break;
+						case MidiEvent.NoteOff:
+							type = "NOff";
+							break;
+						case MidiEvent.PAf:
+							type = "PAf";
+							break;
+						case MidiEvent.CC:
+							type = "CC";
+							break;
+						case MidiEvent.Program:
+							type = "@";
+							break;
+						case MidiEvent.CAf:
+							type = "CAf";
+							break;
+						case MidiEvent.Pitch:
+							type = "P";
+							break;
+						case MidiEvent.SysEx1:
+							type = "SysEX";
+							break;
+						case MidiEvent.SysEx2:
+							type = "SysEX2";
+							break;
+						case MidiEvent.Meta:
+							type = "META";
+							break;
 						}
-						Console.WriteLine ("{0:06} {1:D02} {2} {3}", (DateTimeOffset.Now - start).TotalMilliseconds, e.Channel, type, e);
+
+						Console.WriteLine ("{0:06} {1:D02} {2} {3}",
+							(DateTimeOffset.Now - start).TotalMilliseconds, e.Channel, type, e);
 					};
+				}
+
 				player.Finished += delegate {
 					loop = false;
 					wh.Set ();

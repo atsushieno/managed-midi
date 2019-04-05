@@ -10,6 +10,7 @@ namespace Commons.Music.Midi.Tests
 	public class RtMidiTest
 	{
 		[Test]
+		[Ignore ("https://github.com/atsushieno/managed-midi/issues/1")]
 		public void RawDeviceCount ()
 		{
 			var input = new RtMidiInputDevice ();
@@ -25,6 +26,7 @@ namespace Commons.Music.Midi.Tests
 		}
 		
 		[Test]
+		[Ignore ("https://github.com/atsushieno/managed-midi/issues/1")]
 		public void DeviceDetails ()
 		{
 			var a = new RtMidiAccess ();

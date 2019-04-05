@@ -9,7 +9,14 @@ namespace ManagedMidiRecorder
 	{
 		public static void Main (string [] args)
 		{
-			string outfile = args.FirstOrDefault ();
+			string port = null;
+			string outfile = null;
+			foreach (var arg in args) {
+				if (arg.StartsWith ("--port:"))
+					port = arg.Substring ("--port:".Length);
+				else
+					outfile = arg;
+			}
 			Stream outStream = outfile != null ? File.OpenWrite (outfile) : null;
 
 			var access = MidiAccessManager.Default;
@@ -19,8 +26,9 @@ namespace ManagedMidiRecorder
 				Console.WriteLine("No input device found.");
 				return;
 			}
-			Console.WriteLine ("Using last one");
-			var input = access.OpenInputAsync (access.Inputs.Last ().Id).Result;
+			var iport = access.Inputs.FirstOrDefault (i => i.Id == port) ?? access.Inputs.Last ();
+			var input = access.OpenInputAsync (iport.Id).Result;
+			Console.WriteLine ("Using " + iport.Id);
 			input.MessageReceived += (obj, e) => {
 				Console.WriteLine ($"{e.Timestamp} {e.Start} {e.Length} {e.Data [0].ToString ("X")}");
 				if (outStream != null)
