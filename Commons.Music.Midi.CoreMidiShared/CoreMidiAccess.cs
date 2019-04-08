@@ -99,7 +99,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			Endpoint = src;
 			Id = src.Name + "__" + src.EndpointName;
 			Manufacturer = src.Manufacturer;
-			Name = src.DisplayName;
+			Name = string.IsNullOrEmpty (src.DisplayName) ? src.Name : src.EndpointName;
 
 			try {
 				Version = src.DriverVersion.ToString ();

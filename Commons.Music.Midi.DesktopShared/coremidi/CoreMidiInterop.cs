@@ -21,6 +21,7 @@ using MIDITimeStamp = System.Int64;
 using MIDIUniqueID = System.Int32;
 using OSStatus = System.Int32;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Commons.Music.Midi.PortMidi;
 using nint = System.Int64;
@@ -234,6 +235,11 @@ namespace CoreMidi {
 
 		public void Dispose ()
 		{
+			if (list != IntPtr.Zero) {
+				Marshal.FreeHGlobal (list);
+				list = IntPtr.Zero;
+			}
+
 			if (should_dispose) {
 				CoreMidiInterop.MIDIPortDispose (Handle);
 				should_dispose = false;
@@ -244,17 +250,24 @@ namespace CoreMidi {
 
 		public void ConnectSource (MidiEndpoint endpoint) => CoreMidiInterop.MIDIPortConnectSource (Handle, endpoint.Handle, IntPtr.Zero);
 
+		int buf_size = 1024;
+		IntPtr list;
+
 		public void Send (MidiEndpoint endpoint, MidiPacket [] arr)
 		{
-			var list = Marshal.AllocHGlobal (Marshal.SizeOf<MidiPacketListNative> ());
-			try {
-				var p = CoreMidiInterop.MIDIPacketListInit (list);
-				foreach (var item in arr)
-					p = CoreMidiInterop.MIDIPacketListAdd (list, arr.Length, p, item.TimeStamp, item.Length, item.Bytes);
-				CoreMidiInterop.MIDISend (Handle, endpoint.Handle, list);
-			} finally {
-				Marshal.FreeHGlobal (list);
+			
+			var msize = Marshal.SizeOf<MIDIPacketNative> ();
+			var size = arr.Select (a => msize + a.Length).Sum ();
+			if (list == IntPtr.Zero || size > buf_size) {
+				if (list != IntPtr.Zero)
+					Marshal.FreeHGlobal (list);
+				list = Marshal.AllocHGlobal (buf_size);
 			}
+
+			var p = CoreMidiInterop.MIDIPacketListInit (list);
+			foreach (var item in arr)
+				p = CoreMidiInterop.MIDIPacketListAdd (list, 1024, p, item.TimeStamp, item.Length, item.Bytes);
+			CoreMidiInterop.MIDISend (Handle, endpoint.Handle, list);
 		}
 	}
 
