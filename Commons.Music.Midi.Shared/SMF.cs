@@ -282,10 +282,21 @@ namespace Commons.Music.Midi
 		public const byte CAf = 0xD0;
 		public const byte Pitch = 0xE0;
 		public const byte SysEx1 = 0xF0;
+		public const byte MtcQuarterFrame = 0xF1;
+		public const byte SongPositionPointer = 0xF2;
+		public const byte SongSelect = 0xF3;
+		public const byte TuneRequest = 0xF6;
 		public const byte SysEx2 = 0xF7;
-		public const byte Meta = 0xFF;
+		public const byte MidiClock = 0xF8;
+		public const byte MidiTick = 0xF9;
+		public const byte MidiStart = 0xFA;
+		public const byte MidiContinue = 0xFB;
+		public const byte MidiStop = 0xFC;
+		public const byte ActiveSense = 0xFE;
+		public const byte Reset = 0xFF;
 
 		public const byte EndSysEx = 0xF7;
+		public const byte Meta = 0xFF;
 
 		public static IEnumerable<MidiEvent> Convert (byte[] bytes, int index, int size)
 		{
@@ -363,9 +374,17 @@ namespace Commons.Music.Midi
 		{
 			switch (statusByte & 0xF0) {
 			case 0xF0: // and 0xF7, 0xFF
-				return 0; // no fixed data
-			case Program: // ProgramChg
-			case CAf: // CAf
+				switch (statusByte) {
+				case MtcQuarterFrame:
+				case SongSelect:
+					return 1;
+				case SongPositionPointer:
+					return 2;
+				default:
+					return 0; // no fixed data
+				}
+			case Program:
+			case CAf:
 				return 1;
 			default:
 				return 2;
