@@ -68,7 +68,7 @@ namespace Commons.Music.Midi
 		void Mute ()
 		{
 			for (int i = 0; i < 16; i++)
-				OnEvent (new MidiEvent ((byte) (i + 0xB0), 0x78, 0, null));
+				OnEvent (new MidiEvent ((byte) (i + 0xB0), 0x78, 0, null, 0, 0));
 		}
 
 		public void Pause ()
@@ -131,9 +131,9 @@ namespace Commons.Music.Midi
 			
 			if (m.Event.StatusByte == 0xFF) {
 				if (m.Event.Msb == MidiMetaType.Tempo)
-					current_tempo = MidiMetaType.GetTempo (m.Event.Data);
-				else if (m.Event.Msb == MidiMetaType.TimeSignature && m.Event.Data.Length == 4)
-					Array.Copy (m.Event.Data, current_time_signature, 4);
+					current_tempo = MidiMetaType.GetTempo (m.Event.ExtraData, m.Event.ExtraDataOffset);
+				else if (m.Event.Msb == MidiMetaType.TimeSignature && m.Event.ExtraDataLength == 4)
+					Array.Copy (m.Event.ExtraData, current_time_signature, 4);
 			}
 
 			OnEvent (m.Event);
@@ -229,11 +229,11 @@ namespace Commons.Music.Midi
 					goto default;
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
-					if (buffer.Length <= m.Data.Length)
+					if (buffer.Length <= m.ExtraDataLength)
 						buffer = new byte [buffer.Length * 2];
 					buffer [0] = m.StatusByte;
-					Array.Copy (m.Data, 0, buffer, 1, m.Data.Length);
-					output.Send (buffer, 0, m.Data.Length + 1, 0);
+					Array.Copy (m.ExtraData, m.ExtraDataOffset, buffer, 1, m.ExtraDataLength);
+					output.Send (buffer, 0, m.ExtraDataLength + 1, 0);
 					break;
 				case MidiEvent.Meta:
 					// do nothing.
@@ -334,7 +334,9 @@ namespace Commons.Music.Midi
 				return;
 			case PlayerState.Stopped:
 			        if (sync_player_task == null || sync_player_task.Status != TaskStatus.Running)
+#pragma warning disable 618
 					StartLoop ();
+#pragma warning restore 618
 				player.Play ();
 				return;
 			}

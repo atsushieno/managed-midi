@@ -98,7 +98,7 @@ namespace Commons.Music.Midi
 						break;
 					t += m.DeltaTime;
 					if (m.Event.EventType == MidiEvent.Meta && m.Event.Msb == MidiMetaType.Tempo)
-						tempo = MidiMetaType.GetTempo (m.Event.Data);
+						tempo = MidiMetaType.GetTempo (m.Event.ExtraData, m.Event.ExtraDataOffset);
 				}
 				return v;
 			}
@@ -260,15 +260,25 @@ namespace Commons.Music.Midi
 		public const byte SequencerSpecific = 0x7F;
 
 		public const int DefaultTempo = 500000;
-		
-		public static int GetTempo (byte [] data)
+
+		[Obsolete ("Use another GetTempo overload with offset and length arguments instead.")]
+		public static int GetTempo (byte [] data) => GetTempo (data, 0);
+
+		public static int GetTempo (byte [] data, int offset)
 		{
-			return (data [0] << 16) + (data [1] << 8) + data [2];
+			if (data == null)
+				throw new ArgumentNullException (nameof (data));
+			if (offset < 0 || offset + 2 >= data.Length)
+				throw new ArgumentException ($"offset + 2 must be a valid size under data length of array size {data.Length}; {offset} is not.");
+			return (data [offset] << 16) + (data [offset + 1] << 8) + data [offset + 2];
 		}
 
-		public static double GetBpm (byte [] data)
+		[Obsolete ("Use another GetBpm() overload with offset argument instead")]
+		public static double GetBpm (byte [] data) => GetBpm (data, 0);
+		
+		public static double GetBpm (byte [] data, int offset)
 		{
-			return 60000000.0 / GetTempo (data);
+			return 60000000.0 / GetTempo (data, offset);
 		}
 	}
 
@@ -304,9 +314,7 @@ namespace Commons.Music.Midi
 			int end = index + size;
 			while (i < end) {
 				if (bytes[i] == 0xF0) {
-					var tmp = new byte [size];
-					Array.Copy (bytes, i, tmp, 0, tmp.Length);
-					yield return new MidiEvent (0xF0, 0, 0, tmp);
+					yield return new MidiEvent (0xF0, 0, 0, bytes, index + 1, size - 1);
 					i += size;
 				}
 				else
@@ -314,7 +322,7 @@ namespace Commons.Music.Midi
 					if (end < i + MidiEvent.FixedDataSize (bytes [i]))
 						throw new Exception (string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes[i]));
                     var z = MidiEvent.FixedDataSize (bytes[i]);
-					yield return new MidiEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null);
+					yield return new MidiEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null, 0, 0);
 					i += z + 1;
 				}
 			}
@@ -323,19 +331,43 @@ namespace Commons.Music.Midi
 		public MidiEvent (int value)
 		{
 			Value = value;
+#pragma warning disable 618
 			Data = null;
+#pragma warning restore
+			ExtraData = null;
+			ExtraDataOffset = 0;
+			ExtraDataLength = 0;
 		}
 
+		[Obsolete ("Use another constructor overload with Span<byte> instead")]
 		public MidiEvent (byte type, byte arg1, byte arg2, byte [] data)
+			: this (type, arg1, arg2, data, 0, data.Length)
+		{
+		}
+
+		public MidiEvent (byte type, byte arg1, byte arg2, byte [] extraData, int extraDataOffset, int extraDataLength)
 		{
 			Value = type + (arg1 << 8) + (arg2 << 16);
-			Data = data;
+#pragma warning disable 618
+			Data = extraData;
+#pragma warning restore
+			ExtraData = extraData;
+			ExtraDataOffset = extraDataLength;
+			ExtraDataLength = extraDataLength;
+
 		}
 
 		public readonly int Value;
 
 		// This expects EndSysEx byte _inclusive_ for F0 message.
+		[Obsolete ("Use ExtraData with ExtraDataOffset and ExtraDataLength instead.")]
 		public readonly byte [] Data;
+		
+		public readonly byte [] ExtraData;
+		
+		public readonly int ExtraDataOffset;
+		
+		public readonly int ExtraDataLength;
 
 		public byte StatusByte {
 			get { return (byte) (Value & 0xFF); }
@@ -393,7 +425,7 @@ namespace Commons.Music.Midi
 
 		public override string ToString ()
 		{
-			return String.Format ("{0:X02}:{1:X02}:{2:X02}{3}", StatusByte, Msb, Lsb, Data != null ? "[data:" + Data.Length + "]" : "");
+			return String.Format ("{0:X02}:{1:X02}:{2:X02}{3}", StatusByte, Msb, Lsb, ExtraData != null ? "[data:" + ExtraDataLength + "]" : "");
 		}
 	}
 
@@ -471,8 +503,8 @@ namespace Commons.Music.Midi
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
 					stream.WriteByte (e.Event.EventType);
-					Write7BitVariableInteger (e.Event.Data.Length);
-					stream.Write (e.Event.Data, 0, e.Event.Data.Length);
+					Write7BitVariableInteger (e.Event.ExtraDataLength);
+					stream.Write (e.Event.ExtraData, e.Event.ExtraDataOffset, e.Event.ExtraDataLength);
 					break;
 				default:
 					if (DisableRunningStatus || e.Event.StatusByte != running_status)
@@ -517,8 +549,8 @@ namespace Commons.Music.Midi
 				case MidiEvent.SysEx1:
 				case MidiEvent.SysEx2:
 					size++;
-					size += GetVariantLength (e.Event.Data.Length);
-					size += e.Event.Data.Length;
+					size += GetVariantLength (e.Event.ExtraDataLength);
+					size += e.Event.ExtraDataLength;
 					break;
 				default:
 					// message type & channel
@@ -560,15 +592,15 @@ namespace Commons.Music.Midi
 			default_meta_writer = delegate (bool lengthMode, MidiMessage e, Stream stream) {
 				if (lengthMode) {
 					// [0x00] 0xFF metaType size ... (note that for more than one meta event it requires step count of 0).
-					int repeatCount = e.Event.Data.Length / 0x7F;
+					int repeatCount = e.Event.ExtraDataLength / 0x7F;
 					if (repeatCount == 0)
-						return 3 + e.Event.Data.Length;
-					int mod = e.Event.Data.Length % 0x7F;
+						return 3 + e.Event.ExtraDataLength;
+					int mod = e.Event.ExtraDataLength % 0x7F;
 					return repeatCount * (4 + 0x7F) - 1 + (mod > 0 ? 4 + mod : 0);
 				}
 
 				int written = 0;
-				int total = e.Event.Data.Length;
+				int total = e.Event.ExtraDataLength;
 				do {
 					if (written > 0)
 						stream.WriteByte (0); // step
@@ -576,7 +608,7 @@ namespace Commons.Music.Midi
 					stream.WriteByte (e.Event.MetaType);
 					int size = Math.Min (0x7F, total - written);
 					stream.WriteByte ((byte) size);
-					stream.Write (e.Event.Data, written, size);
+					stream.Write (e.Event.ExtraData, e.Event.ExtraDataOffset + written, size);
 					written += size;
 				} while (written < total);
 				return 0;
@@ -584,23 +616,23 @@ namespace Commons.Music.Midi
 
 			vsq_meta_text_splitter = delegate (bool lengthMode, MidiMessage e, Stream stream) {
 				// The split should not be applied to "Master Track"
-				if (e.Event.Data.Length < 0x80) {
+				if (e.Event.ExtraDataLength < 0x80) {
 					return default_meta_writer (lengthMode, e, stream);
 				}
 
 				if (lengthMode) {
 					// { [0x00] 0xFF metaType DM:xxxx:... } * repeat + 0x00 0xFF metaType DM:xxxx:mod... 
 					// (note that for more than one meta event it requires step count of 0).
-					int repeatCount = e.Event.Data.Length / 0x77;
+					int repeatCount = e.Event.ExtraDataLength / 0x77;
 					if (repeatCount == 0)
-						return 11 + e.Event.Data.Length;
-					int mod = e.Event.Data.Length % 0x77;
+						return 11 + e.Event.ExtraDataLength;
+					int mod = e.Event.ExtraDataLength % 0x77;
 					return repeatCount * (12 + 0x77) - 1 + (mod > 0 ? 12 + mod : 0);
 				}
 
 
 				int written = 0;
-				int total = e.Event.Data.Length;
+				int total = e.Event.ExtraDataLength;
 				int idx = 0;
 				do {
 					if (written > 0)
@@ -610,7 +642,7 @@ namespace Commons.Music.Midi
 					int size = Math.Min (0x77, total - written);
 					stream.WriteByte ((byte) (size + 8));
 					stream.Write (Encoding.UTF8.GetBytes (String.Format ("DM:{0:D04}:", idx++)), 0, 8);
-					stream.Write (e.Event.Data, written, size);
+					stream.Write (e.Event.ExtraData, e.Event.ExtraDataOffset + written, size);
 					written += size;
 				} while (written < total);
 				return 0;
@@ -704,7 +736,7 @@ namespace Commons.Music.Midi
 				byte [] args = new byte [len];
 				if (len > 0)
 					ReadBytes (args);
-				return new MidiMessage (deltaTime, new MidiEvent (running_status, metaType, 0, args));
+				return new MidiMessage (deltaTime, new MidiEvent (running_status, metaType, 0, args, 0, args.Length));
 			default:
 				int value = running_status;
 				value += ReadByte () << 8;

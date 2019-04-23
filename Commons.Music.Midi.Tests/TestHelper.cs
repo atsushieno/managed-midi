@@ -8,12 +8,12 @@ namespace Commons.Music.Midi.Tests
 			music.DeltaTimeSpec = 192;
 			var track = new MidiTrack ();
 			byte ch = 1;
-			track.Messages.Add (new MidiMessage (188, new MidiEvent ((byte) (MidiEvent.Program + ch), 1, 0, null)));
+			track.Messages.Add (new MidiMessage (188, new MidiEvent ((byte) (MidiEvent.Program + ch), 1, 0, null, 0, 0)));
 			for (int i = 0; i < 100; i++) {
 				track.Messages.Add (
-					new MidiMessage (4, new MidiEvent ((byte) (MidiEvent.NoteOn + ch), 60, 120, null)));
+					new MidiMessage (4, new MidiEvent ((byte) (MidiEvent.NoteOn + ch), 60, 120, null, 0, 0)));
 				track.Messages.Add (
-					new MidiMessage (44, new MidiEvent ((byte) (MidiEvent.NoteOff + ch), 60, 0, null)));
+					new MidiMessage (44, new MidiEvent ((byte) (MidiEvent.NoteOff + ch), 60, 0, null, 0, 0)));
 			}
 
 			music.Tracks.Add (track);

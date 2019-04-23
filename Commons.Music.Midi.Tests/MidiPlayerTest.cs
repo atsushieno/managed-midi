@@ -23,9 +23,9 @@ namespace Commons.Music.Midi.Tests
 		{
 			var vt = new VirtualMidiPlayerTimeManager ();
 			var player = TestHelper.GetMidiPlayer (vt);
-			player.PlayAsync ();
+			player.Play ();
 			vt.ProceedBy (200000);
-			player.PauseAsync ();
+			player.Pause ();
 			player.Dispose ();
 		}
 
@@ -35,9 +35,9 @@ namespace Commons.Music.Midi.Tests
 		{
 			var vt = new AlmostVirtualMidiPlayerTimeManager ();
 			var player = TestHelper.GetMidiPlayer (vt, new RtMidi.RtMidiAccess ());
-			player.PlayAsync ();
+			player.Play ();
 			vt.ProceedBy (200000);
-			player.PauseAsync ();
+			player.Pause ();
 			player.Dispose ();
 		}
 
@@ -47,9 +47,9 @@ namespace Commons.Music.Midi.Tests
 		{
 			var vt = new AlmostVirtualMidiPlayerTimeManager ();
 			var player = TestHelper.GetMidiPlayer (vt, new PortMidi.PortMidiAccess ());
-			player.PlayAsync ();
+			player.Play ();
 			vt.ProceedBy (200000);
-			player.PauseAsync ();
+			player.Pause ();
 			player.Dispose ();
 		}
 
@@ -66,7 +66,7 @@ namespace Commons.Music.Midi.Tests
 			player.Finished += () => finished = true;
 			Assert.IsTrue (!completed, "1 PlaybackCompletedToEnd already fired");
 			Assert.IsTrue (!finished, "2 Finished already fired");
-			player.PlayAsync ();
+			player.Play ();
 			vt.ProceedBy (100);
 			Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
 			Assert.IsTrue (!finished, "4 Finished already fired");
@@ -76,7 +76,7 @@ namespace Commons.Music.Midi.Tests
 			while (player.PlayDeltaTime < 4988)
 				Task.Delay (100);
 			Assert.AreEqual (4988, player.PlayDeltaTime, "PlayDeltaTime");
-			player.PauseAsync ();
+			player.Pause ();
 			player.Dispose ();
 			Assert.IsTrue (completed, "5 PlaybackCompletedToEnd not fired");
 			Assert.IsTrue (finished, "6 Finished not fired");
@@ -90,43 +90,15 @@ namespace Commons.Music.Midi.Tests
 			bool completed = false, finished = false;
 			player.PlaybackCompletedToEnd += () => completed = true;
 			player.Finished += () => finished = true;
-			player.PlayAsync ();
+			player.Play ();
 			vt.ProceedBy (1000);
 			// FIXME: this is ugly
 			while (player.PlayDeltaTime == 0)
 				Task.Delay (100);
-			player.PauseAsync ();
+			player.Pause ();
 			player.Dispose (); // abort in the middle
 			Assert.IsFalse( completed, "1 PlaybackCompletedToEnd unexpectedly fired");
 			Assert.IsTrue (finished, "2 Finished not fired");
-		}
-
-		[Test]
-		public void GetTimePositionInMillisecondsForTick ()
-		{
-			var vt = new VirtualMidiPlayerTimeManager ();
-			var player = TestHelper.GetMidiPlayer (vt);
-			player.PlayAsync ();
-			vt.ProceedBy (100);
-			player.SeekAsync (5000);
-			Task.Delay (100);
-			Assert.AreEqual (5000, player.PlayDeltaTime, "1 PlayDeltaTime");
-			Assert.AreEqual (12, (int) player.PositionInTime.TotalSeconds, "1 PositionInTime");
-			vt.ProceedBy (100);
-			// FIXME: this is ugly.
-			Task.Delay (100);
-			// FIXME: not working
-			//Assert.AreEqual (5100, player.PlayDeltaTime, "2 PlayDeltaTime");
-			Assert.AreEqual (12, (int) player.PositionInTime.TotalSeconds, "2 PositionInTime");
-			player.SeekAsync (2000);
-			Assert.AreEqual (2000, player.PlayDeltaTime, "3 PlayDeltaTime");
-			Assert.AreEqual (5, (int) player.PositionInTime.TotalSeconds, "3 PositionInTime");
-			vt.ProceedBy (100);
-			// FIXME: this is ugly.
-			Task.Delay (100);
-			// FIXME: not working
-			//Assert.AreEqual (2100, player.PlayDeltaTime, "4 PlayDeltaTime");
-			Assert.AreEqual (5, (int) player.PositionInTime.TotalSeconds, "4 PositionInTime");
 		}
 	}
 }
