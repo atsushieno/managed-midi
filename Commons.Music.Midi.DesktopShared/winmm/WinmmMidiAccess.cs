@@ -339,7 +339,7 @@ namespace Commons.Music.Midi.WinMM
 		public void Send (byte [] mevent, int offset, int length, long timestamp)
 		{
 			foreach (var evt in MidiEvent.Convert (mevent, offset, length)) {
-                if (evt.StatusByte < 0xF0)
+                if (evt.StatusByte < 0xF0 || evt.ExtraData == null)
                 {
                     DieOnError(WinMMNatives.midiOutShortMsg(handle, (uint)(evt.StatusByte + (evt.Msb << 8) + (evt.Lsb << 16))));
                 }
