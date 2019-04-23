@@ -61,6 +61,18 @@ Basically, these features with raw MIDI access implementation makes up this mana
 
 ## MIDI Access API implementations
 
+Here is a quick list of per-platform backend implementation.
+
+| target framework | Linux | Mac | Windows | Android | iOS |
+|------------------|-------|-----|---------|---------|-----|
+| netstandard | Empty | Empty | Empty | Empty | Empty |
+| net45 | ALSA/portmidi/rtmidi | portmidi/rtmidi | WinMM/portmidi/rtmidi | - | - |
+| netcoreapp2.1 | ALSA/portmidi/rtmidi | CoreMidi (own implementation, incomplete)/portmidi/rtmidi | WinMM | - | - |
+| MonoAndroid | - | - | - | Android MIDI API | - |
+| XamariniOS | - | - | - | - | Xamarin.iOS CoreMIDI |
+| XamarinMac | - | Xamarin.Mac CoreMIDI | - | - | - |
+| uap10.0 | - | - | UWP MIDI API | - | - |
+
 ### ALSA
 
 This is the primary Linux MIDI support and the actual ALSA implementation is done by [alsa-sharp](https://github.com/atsushieno/alsa-sharp) project.
