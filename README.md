@@ -61,17 +61,17 @@ Basically, these features with raw MIDI access implementation makes up this mana
 
 ## MIDI Access API implementations
 
-Here is a quick list of per-platform backend implementation.
+Here is a quick list of per-platform backend implementation. **Bold** ones are default.
 
 | target framework | Linux | Mac | Windows | Android | iOS |
 |------------------|-------|-----|---------|---------|-----|
-| netstandard | Empty | Empty | Empty | Empty | Empty |
-| net45 | ALSA, portmidi, rtmidi | own CoreMIDI (incomplete), portmidi, rtmidi | WinMM, portmidi, rtmidi | - | - |
-| netcoreapp2.1 | ALSA, portmidi, rtmidi | own CoreMidi (incomplete), portmidi, rtmidi | WinMM, portmidi, rtmidi | - | - |
-| MonoAndroid | - | - | - | Android MIDI API | - |
-| XamariniOS | - | - | - | - | Xamarin.iOS CoreMIDI |
-| XamarinMac | - | Xamarin.Mac CoreMIDI | - | - | - |
-| uap10.0 | - | - | UWP MIDI API | - | - |
+| netstandard | **Empty** | **Empty** | **Empty** | **Empty** | **Empty** |
+| net45 | **ALSA**, portmidi, rtmidi | **own CoreMIDI** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
+| netcoreapp2.1 | **ALSA**, portmidi, rtmidi | **own CoreMidi** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
+| MonoAndroid | - | - | - | **Android MIDI API** | - |
+| XamariniOS | - | - | - | - | **Xamarin.iOS CoreMIDI** |
+| XamarinMac | - | **Xamarin.Mac CoreMIDI** | - | - | - |
+| uap10.0 | - | - | **UWP MIDI API** | - | - |
 
 `own CoreMIDI` is a Xamarin-compatible implementation within this repository. It is implemented here to avoid extra dependencies on Xamarin assemblies. They are different from `Xamarin.iOS CoreMIDI` and `Xamarin.Mac CoreMIDI`.
 
