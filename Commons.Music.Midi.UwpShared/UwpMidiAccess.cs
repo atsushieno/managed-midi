@@ -6,8 +6,29 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Midi;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Commons.Music.Midi.UwpMidi;
 
-namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi {
+namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
+{
+	[Obsolete ("This namespace name was bogus. Use Commons.Music.Midi.UwpMidi.UwpMidiAccess instead. It will be removed.")]
+	public class UwpMidiAccess : global::Commons.Music.Midi.UwpMidi.UwpMidiAccess
+	{
+	}
+}
+
+namespace Commons.Music.Midi
+{
+	public partial class MidiAccessManager
+	{
+		partial void InitializeDefault ()
+		{
+			Default = new UwpMidiAccess ();
+		}
+	}	
+}
+
+namespace Commons.Music.Midi.UwpMidi {
+
 	public class UwpMidiAccess : IMidiAccess {
 		public UwpMidiAccess ()
 		{
