@@ -322,7 +322,7 @@ namespace Commons.Music.Midi
 					if (end < i + MidiEvent.FixedDataSize (bytes [i]))
 						throw new Exception (string.Format ("Received data was incomplete to build MIDI status message for '{0:X}' status.", bytes[i]));
                     var z = MidiEvent.FixedDataSize (bytes[i]);
-					yield return new MidiEvent (bytes [i], bytes [i + 1], (byte) (z > 1 ? bytes [i + 2] : 0), null, 0, 0);
+					yield return new MidiEvent (bytes [i], (byte) (z > 0 ? bytes [i + 1] : 0), (byte) (z > 1 ? bytes [i + 2] : 0), null, 0, 0);
 					i += z + 1;
 				}
 			}

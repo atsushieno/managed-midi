@@ -111,6 +111,7 @@ namespace Commons.Music.Midi.WinMM
         IntPtr handle;
         object lockObject = new object();
         
+		byte[] data1b = new byte[1];
 		byte[] data2b = new byte[2];
 		byte[] data3b = new byte[3];
 
@@ -119,10 +120,12 @@ namespace Commons.Music.Midi.WinMM
             var status = (byte)((int)param1 & 0xFF);
             var msb = (byte)(((int)param1 & 0xFF00) >> 8);
             var lsb = (byte)(((int)param1 & 0xFF0000) >> 16);
-            var data = MidiEvent.FixedDataSize(status) == 2 ? data3b : data2b;
+	    var size = MidiEvent.FixedDataSize (status);
+            var data = size == 1 ? data1b : size == 2 ? data2b : data3b;
             data[0] = status;
-            data[1] = msb;
-            if (data.Length == 3)
+            if (size > 1)
+	            data[1] = msb;
+            if (size == 3)
                 data[2] = lsb;
 
             MessageReceived(this, new MidiReceivedEventArgs() { Data = data, Start = 0, Length = data.Length, Timestamp = (long)param2 });
