@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -27,6 +28,18 @@ namespace Commons.Music.Midi.Tests
 			Assert.AreEqual (1, MidiEvent.FixedDataSize (0xF3), "SongSelect");
 			Assert.AreEqual (0, MidiEvent.FixedDataSize (0xF8), "MidiClock");
 			Assert.AreEqual (0, MidiEvent.FixedDataSize (0xFF), "META");
+		}
+
+		[Test]
+		public void MidiEventConvert ()
+		{
+			var bytes1 = new byte [] {0xF8};
+			var events1 = MidiEvent.Convert (bytes1, 0, bytes1.Length);
+			Assert.AreEqual (1, events1.Count (), "bytes1 count");
+
+			var bytes2 = new byte [] {0xFE};
+			var events2 = MidiEvent.Convert (bytes2, 0, bytes2.Length);
+			Assert.AreEqual (1, events2.Count (), "bytes2 count");
 		}
 
 		// FIXME: this test seems to be order/position dependent.
