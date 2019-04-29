@@ -120,12 +120,12 @@ namespace Commons.Music.Midi.WinMM
             var status = (byte)((int)param1 & 0xFF);
             var msb = (byte)(((int)param1 & 0xFF00) >> 8);
             var lsb = (byte)(((int)param1 & 0xFF0000) >> 16);
-	    var size = MidiEvent.FixedDataSize (status);
-            var data = size == 1 ? data1b : size == 2 ? data2b : data3b;
+	        var size = MidiEvent.FixedDataSize (status);
+            var data = size == 1 ? data2b : size == 2 ? data3b : data1b;
             data[0] = status;
-            if (size > 1)
+            if (data.Length >= 2)
 	            data[1] = msb;
-            if (size == 3)
+            if (data.Length >= 3)
                 data[2] = lsb;
 
             MessageReceived(this, new MidiReceivedEventArgs() { Data = data, Start = 0, Length = data.Length, Timestamp = (long)param2 });
