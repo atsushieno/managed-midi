@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Desktop", "Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj", "{59EEFB0D-3957-43FC-8272-C3B460F7FF84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.UwpWithStub", "Commons.Music.Midi.UwpWithStub\Commons.Music.Midi.UwpWithStub.csproj", "{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.Shared", "Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.shproj", "{8742663D-9BB6-43D5-887D-0668E550652F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "Commons.Music.Midi.Uwp\Commons.Music.Midi.Uwp.csproj", "{DDAD7F20-40BE-446C-BED1-E770DD7A0503}"
@@ -35,6 +33,8 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commons.Music.Midi.DesktopShared", "Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.shproj", "{ACB7F202-3B4C-4859-B9BE-ADE6B6726DB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "alsa-sharp", "external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj", "{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.UwpWithStub", "Commons.Music.Midi.UwpWithStub\Commons.Music.Midi.UwpWithStub.csproj", "{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -93,14 +93,6 @@ Global
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|x86.ActiveCfg = Release|Any CPU
 		{59EEFB0D-3957-43FC-8272-C3B460F7FF84}.Release|x86.Build.0 = Release|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Debug|x86.Build.0 = Debug|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|x86.ActiveCfg = Release|Any CPU
-		{AE949BE1-6BA7-4EDF-96FF-C5730EDDF122}.Release|x86.Build.0 = Release|Any CPU
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDAD7F20-40BE-446C-BED1-E770DD7A0503}.Debug|x86.ActiveCfg = Debug|x86
@@ -157,6 +149,14 @@ Global
 		{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}.Release|x86.ActiveCfg = Release|Any CPU
 		{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}.Release|x86.Build.0 = Release|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{49DEFD8A-F6AC-49CF-A8EF-936B81AA55CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

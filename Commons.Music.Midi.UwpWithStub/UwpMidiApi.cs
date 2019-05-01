@@ -1,10 +1,22 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Storage.Streams;
+
+namespace System
+{
+	public static class IAsyncOperationExtensions
+	{
+		public static Task<T> AsTask<T> (this IAsyncOperation<T> source)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+}	
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {

@@ -36,14 +36,14 @@ namespace Commons.Music.Midi.UwpMidi {
 
 		public async Task<IEnumerable<IMidiPortDetails>> GetInputsAsync ()
 		{
-			return DeviceInformation.FindAllAsync (MidiInPort.GetDeviceSelector ())
-						.GetResults ().Select (i => new UwpMidiPortDetails (i));
+			var inputs = await DeviceInformation.FindAllAsync (MidiInPort.GetDeviceSelector ()).AsTask (); 
+			return inputs.Select (i => new UwpMidiPortDetails (i));
 		}
 
 		public async Task<IEnumerable<IMidiPortDetails>> GetOutputsAsync ()
 		{
-			return DeviceInformation.FindAllAsync (MidiOutPort.GetDeviceSelector ())
-						.GetResults ().Select (i => new UwpMidiPortDetails (i));
+			var outputs = await DeviceInformation.FindAllAsync (MidiOutPort.GetDeviceSelector ()).AsTask ();
+			return outputs.Select (i => new UwpMidiPortDetails (i));
 		}
 
 		public IEnumerable<IMidiPortDetails> Inputs {
