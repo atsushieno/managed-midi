@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -14,6 +15,12 @@ namespace Commons.Music.Midi.Tests
 		{
 			Assert.AreEqual (120, MidiMetaType.GetBpm (new byte[] {7, 0xA1, 0x20}, 0), "120");
 			Assert.AreEqual (140, Math.Round (MidiMetaType.GetBpm (new byte[] {6, 0x8A, 0xB1}, 0)), "140");
+		}
+
+		[Test]
+		public void GetTempo ()
+		{
+			Assert.AreEqual (500000, MidiMetaType.GetTempo (new byte[] {7, 0xA1, 0x20}, 0), "500000");
 		}
 		
 		[Test]
@@ -42,8 +49,19 @@ namespace Commons.Music.Midi.Tests
 			Assert.AreEqual (1, events2.Count (), "bytes2 count");
 		}
 
+		[Test]
+		public void MidiMusicGetPlayTimeMillisecondsAtTick ()
+		{
+			var music = TestHelper.GetMidiMusic ();
+			Assert.AreEqual (0, music.GetTimePositionInMillisecondsForTick (0), "tick 0");
+			Assert.AreEqual (125, music.GetTimePositionInMillisecondsForTick (48), "tick 48");
+			Assert.AreEqual (500, music.GetTimePositionInMillisecondsForTick (192), "tick 192");
+		}
+
 		// FIXME: this test seems to be order/position dependent.
 		// It should be moved to MidiPlayerTest class, but it caused regression.
+		// 
+		// It is likely related to manifest resource tetrieval.
 		[Test]
 		public void GetTimePositionInMillisecondsForTick ()
 		{
@@ -70,6 +88,22 @@ namespace Commons.Music.Midi.Tests
 			// FIXME: not working
 			//Assert.AreEqual (2100, player.PlayDeltaTime, "4 PlayDeltaTime");
 			Assert.AreEqual (5, (int) player.PositionInTime.TotalSeconds, "4 PositionInTime");
+		}
+
+		[Test]
+		public void SmfReaderRead ()
+		{
+			foreach (var name in GetType ().Assembly.GetManifestResourceNames ()) {
+				using (var stream = GetType ().Assembly.GetManifestResourceStream (name)) {
+					try {
+						new SmfReader ().Read (stream);
+					}
+					catch {
+						Assert.Warn ($"Failed at {name}");
+						throw;
+					}
+				}
+			}
 		}
 	}
 }

@@ -49,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\testmidi.mid" />
+    <EmbeddedResource Include="Resources\testmidi2.mid" />
+    <EmbeddedResource Include="Resources\testmidi3.mid" />
+    <EmbeddedResource Include="Resources\testmidi4.mid" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">

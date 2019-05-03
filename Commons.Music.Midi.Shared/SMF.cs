@@ -93,7 +93,7 @@ namespace Commons.Music.Midi
 				int v = 0, t = 0;
 				foreach (var m in messages) {
 					var deltaTime = t + m.DeltaTime < ticks ? m.DeltaTime : ticks - t;
-					v += (int) (tempo / 1000 * deltaTime / deltaTimeSpec);
+					v += (int) Math.Round ((double) tempo / 1000 * deltaTime / deltaTimeSpec);
 					if (deltaTime != m.DeltaTime)
 						break;
 					t += m.DeltaTime;
@@ -670,6 +670,8 @@ namespace Commons.Music.Midi
 
 		public void Read (Stream stream)
 		{
+			if (stream == null)
+				throw new ArgumentNullException (nameof (stream));
 			this.stream = stream;
 			data = new MidiMusic ();
 			try {
