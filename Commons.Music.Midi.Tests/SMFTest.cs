@@ -55,7 +55,7 @@ namespace Commons.Music.Midi.Tests
 			var music = TestHelper.GetMidiMusic ();
 			Assert.AreEqual (0, music.GetTimePositionInMillisecondsForTick (0), "tick 0");
 			Assert.AreEqual (125, music.GetTimePositionInMillisecondsForTick (48), "tick 48");
-			Assert.AreEqual (499, music.GetTimePositionInMillisecondsForTick (192), "tick 192");
+			Assert.AreEqual (500, music.GetTimePositionInMillisecondsForTick (192), "tick 192");
 		}
 
 		// FIXME: this test seems to be order/position dependent.

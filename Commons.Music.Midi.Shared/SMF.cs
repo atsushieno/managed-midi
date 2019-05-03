@@ -90,17 +90,18 @@ namespace Commons.Music.Midi
 				throw new NotSupportedException ("non-tick based DeltaTime");
 			else {
 				int tempo = MidiMetaType.DefaultTempo;
-				int v = 0, t = 0;
+				int t = 0;
+				double v = 0;
 				foreach (var m in messages) {
 					var deltaTime = t + m.DeltaTime < ticks ? m.DeltaTime : ticks - t;
-					v += (int) ((double) tempo / 1000 * deltaTime / deltaTimeSpec);
+					v += (double) tempo / 1000 * deltaTime / deltaTimeSpec;
 					if (deltaTime != m.DeltaTime)
 						break;
 					t += m.DeltaTime;
 					if (m.Event.EventType == MidiEvent.Meta && m.Event.Msb == MidiMetaType.Tempo)
 						tempo = MidiMetaType.GetTempo (m.Event.ExtraData, m.Event.ExtraDataOffset);
 				}
-				return v;
+				return (int) v;
 			}
 		}
 	}

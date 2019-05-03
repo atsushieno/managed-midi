@@ -71,7 +71,7 @@ namespace Commons.Music.Midi.Tests
 			Assert.IsTrue (!completed, "3 PlaybackCompletedToEnd already fired");
 			Assert.IsTrue (!finished, "4 Finished already fired");
 			vt.ProceedBy (qmsec);
-			Assert.AreEqual (12889, qmsec, "qmsec");
+			Assert.AreEqual (12989, qmsec, "qmsec");
 			// FIXME: this is ugly
 			while (player.PlayDeltaTime < 4988)
 				Task.Delay (100);
