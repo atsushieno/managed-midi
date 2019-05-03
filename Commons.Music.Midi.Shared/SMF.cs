@@ -93,7 +93,7 @@ namespace Commons.Music.Midi
 				int v = 0, t = 0;
 				foreach (var m in messages) {
 					var deltaTime = t + m.DeltaTime < ticks ? m.DeltaTime : ticks - t;
-					v += (int) Math.Round ((double) tempo / 1000 * deltaTime / deltaTimeSpec);
+					v += (int) ((double) tempo / 1000 * deltaTime / deltaTimeSpec);
 					if (deltaTime != m.DeltaTime)
 						break;
 					t += m.DeltaTime;
