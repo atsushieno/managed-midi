@@ -355,7 +355,7 @@ namespace Commons.Music.Midi
 			Data = extraData;
 #pragma warning restore
 			ExtraData = extraData;
-			ExtraDataOffset = extraDataLength;
+			ExtraDataOffset = extraDataOffset;
 			ExtraDataLength = extraDataLength;
 
 		}
