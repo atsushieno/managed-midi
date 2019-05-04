@@ -62,7 +62,7 @@ namespace Commons.Music.Midi
 		public override MidiModuleDefinition Resolve (string moduleName)
 		{
 			if (moduleName == null)
-				throw new ArgumentNullException ("moduleName");
+				return null;
 			string name = ResolvePossibleAlias (moduleName);
 			return Modules.FirstOrDefault (m => m.Name == name) ?? Modules.FirstOrDefault (m => m.Match != null && new Regex (m.Match).IsMatch (name) || name.Contains (m.Name));
 		}
