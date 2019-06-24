@@ -19,7 +19,7 @@ namespace Commons.Music.Midi.WinMM
 				for (uint i = 0; i < devs; i++)
 				{
 					MidiInCaps caps;
-					WinMMNatives.midiInGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf (typeof (MidiInCaps)));
+					WinMMNatives.midiInGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf<MidiInCaps>());
 					yield return new WinMMPortDetails (i, caps.Name, caps.DriverVersion);
 				}
 			}
@@ -30,7 +30,7 @@ namespace Commons.Music.Midi.WinMM
 				int devs = WinMMNatives.midiOutGetNumDevs ();
 				for (uint i = 0; i < devs; i++) {
 					MidiOutCaps caps;
-					var err = WinMMNatives.midiOutGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf (typeof (MidiOutCaps)));
+					var err = WinMMNatives.midiOutGetDevCaps ((UIntPtr) i, out caps, (uint) Marshal.SizeOf<MidiOutCaps>());
                     if (err != 0)
                         throw new Win32Exception (err);
 					yield return new WinMMPortDetails (i, caps.Name, caps.DriverVersion);
