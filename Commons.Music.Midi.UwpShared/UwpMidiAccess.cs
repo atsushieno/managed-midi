@@ -220,8 +220,12 @@ namespace Commons.Music.Midi.UwpMidi {
 					break;
 				case MidiEvent.SysEx1:
 					int pos = Array.IndexOf (mevent, MidiEvent.EndSysEx, i, length - i);
-					if (pos >= 0)
-						yield return new MidiSystemExclusiveMessage (new Buffer (mevent, i, pos - i));
+					if (pos >= 0) {
+						pos++;
+						yield return new MidiSystemExclusiveMessage (new Buffer (mevent, i,
+							pos - i));
+						i = pos;
+					}
 					break;
 				default:
 					throw new NotSupportedException ($"MIDI message byte '{mevent [i].ToString ("X02")}' is not supported.");
