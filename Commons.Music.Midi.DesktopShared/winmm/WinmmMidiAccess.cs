@@ -134,10 +134,15 @@ namespace Commons.Music.Midi.WinMM
         void HandleLongData(IntPtr param1, IntPtr param2)
         {
             byte[] data = null;
-
+            
             lock (lockObject)
             {
                 var buffer = lmBuffers[param1];
+                // FIXME: this is a nasty workaround for https://github.com/atsushieno/managed-midi/issues/49
+                // We have no idea when/how this message is sent (midi in proc is not well documented).
+                if (buffer.Header.BytesRecorded == 0)
+	                return;
+
                 data = new byte[buffer.Header.BytesRecorded];
 
                 Marshal.Copy(buffer.Header.Data, data, 0, buffer.Header.BytesRecorded);
