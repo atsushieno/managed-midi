@@ -207,12 +207,14 @@ namespace CoreMidi {
 	}
 
 	public class MidiPort : IDisposable {
-		public MidiPort (MIDIPortRef port, bool shouldDispose)
+		public MidiPort (MIDIPortRef port, bool shouldDispose, ReadDispatcher dispatcher)
 		{
 			Handle = port;
 			should_dispose = shouldDispose;
+			this.dispatcher = dispatcher;
 		}
 		bool should_dispose;
+		ReadDispatcher dispatcher;
 
 		public MIDIPortRef Handle { get; private set; }
 
@@ -241,6 +243,7 @@ namespace CoreMidi {
 			}
 
 			if (should_dispose) {
+				dispatcher = null;
 				CoreMidiInterop.MIDIPortDispose (Handle);
 				should_dispose = false;
 			}
@@ -286,6 +289,16 @@ namespace CoreMidi {
 		public long TimeStamp { get; internal set; }
 	}
 
+	public class ReadDispatcher
+	{
+		public MidiPort Port { get; set; }
+
+		public void DispatchRead (MIDIPacketListPtr pktlist, IntPtr readProcRefCon, IntPtr srcConnRefCon)
+		{
+			Port.CallMessageReceived (pktlist, readProcRefCon, srcConnRefCon);
+		}
+	}
+
 	public class MidiClient : IDisposable
 	{
 		public MidiClient (string name)
@@ -307,22 +320,12 @@ namespace CoreMidi {
 
 		public MIDIClientRef Handle { get; private set; }
 
-		class ReadDispatcher
-		{
-			public MidiPort Port { get; set; }
-
-			public void DispatchRead (MIDIPacketListPtr pktlist, IntPtr readProcRefCon, IntPtr srcConnRefCon)
-			{
-				Port.CallMessageReceived (pktlist, readProcRefCon, srcConnRefCon);
-			}
-		}
-
 		public MidiPort CreateInputPort (string name)
 		{
 			MIDIPortRef port;
 			var d = new ReadDispatcher ();
 			CoreMidiInterop.MIDIInputPortCreate(Handle, Midi.ToCFStringRef (name), d.DispatchRead, IntPtr.Zero, out port);
-			d.Port = new MidiPort (port, true);
+			d.Port = new MidiPort (port, true, d);
 			return d.Port;
 		}
 
@@ -330,7 +333,7 @@ namespace CoreMidi {
 		{
 			MIDIPortRef port;
 			CoreMidiInterop.MIDIOutputPortCreate (Handle, Midi.ToCFStringRef (name), out port);
-			return new MidiPort (port, true);
+			return new MidiPort (port, true, null);
 		}
 
 		public MidiEndpoint CreateVirtualSource (string name, out MidiError statusCode)
