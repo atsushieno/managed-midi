@@ -335,18 +335,13 @@ namespace CoreMidi {
 		{
 			IntPtr h;
 			name_string = Midi.ToCFStringRef (name);
-			int ret = CoreMidiInterop.MIDIClientCreate (name_string, OnNotify, IntPtr.Zero, out h);
+			int ret = CoreMidiInterop.MIDIClientCreate (name_string, null, IntPtr.Zero, out h);
 			if (ret != 0)
 				throw new MidiException ($"Failed to create MIDI client for {name}: error code {ret}");
 			Handle = h;
 		}
 
 		CFStringRef name_string;
-
-		void OnNotify (IntPtr message, IntPtr refCon)
-		{
-			throw new NotImplementedException ();
-		}
 
 		public MIDIClientRef Handle { get; private set; }
 
