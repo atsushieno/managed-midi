@@ -156,7 +156,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 					if (dispatch_bytes.Length < p.Length)
 						dispatch_bytes = new byte[p.Length];
 					Marshal.Copy(p.Bytes, dispatch_bytes, 0, p.Length);
-					MessageReceived(sender, new MidiReceivedEventArgs() { Data = dispatch_bytes, Start = 0, Length = dispatch_bytes.Length, Timestamp = p.TimeStamp });
+					MessageReceived(this, new MidiReceivedEventArgs() { Data = dispatch_bytes, Start = 0, Length = p.Length, Timestamp = p.TimeStamp });
 				}
 			}
 		}
