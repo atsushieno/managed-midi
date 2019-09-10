@@ -122,21 +122,23 @@ namespace CoreMidi {
 		public nint Destinations => CoreMidiInterop.MIDIEntityGetNumberOfDestinations (entity);
 	}
 
-	public class MidiEndpoint
+	public class MidiEndpoint : IDisposable
 	{
 
-		public static MidiEndpoint GetSource (nint s) => new MidiEndpoint (CoreMidiInterop.MIDIGetSource (s), "Source" + s, false);
+		public static MidiEndpoint GetSource (nint s) => new MidiEndpoint (CoreMidiInterop.MIDIGetSource (s), "Source" + s, false, null);
 
-		public static MidiEndpoint GetDestination (nint d) => new MidiEndpoint (CoreMidiInterop.MIDIGetDestination (d), "Destination" + d, false);
+		public static MidiEndpoint GetDestination (nint d) => new MidiEndpoint (CoreMidiInterop.MIDIGetDestination (d), "Destination" + d, false, null);
 
-		public MidiEndpoint (MIDIEndpointRef endpoint, string endpointName, bool shouldDispose)
+		public MidiEndpoint (MIDIEndpointRef endpoint, string endpointName, bool shouldDispose, ReadDispatcher dispatcher)
 		{
 			Handle = endpoint;
 			should_dispose = shouldDispose;
 			EndpointName = endpointName;
+			this.dispatcher = dispatcher;
 		}
 
 		bool should_dispose;
+		ReadDispatcher dispatcher;
 
 		public MIDIEndpointRef Handle { get; private set; }
 
@@ -203,6 +205,12 @@ namespace CoreMidi {
 			int ret;
 			CoreMidiInterop.MIDIObjectGetIntegerProperty(Handle, id, out ret);
 			return ret;
+		}
+
+		public void Dispose()
+		{
+			if (should_dispose)
+				dispatcher = null;
 		}
 	}
 
@@ -293,7 +301,14 @@ namespace CoreMidi {
 	{
 		public MidiPort Port { get; set; }
 
-		public void DispatchRead (MIDIPacketListPtr pktlist, IntPtr readProcRefCon, IntPtr srcConnRefCon)
+		internal readonly CoreMidiInterop.MIDIReadProc DispatchProc;
+
+		public ReadDispatcher()
+		{
+			DispatchProc = dispatchRead;
+		}
+
+		private void dispatchRead (MIDIPacketListPtr pktlist, IntPtr readProcRefCon, IntPtr srcConnRefCon)
 		{
 			Port.CallMessageReceived (pktlist, readProcRefCon, srcConnRefCon);
 		}
@@ -324,7 +339,7 @@ namespace CoreMidi {
 		{
 			MIDIPortRef port;
 			var d = new ReadDispatcher ();
-			CoreMidiInterop.MIDIInputPortCreate(Handle, Midi.ToCFStringRef (name), d.DispatchRead, IntPtr.Zero, out port);
+			CoreMidiInterop.MIDIInputPortCreate(Handle, Midi.ToCFStringRef (name), d.DispatchProc, IntPtr.Zero, out port);
 			d.Port = new MidiPort (port, true, d);
 			return d.Port;
 		}
@@ -340,7 +355,7 @@ namespace CoreMidi {
 		{
 			IntPtr ptr;
 			statusCode = (MidiError) CoreMidiInterop.MIDISourceCreate (Handle, Midi.ToCFStringRef (name), out ptr);
-			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true) : null;
+			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true, null) : null;
 		}
 
 		public MidiEndpoint CreateVirtualDestination (string name, out MidiError statusCode)
@@ -348,8 +363,8 @@ namespace CoreMidi {
 			IntPtr ptr;
 			var d = new ReadDispatcher ();
 			statusCode = (MidiError) CoreMidiInterop.MIDIDestinationCreate (Handle, Midi.ToCFStringRef (name),
-				d.DispatchRead, IntPtr.Zero, out ptr);
-			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true) : null;
+				d.DispatchProc, IntPtr.Zero, out ptr);
+			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true, d) : null;
 		}
 
 		public void Dispose ()
