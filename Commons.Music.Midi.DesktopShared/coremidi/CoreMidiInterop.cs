@@ -210,7 +210,11 @@ namespace CoreMidi {
 		public void Dispose()
 		{
 			if (should_dispose)
+			{
+				dispatcher?.Dispose();
 				dispatcher = null;
+				should_dispose = false;
+			}
 		}
 	}
 
@@ -251,8 +255,9 @@ namespace CoreMidi {
 			}
 
 			if (should_dispose) {
-				dispatcher = null;
 				CoreMidiInterop.MIDIPortDispose (Handle);
+				dispatcher?.Dispose();
+				dispatcher = null;
 				should_dispose = false;
 			}
 		}
@@ -297,20 +302,30 @@ namespace CoreMidi {
 		public long TimeStamp { get; internal set; }
 	}
 
-	public class ReadDispatcher
+	public class ReadDispatcher : IDisposable
 	{
-		public MidiPort Port { get; set; }
+		private static List<CoreMidiInterop.MIDIReadProc> read_procs = new List<CoreMidiInterop.MIDIReadProc>();
 
-		internal readonly CoreMidiInterop.MIDIReadProc DispatchProc;
+		public MidiPort Port { get; set; }
+		internal CoreMidiInterop.MIDIReadProc DispatchProc;
 
 		public ReadDispatcher()
 		{
 			DispatchProc = dispatchRead;
+
+			lock (read_procs)
+				read_procs.Add(DispatchProc);
 		}
 
 		private void dispatchRead (MIDIPacketListPtr pktlist, IntPtr readProcRefCon, IntPtr srcConnRefCon)
 		{
 			Port.CallMessageReceived (pktlist, readProcRefCon, srcConnRefCon);
+		}
+
+		public void Dispose()
+		{
+			lock (read_procs)
+				read_procs.Remove(DispatchProc);
 		}
 	}
 
