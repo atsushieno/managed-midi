@@ -92,7 +92,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		}
 	}
 
-	class CoreMidiPortDetails : IMidiPortDetails
+	class CoreMidiPortDetails : IMidiPortDetails, IDisposable
 	{
 		public CoreMidiPortDetails (MidiEndpoint src)
 		{
@@ -117,6 +117,11 @@ namespace Commons.Music.Midi.CoreMidiApi
 		public string Name { get; set; }
 
 		public string Version { get; set; }
+
+		public void Dispose()
+		{
+			Endpoint?.Dispose ();
+		}
 	}
 
 	class CoreMidiInput : IMidiInput
@@ -161,6 +166,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			port.Disconnect (details.Endpoint);
 			port.Dispose ();
 			client.Dispose ();
+			details.Dispose ();
 			return Task.CompletedTask;
 		}
 
@@ -192,6 +198,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			port.Disconnect (details.Endpoint);
 			port.Dispose ();
 			client.Dispose ();
+			details.Dispose ();
 			return Task.CompletedTask;
 		}
 
