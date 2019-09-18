@@ -345,7 +345,7 @@ namespace Commons.Music.Midi
 
 		[Obsolete ("Use another constructor overload with Span<byte> instead")]
 		public MidiEvent (byte type, byte arg1, byte arg2, byte [] data)
-			: this (type, arg1, arg2, data, 0, data.Length)
+			: this (type, arg1, arg2, data, 0, data != null ? data.Length : 0)
 		{
 		}
 
