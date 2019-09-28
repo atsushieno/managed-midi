@@ -20,6 +20,7 @@ namespace Commons.Music.Midi
 
 namespace Commons.Music.Midi.AndroidExtensions
 {
+	[Obsolete ("This will not be part of public API in the future")]
 	public class AndroidMidiAccess : IMidiAccess
 	{
 		MidiManager midi_manager;
@@ -112,6 +113,7 @@ namespace Commons.Music.Midi.AndroidExtensions
 		}
 	}
 
+	[Obsolete ("This will not be part of public API in the future")]
 	public class MidiPortDetails : IMidiPortDetails
 	{
 		MidiDeviceInfo device;
@@ -144,7 +146,10 @@ namespace Commons.Music.Midi.AndroidExtensions
 		}
 
 		public string Name {
-			get { return port.Name; }
+			get {
+				var d = device.Properties.GetString (MidiDeviceInfo.PropertyName) ?? "";
+				return d + (d == "" ? "" : " ") + port.Name;
+			}
 		}
 
 		public string Version {
@@ -152,6 +157,7 @@ namespace Commons.Music.Midi.AndroidExtensions
 		}
 	}
 
+	[Obsolete ("This will not be part of public API in the future")]
 	public class MidiPort : IMidiPort
 	{
 		MidiPortDetails details;
@@ -190,6 +196,7 @@ namespace Commons.Music.Midi.AndroidExtensions
 		}
 	}
 	
+	[Obsolete ("This will not be part of public API in the future")]
 	public class MidiInput : MidiPort, IMidiInput
 	{
 		MidiOutputPort port;
@@ -230,6 +237,7 @@ namespace Commons.Music.Midi.AndroidExtensions
 		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
 	}
 
+	[Obsolete ("This will not be part of public API in the future")]
 	public class MidiOutput : MidiPort, IMidiOutput
 	{
 		MidiInputPort port;
