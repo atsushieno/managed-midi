@@ -50,7 +50,7 @@ namespace Commons.Music.Midi
 		{
 			Modules = new List<MidiModuleDefinition> ();
 			var catalog = new StreamReader (GetResource ("midi-module-catalog.txt")).ReadToEnd ().Split ('\n');
-			foreach (string filename in catalog)
+			foreach (string filename in catalog.Select (s => s.Trim ())) // strip extraneous \r
 				if (filename.Length > 0)
 					Modules.Add (MidiModuleDefinition.Load (GetResource (filename)));
 		}

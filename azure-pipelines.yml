@@ -1,49 +1,55 @@
-pool:
-  name: Hosted VS2017
-  demands:
-  - msbuild
-  - visualstudio
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
 
-steps:
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet 4.3.0'
-  inputs:
-    versionSpec: 4.3.0
+jobs:
+-  job: windows
+  pool:
+    name: Hosted VS2017
+    demands:
+    - msbuild
+    - visualstudio
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
-  inputs:
-    command: restore
-    projects: |
-     external/alsa-sharp/dotnetcore/**/*.csproj
-     Commons.Music.Midi.DotNetCore/*.csproj
+  steps:
+  - task: NuGetToolInstaller@1
+    displayName: 'Use NuGet 4.3.0'
+    inputs:
+　　　　versionSpec: 4.3.0
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet build'
-  inputs:
-    projects: 'Commons.Music.Midi.DotNetCore/*.csproj'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+　　　　command: restore
+　　　　projects: |
+　　　　　　external/alsa-sharp/dotnetcore/**/*.csproj
+　　　　　　Commons.Music.Midi.DotNetCore/*.csproj
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore **\*.sln'
-  inputs:
-    restoreSolution: 'managed-midi.sln'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet build'
+    inputs:
+  　　　projects: 'Commons.Music.Midi.DotNetCore/*.csproj'
 
-- task: VSBuild@1
-  displayName: 'Build solution **\*.sln'
-  inputs:
-    configuration: Debug
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore **\*.sln'
+    inputs:
+  　　　restoreSolution: 'managed-midi.sln'
 
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: pack
-    packagesToPack: 'managed-midi.nuspec'
+  - task: VSBuild@1
+    displayName: 'Build solution **\*.sln'
+    inputs:
+  　　　configuration: Debug
 
-- task: NuGetCommand@2
-  displayName: 'NuGet push'
-  inputs:
-    command: push
-    nuGetFeedType: external
-    publishFeedCredentials: nuget.org
+  - task: NuGetCommand@2
+    displayName: 'NuGet pack'
+    inputs:
+  　　　command: pack
+  　　　packagesToPack: 'managed-midi.nuspec'
 
-
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    inputs:
+  　　　command: push
+  　　　nuGetFeedType: external
+  　　　publishFeedCredentials: nuget.org
