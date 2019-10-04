@@ -43,9 +43,7 @@ namespace Commons.Music.Midi
 		// am too lazy to adjust resource names :/
 		public static Stream GetResource (string name)
 		{
-			return ass.GetManifestResourceStream (name) ?? ass.GetManifestResourceStream (
-				       ass.GetManifestResourceNames ().FirstOrDefault (m =>
-					       m.EndsWith (name, StringComparison.OrdinalIgnoreCase)));
+			return ass.GetManifestResourceStream (ass.GetManifestResourceNames ().FirstOrDefault (m => m.EndsWith (name, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public DefaultMidiModuleDatabase ()
