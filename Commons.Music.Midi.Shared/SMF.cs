@@ -315,7 +315,7 @@ namespace Commons.Music.Midi
 			int end = index + size;
 			while (i < end) {
 				if (bytes [i] == 0xF0) {
-					yield return new MidiEvent (0xF0, 0, 0, bytes, index + 1, size - 1);
+					yield return new MidiEvent (0xF0, 0, 0, bytes, index, size);
 					i += size;
 				} else {
 					var z = MidiEvent.FixedDataSize (bytes [i]);

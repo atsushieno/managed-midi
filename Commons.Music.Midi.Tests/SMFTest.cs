@@ -105,5 +105,14 @@ namespace Commons.Music.Midi.Tests
 				}
 			}
 		}
+
+		[Test]
+		public void Convert ()
+		{
+			int [] bytes = {0xF0, 0x0A, 0x41, 0x10, 0x42, 0x12, 0x40, 0, 0x7F, 0, 0x41, 0xF7}; // am too lazy to add cast to byte...
+			var msgs = MidiEvent.Convert (bytes.Select (i => (byte) i).ToArray (), 0, bytes.Length);
+			Assert.AreEqual (1, msgs.Count (), "message length");
+			Assert.AreEqual (bytes.Length, msgs.First().ExtraDataLength);
+		}
 	}
 }
