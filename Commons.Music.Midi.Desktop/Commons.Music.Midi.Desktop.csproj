@@ -50,9 +50,10 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj">
-      <Project>{4c7d511e-ee5d-4f88-9caa-a68dafa19132}</Project>
+    <ProjectReference Include="..\external\alsa-sharp\alsa-sharp\alsa-sharp.csproj">
+      <Project>{4C7D511E-EE5D-4F88-9CAA-A68DAFA19132}</Project>
       <Name>alsa-sharp</Name>
     </ProjectReference>
   </ItemGroup>
