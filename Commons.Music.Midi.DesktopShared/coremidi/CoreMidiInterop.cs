@@ -43,7 +43,7 @@ namespace CoreMidi {
 
 		public static nint DestinationCount => CoreMidiInterop.MIDIGetNumberOfDestinations ();
 
-		internal static CFStringRef ToCFStringRef (string s)
+		internal static CFStringRef CreateCFStringRef (string s)
 		{
 			return CoreFoundationInterop.CFStringCreateWithCString (IntPtr.Zero, s, CoreFoundationInterop.kCFStringEncodingUTF8);
 		}
@@ -125,9 +125,18 @@ namespace CoreMidi {
 	public class MidiEndpoint : IDisposable
 	{
 
-		public static MidiEndpoint GetSource (nint s) => new MidiEndpoint (CoreMidiInterop.MIDIGetSource (s), "Source" + s, false, null);
+		public static MidiEndpoint GetSource (nint s)
+		{
+			var ret = CoreMidiInterop.MIDIGetSource (s);
+			return ret == IntPtr.Zero ? null : new MidiEndpoint (ret, "Source" + s, false, null);
+			
+		}
 
-		public static MidiEndpoint GetDestination (nint d) => new MidiEndpoint (CoreMidiInterop.MIDIGetDestination (d), "Destination" + d, false, null);
+		public static MidiEndpoint GetDestination (nint d)
+		{
+			var ret = CoreMidiInterop.MIDIGetDestination (d);
+			return ret == IntPtr.Zero ? null : new MidiEndpoint (ret, "Destination" + d, false, null);
+		}
 
 		public MidiEndpoint (MIDIEndpointRef endpoint, string endpointName, bool shouldDispose, ReadDispatcher dispatcher)
 		{
@@ -173,7 +182,7 @@ namespace CoreMidi {
 			if (id == IntPtr.Zero)
 				return;
 			CFStringRef str;
-			CoreMidiInterop.MIDIObjectSetStringProperty (Handle, id, Midi.ToCFStringRef (value));
+			CoreMidiInterop.MIDIObjectSetStringProperty (Handle, id, Midi.CreateCFStringRef (value));
 		}
 
 		String GetStringProp (IntPtr id)
@@ -334,7 +343,7 @@ namespace CoreMidi {
 		public MidiClient (string name)
 		{
 			IntPtr h;
-			name_string = Midi.ToCFStringRef (name);
+			name_string = Midi.CreateCFStringRef (name);
 			int ret = CoreMidiInterop.MIDIClientCreate (name_string, null, IntPtr.Zero, out h);
 			if (ret != 0)
 				throw new MidiException ($"Failed to create MIDI client for {name}: error code {ret}");
@@ -349,7 +358,7 @@ namespace CoreMidi {
 		{
 			MIDIPortRef port;
 			var d = new ReadDispatcher ();
-			CoreMidiInterop.MIDIInputPortCreate(Handle, Midi.ToCFStringRef (name), d.DispatchProc, IntPtr.Zero, out port);
+			CoreMidiInterop.MIDIInputPortCreate(Handle, Midi.CreateCFStringRef (name), d.DispatchProc, IntPtr.Zero, out port);
 			d.Port = new MidiPort (port, true, d);
 			return d.Port;
 		}
@@ -357,14 +366,14 @@ namespace CoreMidi {
 		public MidiPort CreateOutputPort (string name)
 		{
 			MIDIPortRef port;
-			CoreMidiInterop.MIDIOutputPortCreate (Handle, Midi.ToCFStringRef (name), out port);
+			CoreMidiInterop.MIDIOutputPortCreate (Handle, Midi.CreateCFStringRef (name), out port);
 			return new MidiPort (port, true, null);
 		}
 
 		public MidiEndpoint CreateVirtualSource (string name, out MidiError statusCode)
 		{
 			IntPtr ptr;
-			statusCode = (MidiError) CoreMidiInterop.MIDISourceCreate (Handle, Midi.ToCFStringRef (name), out ptr);
+			statusCode = (MidiError) CoreMidiInterop.MIDISourceCreate (Handle, Midi.CreateCFStringRef (name), out ptr);
 			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true, null) : null;
 		}
 
@@ -372,7 +381,7 @@ namespace CoreMidi {
 		{
 			IntPtr ptr;
 			var d = new ReadDispatcher ();
-			statusCode = (MidiError) CoreMidiInterop.MIDIDestinationCreate (Handle, Midi.ToCFStringRef (name),
+			statusCode = (MidiError) CoreMidiInterop.MIDIDestinationCreate (Handle, Midi.CreateCFStringRef (name),
 				d.DispatchProc, IntPtr.Zero, out ptr);
 			return statusCode == MidiError.Ok ? new MidiEndpoint (ptr, name, true, d) : null;
 		}
@@ -380,8 +389,9 @@ namespace CoreMidi {
 		public void Dispose ()
 		{
 			CoreMidiInterop.MIDIClientDispose (Handle);
-			CoreFoundationInterop.CFRelease (name_string);
-
+			if (name_string != IntPtr.Zero)
+				CoreFoundationInterop.CFRelease (name_string);
+			name_string = IntPtr.Zero;
 		}
 	}
 
