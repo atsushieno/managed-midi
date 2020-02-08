@@ -79,7 +79,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 		{
 			var details = Inputs.Cast<CoreMidiPortDetails> ().FirstOrDefault (i => i.Id == portId);
 			if (details == null)
-				throw new InvalidOperationException($"Device specified as port {portId}) is not found.");
+				throw new InvalidOperationException($"The device which is specified as port '{portId}' is not found.");
 			return Task.FromResult((IMidiInput) new CoreMidiInput (details));
 		}
 
@@ -99,7 +99,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			Endpoint = src;
 			Id = src.Name + "__" + src.EndpointName;
 			Manufacturer = src.Manufacturer;
-			Name = string.IsNullOrEmpty (src.DisplayName) ? src.Name : src.EndpointName;
+			Name = string.IsNullOrEmpty (src.DisplayName) ? src.Name : src.DisplayName;
 
 			try {
 				Version = src.DriverVersion.ToString ();
@@ -183,6 +183,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			this.details = details;
 			client = new MidiClient ("outputclient");
 			port = client.CreateOutputPort ("outputport");
+			Connection = MidiPortConnectionState.Open;
 		}
 
 		MidiClient client;
@@ -191,7 +192,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public IMidiPortDetails Details => details;
 
-		public MidiPortConnectionState Connection => throw new NotImplementedException();
+		public MidiPortConnectionState Connection { get; private set; }
 
 		public Task CloseAsync()
 		{
@@ -200,6 +201,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 			client.Dispose ();
 			details.Dispose ();
 			return Task.CompletedTask;
+			Connection = MidiPortConnectionState.Closed;
 		}
 
 		public void Dispose()
