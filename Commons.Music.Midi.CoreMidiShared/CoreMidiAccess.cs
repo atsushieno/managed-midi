@@ -172,7 +172,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public void Dispose()
 		{
-			CloseAsync().RunSynchronously();
+			CloseAsync().Wait ();
 		}
 	}
 
@@ -206,7 +206,7 @@ namespace Commons.Music.Midi.CoreMidiApi
 
 		public void Dispose()
 		{
-			CloseAsync().RunSynchronously();
+			CloseAsync().Wait();
 		}
 
 		MidiPacket[] arr = new MidiPacket[1];

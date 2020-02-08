@@ -127,7 +127,7 @@ namespace Commons.Music.Midi.UwpMidi {
 		public void Dispose ()
 		{
 			input.MessageReceived -= DispatchMessageReceived;
-			CloseAsync ().RunSynchronously ();
+			CloseAsync ().Wait ();
 		}
 	}
 
@@ -158,7 +158,7 @@ namespace Commons.Music.Midi.UwpMidi {
 
 		public void Dispose ()
 		{
-			CloseAsync ().RunSynchronously ();
+			CloseAsync ().Wait ();
 		}
 
 		public void Send (byte [] mevent, int offset, int length, long timestamp)
