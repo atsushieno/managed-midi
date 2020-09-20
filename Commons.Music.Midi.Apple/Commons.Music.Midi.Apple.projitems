@@ -10,4 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMidiAccess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMidiInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMidiOutput .cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMidiPortDetails.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMidiSynthesizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MidiSystem.cs" />
+  </ItemGroup>
 </Project>

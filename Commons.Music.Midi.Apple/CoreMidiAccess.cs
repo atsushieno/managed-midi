@@ -21,7 +21,7 @@ namespace Commons.Music.Midi.macOS
 		public ObservableCollection<IMidiPortDetails> Outputs { get; }
 
 		public CoreMidiAccess()
-        {
+		{
 			_midiSynthesizer = new CoreMidiSynthesizer();
 			Inputs = new ObservableCollection<IMidiPortDetails>(GetInputDevices());
 
@@ -29,14 +29,16 @@ namespace Commons.Music.Midi.macOS
 			Outputs.Add(_midiSynthesizer);
 
 			_client = new MidiClient("CoreMidiSample MIDI CLient");
-			_client.ObjectAdded += delegate (object sender, ObjectAddedOrRemovedEventArgs e) {
+			_client.ObjectAdded += delegate (object sender, ObjectAddedOrRemovedEventArgs e)
+			{
 				UpdateInputDevices(false);
 				UpdateOutputDevices(false);
 			};
-			_client.ObjectRemoved += delegate (object sender, ObjectAddedOrRemovedEventArgs e) {
+			_client.ObjectRemoved += delegate (object sender, ObjectAddedOrRemovedEventArgs e)
+			{
 				UpdateInputDevices(true);
 				UpdateOutputDevices(true);
-			};			
+			};
 		}
 
 		private void UpdateInputDevices(bool hasRemovedDevice)
@@ -82,38 +84,38 @@ namespace Commons.Music.Midi.macOS
 					Outputs.Add(device);
 				}
 			}
-			if(!Outputs.Contains(_midiSynthesizer))
-            {
+			if (!Outputs.Contains(_midiSynthesizer))
+			{
 				Outputs.Add(_midiSynthesizer);
-            }
+			}
 		}
 
 		private IEnumerable<IMidiPortDetails> GetOutputDevices()
-        {
-            return Enumerable.Range(0, (int)CoreMidi.Midi.DestinationCount).Select(i => (IMidiPortDetails)new CoreMidiPortDetails(MidiEndpoint.GetDestination(i))); ;
+		{
+			return Enumerable.Range(0, (int)CoreMidi.Midi.DestinationCount).Select(i => (IMidiPortDetails)new CoreMidiPortDetails(MidiEndpoint.GetDestination(i))); ;
 		}
 
-        private IEnumerable<IMidiPortDetails> GetInputDevices()
-        {
-           return Enumerable.Range(0, (int)CoreMidi.Midi.SourceCount).Select(i => (IMidiPortDetails)new CoreMidiPortDetails(MidiEndpoint.GetSource(i))); ;
+		private IEnumerable<IMidiPortDetails> GetInputDevices()
+		{
+			return Enumerable.Range(0, (int)CoreMidi.Midi.SourceCount).Select(i => (IMidiPortDetails)new CoreMidiPortDetails(MidiEndpoint.GetSource(i))); ;
 		}
 
-        private void UpdateDeviceLists()
-        {
-            ;
-        }
+		private void UpdateDeviceLists()
+		{
+			;
+		}
 
-        //public MidiAccessExtensionManager ExtensionManager { get; } = new CoreMidiAccessExtensionManager ();
-		
-        
-        public event EventHandler<MidiConnectionEventArgs> StateChanged;
+		//public MidiAccessExtensionManager ExtensionManager { get; } = new CoreMidiAccessExtensionManager ();
+
+
+		public event EventHandler<MidiConnectionEventArgs> StateChanged;
 
 		public Task<IMidiInput> OpenInputAsync(string portId)
 		{
-			var details = Inputs.Cast<CoreMidiPortDetails> ().FirstOrDefault (i => i.Id == portId);
+			var details = Inputs.Cast<CoreMidiPortDetails>().FirstOrDefault(i => i.Id == portId);
 			if (details == null)
 				throw new InvalidOperationException($"The device which is specified as port '{portId}' is not found.");
-			return Task.FromResult((IMidiInput) new CoreMidiInput (details));
+			return Task.FromResult((IMidiInput)new CoreMidiInput(details));
 		}
 
 		public Task<IMidiOutput> OpenOutputAsync(string portId)
@@ -131,10 +133,4 @@ namespace Commons.Music.Midi.macOS
 			}
 		}
 	}
-
-	
-
-	
-
-	
 }

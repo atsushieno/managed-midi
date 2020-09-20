@@ -27,8 +27,6 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchSdkVersion>
-    </MtouchSdkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -144,7 +142,7 @@
       <Name>Commons.Music.Midi</Name>
     </ProjectReference>
     <ProjectReference Include="..\XFTest\XFTest.csproj">
-      <Project>{D177BA21-6B25-4040-A9C4-F46BB8E5B5FD}</Project>
+      <Project>{5A7980A6-B761-440B-BBAC-A69B6D05098A}</Project>
       <Name>XFTest</Name>
     </ProjectReference>
   </ItemGroup>

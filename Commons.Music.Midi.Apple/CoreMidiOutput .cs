@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CoreMidi;
-using Foundation;
-using UIKit;
-using Commons.Music.Midi;
 using System.Threading.Tasks;
 
 #if __MOBILE__
@@ -14,7 +8,7 @@ namespace Commons.Music.Midi.iOS
 namespace Commons.Music.Midi.macOS
 #endif
 {
-	public class CoreMidiOutput : IMidiOutput
+    public class CoreMidiOutput : IMidiOutput
 	{
 		public CoreMidiOutput(IMidiPortDetails details)
 		{

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CoreMidi;
-using Foundation;
-using UIKit;
 
 #if __MOBILE__
 namespace Commons.Music.Midi.iOS
@@ -12,7 +7,7 @@ namespace Commons.Music.Midi.iOS
 namespace Commons.Music.Midi.macOS
 #endif
 {
-	public class CoreMidiPortDetails : IMidiPortDetails, IDisposable
+    public class CoreMidiPortDetails : IMidiPortDetails, IDisposable
 	{
 		public CoreMidiPortDetails(MidiEndpoint src)
 		{

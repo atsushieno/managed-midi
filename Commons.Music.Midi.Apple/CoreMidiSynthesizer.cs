@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using AVFoundation;
 using Foundation;
-using UIKit;
 
 #if __MOBILE__
 namespace Commons.Music.Midi.iOS
@@ -46,6 +42,7 @@ namespace Commons.Music.Midi.macOS
 
         private void SetSessionPlayback()
         {
+#if __MOBILE__
             var audioSession = AVAudioSession.SharedInstance();
             NSError error = audioSession.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.MixWithOthers);
             if (error != null)
@@ -62,6 +59,7 @@ namespace Commons.Music.Midi.macOS
                     Debug.WriteLine(error.ToString());
                 }
             }
+#endif
         }
 
         private void StartEngine()

@@ -13,10 +13,11 @@ namespace Commons.Music.Midi.macOS
 		public static void Initialize(NSUrl pathToSoundFont)
 		{
 			_pathToSoundFont = pathToSoundFont;
+#if __MOBILE__
 			MidiNetworkSession session = MidiNetworkSession.DefaultSession;
 			session.Enabled = true;
 			session.ConnectionPolicy = MidiNetworkConnectionPolicy.Anyone;
-
+#endif
 			Default = new CoreMidiAccess();
 		}
 

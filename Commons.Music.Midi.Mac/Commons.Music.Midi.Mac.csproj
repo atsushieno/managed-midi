@@ -6,8 +6,8 @@
     <ProjectGuid>{48CF93CC-9B9D-4114-AD87-09BF4AD475DD}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>Commons.Music.Midi.XamMac</RootNamespace>
-    <AssemblyName>Commons.Music.Midi</AssemblyName>
+    <RootNamespace>Commons.Music.Midi.Mac</RootNamespace>
+    <AssemblyName>Commons.Music.Midi.Mac</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
@@ -30,6 +30,7 @@
     <XamMacArch>
     </XamMacArch>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -48,6 +49,7 @@
     <XamMacArch>
     </XamMacArch>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AOTMode>None</AOTMode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -59,6 +61,12 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems')" />
+  <ItemGroup>
+    <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{7D9A799C-7724-4787-9F6D-61A76DC49F1F}</Project>
+      <Name>Commons.Music.Midi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\Commons.Music.Midi.Apple\Commons.Music.Midi.Apple.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Apple\Commons.Music.Midi.Apple.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
