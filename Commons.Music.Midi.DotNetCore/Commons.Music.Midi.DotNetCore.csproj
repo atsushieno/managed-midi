@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" />
-    <ProjectReference Include="..\external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj" />
+    <ProjectReference Include="..\external\alsa-sharp\alsa-sharp.csproj" />
   </ItemGroup>
   <Import Project="..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems')" />
   <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />

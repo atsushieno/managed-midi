@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Commons.Music.Midi;
 using AlsaSharp;
+using System.Collections.ObjectModel;
 
 namespace Commons.Music.Midi.Alsa {
 	public class AlsaMidiAccess : IMidiAccess2 {
@@ -134,9 +135,10 @@ namespace Commons.Music.Midi.Alsa {
 			return seq.GetPort (sub.Sender.Client, sub.Sender.Port);
 		}
 
-		public IEnumerable<IMidiPortDetails> Inputs => EnumerateAvailableInputPorts ().Select (p => new AlsaMidiPortDetails (p));
+		//Should be changed to something observable, by implementing a device watcher similar to the uwp one.
+		public ObservableCollection<IMidiPortDetails> Inputs => new ObservableCollection<IMidiPortDetails> (EnumerateAvailableInputPorts ().Select (p => new AlsaMidiPortDetails (p)));
 
-		public IEnumerable<IMidiPortDetails> Outputs => EnumerateAvailableOutputPorts ().Select (p => new AlsaMidiPortDetails (p));
+		public ObservableCollection<IMidiPortDetails> Outputs => new ObservableCollection<IMidiPortDetails>(EnumerateAvailableOutputPorts ().Select (p => new AlsaMidiPortDetails (p)));
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;
 

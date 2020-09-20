@@ -1,47 +1,173 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Media.Midi;
 using Android.Runtime;
+using Commons.Music.Midi.Driod;
+using Org.Billthefarmer.Mididriver;
 
-namespace Commons.Music.Midi
+namespace Commons.Music.Midi.Droid
 {
-	public partial class MidiAccessManager
+	public class MidiSystem : MidiAccessManager
 	{
-		partial void InitializeDefault ()
+		public static void Initialize (Context context)
 		{
-			Default = new AndroidExtensions.AndroidMidiAccess (Android.App.Application.Context);
+			Default = new AndroidMidiAccess (context);
 		}
 	}
-}
 
-namespace Commons.Music.Midi.AndroidExtensions
-{
-	[Obsolete ("This will not be part of public API in the future")]
-	public class AndroidMidiAccess : IMidiAccess
+	public class AndroidMidiAccess : IMidiAccess, IDisposable
 	{
-		MidiManager midi_manager;
-		
-		public AndroidMidiAccess (Context context)
+		Intent _midiServiceIntent;
+		MidiManager _midiManager;
+
+		ObservableCollection<IMidiPortDetails> _inputs = new ObservableCollection<IMidiPortDetails>();
+		ObservableCollection<IMidiPortDetails> _outputs = new ObservableCollection<IMidiPortDetails>();
+		public ObservableCollection<IMidiPortDetails> Inputs
 		{
-			midi_manager = context.GetSystemService (Context.MidiService).JavaCast<MidiManager> ();
+			get { return _inputs;  }
 		}
+
+		public ObservableCollection<IMidiPortDetails> Outputs
+		{
+			get { return _outputs; }
+		}
+		List<MidiDeviceInfo> _devices = null;
+		List<MidiDevice> open_devices = new List<MidiDevice>();
+		private bool _disposedValue;
+        private MidiDeviceCallback _midiCallback;
 		
-		public IEnumerable<IMidiPortDetails> Inputs {
-			get { return midi_manager.GetDevices ().SelectMany (d => d.GetPorts ().Where (p => p.Type == MidiPortType.Input).Select (p => new MidiPortDetails (d, p))); }
+        public AndroidMidiAccess (Context context)
+		{
+			_midiServiceIntent = new Intent(context, typeof(MidiSynthDeviceService));
+			//_midiServiceIntent.SetAction("android.media.midi.MidiDeviceService");
+			context.StartService(_midiServiceIntent);
+
+			_midiManager = context.GetSystemService (Context.MidiService).JavaCast<MidiManager> ();
+			
+			_midiCallback = new MidiDeviceCallback();
+            _midiCallback.DeviceAdded += OnMidiDeviceAdded;
+            _midiCallback.DeviceRemoved += OnMidiDeviceRemoved;
+            _midiCallback.DeviceStatusChanged += OnMidiDeviceStatusChanged;
+
+			UpdateInputDevices(false);
+			UpdateOutputDevices(false);
 		}
 
-		public IEnumerable<IMidiPortDetails> Outputs {
-			get { return midi_manager.GetDevices ().SelectMany (d => d.GetPorts ().Where (p => p.Type == MidiPortType.Output).Select (p => new MidiPortDetails (d, p))); }
+        ~AndroidMidiAccess()
+        {
+			Dispose(false);
+        }
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!_disposedValue)
+			{
+				if (disposing)
+				{
+					_midiManager.UnregisterDeviceCallback(_midiCallback);
+				}
+				_midiCallback.DeviceAdded -= OnMidiDeviceAdded;
+				_midiCallback.DeviceRemoved -= OnMidiDeviceRemoved;
+				_midiCallback.DeviceStatusChanged -= OnMidiDeviceStatusChanged;
+
+				_disposedValue = true;
+			}
 		}
 
-		// FIXME: left unsupported...
-		public event EventHandler<MidiConnectionEventArgs> StateChanged;
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
+		}
+		private void OnMidiDeviceStatusChanged(object sender, MidiDeviceStatus e)
+		{
+		}
 
-		List<MidiDevice> open_devices = new List<MidiDevice> ();
+		private void OnMidiDeviceRemoved(object sender, MidiDeviceInfo e)
+		{
+			_devices = null;
+			UpdateInputDevices(true);
+			UpdateOutputDevices(true);
+		}
+
+		private void OnMidiDeviceAdded(object sender, MidiDeviceInfo e)
+		{
+			_devices = null;
+			UpdateInputDevices(false);
+			UpdateOutputDevices(false);
+		}
+
+		private void UpdateInputDevices(bool hasRemovedDevice)
+		{
+			List<IMidiPortDetails> deviceList = GetInputDevices();
+			if (hasRemovedDevice)
+			{
+				IMidiPortDetails[] array = _inputs.ToArray();
+				foreach (var device in array)
+				{
+					if (!deviceList.Where(d => d.Id.Equals(device.Id)).Any())
+					{
+						_inputs.Remove(device);
+					}
+				}
+			}
+			foreach (var device in deviceList)
+			{
+				if (!_inputs.Where(d => d.Id.Equals(device.Id)).Any())
+				{
+					_inputs.Add(device);
+				}
+			}
+		}
+
+        private void UpdateOutputDevices(bool hasRemovedDevice)
+		{
+			List<IMidiPortDetails> deviceList = GetOutputDevices();
+			if (hasRemovedDevice)
+			{
+				IMidiPortDetails[] array = _outputs.ToArray();
+				foreach (var device in array)
+				{
+					if (!deviceList.Where(d => d.Id.Equals(device.Id)).Any())
+					{
+						_outputs.Remove(device);
+					}
+				}
+			}
+			foreach (var device in deviceList)
+			{
+				if (!_outputs.Where(d => d.Id.Equals(device.Id)).Any())
+				{
+					_outputs.Add(device);
+				}
+			}
+		}
+		private List<IMidiPortDetails> GetInputDevices()
+		{
+			List<MidiDeviceInfo> devices = GetDevices();
+			return new List<IMidiPortDetails>(devices.SelectMany(d => d.GetPorts().Where(p => p.Type == MidiPortType.Input).Select(p => new MidiPortDetails(d, p)))); 
+		}
+
+        private List<IMidiPortDetails> GetOutputDevices()
+        {
+			List<MidiDeviceInfo> devices = GetDevices();
+			return new List<IMidiPortDetails>(devices.SelectMany(d => d.GetPorts().Where(p => p.Type == MidiPortType.Output).Select(p => new MidiPortDetails(d, p))));
+        }
+
+		private List<MidiDeviceInfo> GetDevices()
+		{
+			if (_devices == null || _devices.Count == 0)
+			{
+				_devices = new List<MidiDeviceInfo>(_midiManager.GetDevices());
+			}
+			return _devices;
+		}
 
 		public Task<IMidiInput> OpenInputAsync (string portId)
 		{
@@ -94,7 +220,7 @@ namespace Commons.Music.Midi.AndroidExtensions
 				return Task.Run (delegate {
 					if (device == null) {
 						wait = new ManualResetEventSlim ();
-						parent.midi_manager.OpenDevice (port_to_open.Device, this, null);
+						parent._midiManager.OpenDevice (port_to_open.Device, this, null);
 						wait.Wait (token);
 						wait.Reset ();
 					}
@@ -111,146 +237,5 @@ namespace Commons.Music.Midi.AndroidExtensions
 				wait.Set ();
 			}
 		}
-	}
-
-	[Obsolete ("This will not be part of public API in the future")]
-	public class MidiPortDetails : IMidiPortDetails
-	{
-		MidiDeviceInfo device;
-		MidiDeviceInfo.PortInfo port;
-		
-		public MidiPortDetails (MidiDeviceInfo device, MidiDeviceInfo.PortInfo port)
-		{
-			if (device == null)
-				throw new ArgumentNullException (nameof (device));
-			if (port == null)
-				throw new ArgumentNullException (nameof (port));
-			this.device = device;
-			this.port = port;
-		}
-		
-		public MidiDeviceInfo Device {
-			get { return device; }
-		}
-		
-		public MidiDeviceInfo.PortInfo Port {
-			get { return port; }
-		}
-		
-		public string Id {
-			get { return "device" + device.Id + "_port" + port.PortNumber; }
-		}
-
-		public string Manufacturer {
-			get { return device.Properties.GetString (MidiDeviceInfo.PropertyManufacturer); }
-		}
-
-		public string Name {
-			get {
-				var d = device.Properties.GetString (MidiDeviceInfo.PropertyName) ?? "";
-				return d + (d == "" ? "" : " ") + port.Name;
-			}
-		}
-
-		public string Version {
-			get { return device.Properties.GetString (MidiDeviceInfo.PropertyVersion); }
-		}
-	}
-
-	[Obsolete ("This will not be part of public API in the future")]
-	public class MidiPort : IMidiPort
-	{
-		MidiPortDetails details;
-		MidiPortConnectionState connection;
-		Action on_close;
-		
-		protected MidiPort (MidiPortDetails details, Action onClose)
-		{
-			this.details = details;
-			on_close = onClose;
-			connection = MidiPortConnectionState.Open;
-		}
-		
-		public MidiPortConnectionState Connection {
-			get { return connection; }
-		}
-
-		public IMidiPortDetails Details {
-			get { return details; }
-		}
-
-		public Task CloseAsync ()
-		{
-			return Task.Run (() => { Close (); });
-		}
-
-		public void Dispose ()
-		{
-			Close ();
-		}
-		
-		internal virtual void Close ()
-		{
-			on_close ();
-			connection = MidiPortConnectionState.Closed;
-		}
-	}
-	
-	[Obsolete ("This will not be part of public API in the future")]
-	public class MidiInput : MidiPort, IMidiInput
-	{
-		MidiOutputPort port;
-		Receiver receiver;
-		
-		public MidiInput (MidiPortDetails details, MidiOutputPort port)
-			: base (details, () => port.Close ())
-		{
-			this.port = port;
-			receiver = new Receiver (this);
-			port.Connect (receiver);
-		}
-		
-		internal override void Close ()
-		{
-			port.Disconnect (receiver);
-			base.Close ();
-		}
-		
-		class Receiver : MidiReceiver
-		{
-			MidiInput parent;
-			
-			public Receiver (MidiInput parent)
-			{
-				this.parent = parent;
-			}
-			
-			public override void OnSend (byte [] msg, int offset, int count, long timestamp)
-			{
-				if (parent.MessageReceived != null)
-					parent.MessageReceived (this, new MidiReceivedEventArgs () {
-						Data = offset == 0 && msg.Length == count ? msg : msg.Skip (offset).Take (count).ToArray (),
-						Timestamp = timestamp });
-			}
-		}
-
-		public event EventHandler<MidiReceivedEventArgs> MessageReceived;
-	}
-
-	[Obsolete ("This will not be part of public API in the future")]
-	public class MidiOutput : MidiPort, IMidiOutput
-	{
-		MidiInputPort port;
-
-		public MidiOutput (MidiPortDetails details, MidiInputPort port)
-			: base (details, () => port.Close ())
-		{
-			this.port = port;
-		}
-
-		public void Send (byte [] mevent, int offset, int length, long timestamp)
-		{
-			port.Send (mevent, offset, length, timestamp);
-		}
-	}
+    }
 }

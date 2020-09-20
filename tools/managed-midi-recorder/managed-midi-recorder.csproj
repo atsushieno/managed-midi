@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,17 +27,21 @@
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Commons.Music.Midi.Desktop\Commons.Music.Midi.Desktop.csproj">
-      <Project>{59EEFB0D-3957-43FC-8272-C3B460F7FF84}</Project>
-      <Name>Commons.Music.Midi.Desktop</Name>
+    <ProjectReference Include="..\..\Commons.Music.Midi.Wpf\Commons.Music.Midi.Wpf.csproj">
+      <Project>{8e88de4d-974d-4239-ad67-de9560c30897}</Project>
+      <Name>Commons.Music.Midi.Wpf</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{7d9a799c-7724-4787-9f6d-61a76dc49f1f}</Project>
+      <Name>Commons.Music.Midi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

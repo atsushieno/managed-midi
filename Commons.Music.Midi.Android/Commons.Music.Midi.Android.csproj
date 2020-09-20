@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,8 +6,8 @@
     <ProjectGuid>{8C6AF32A-3692-43B3-A907-9395564DB067}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>Commons.Music.Midi</RootNamespace>
-    <AssemblyName>Commons.Music.Midi</AssemblyName>
+    <RootNamespace>Commons.Music.Midi.Droid</RootNamespace>
+    <AssemblyName>Commons.Music.Midi.Droid</AssemblyName>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
@@ -42,9 +42,31 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MidiDeviceCallback.cs" />
+    <Compile Include="MidiInput.cs" />
+    <Compile Include="MidiOutput.cs" />
+    <Compile Include="MidiPort.cs" />
+    <Compile Include="MidiPortDetails.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Service\MidiSynthDevice.cs" />
+    <Compile Include="Service\MidiSynthDeviceConnection.cs" />
+    <Compile Include="Service\MidiSynthDeviceInfo.cs" />
+    <Compile Include="Service\MidiSynthDeviceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AndroidMidiAccess.cs" />
   </ItemGroup>
-  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
+  <ItemGroup>
+    <ProjectReference Include="..\com.github.billthefarmer.mididriver\com.github.billthefarmer.mididriver.csproj">
+      <Project>{6d276e6c-22cb-4d27-9783-22159e13a475}</Project>
+      <Name>com.github.billthefarmer.mididriver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{7d9a799c-7724-4787-9f6d-61a76dc49f1f}</Project>
+      <Name>Commons.Music.Midi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\synth_device_info.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

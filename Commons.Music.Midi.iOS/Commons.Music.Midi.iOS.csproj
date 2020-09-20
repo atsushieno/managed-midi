@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,7 +7,7 @@
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Commons.Music.Midi.iOS</RootNamespace>
-    <AssemblyName>Commons.Music.Midi</AssemblyName>
+    <AssemblyName>Commons.Music.Midi.iOS</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,7 +32,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer</CodesignKey>
@@ -52,9 +53,20 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoreMidiInput.cs" />
+    <Compile Include="CoreMidiAccess.cs" />
+    <Compile Include="CoreMidiOutput .cs" />
+    <Compile Include="CoreMidiPortDetails.cs" />
+    <Compile Include="CoreMidiSynthesizer.cs" />
+    <Compile Include="MidiSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
+  <ItemGroup>
+    <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{7d9a799c-7724-4787-9f6d-61a76dc49f1f}</Project>
+      <Name>Commons.Music.Midi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

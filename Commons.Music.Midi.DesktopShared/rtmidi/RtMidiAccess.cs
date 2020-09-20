@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,12 +8,13 @@ namespace Commons.Music.Midi.RtMidi
 {
 	public class RtMidiAccess : IMidiAccess
 	{
-		public IEnumerable<IMidiPortDetails> Inputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new RtMidiPortDetails (d)); }
+		//Should be changed to something observable, by implementing a device watcher similar to the uwp one.
+		public ObservableCollection<IMidiPortDetails> Inputs {
+			get { return new ObservableCollection<IMidiPortDetails>(MidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new RtMidiPortDetails (d))); }
 		}
 
-		public IEnumerable<IMidiPortDetails> Outputs {
-			get { return MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new RtMidiPortDetails (d)); }
+		public ObservableCollection<IMidiPortDetails> Outputs {
+			get { return new ObservableCollection<IMidiPortDetails>(MidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new RtMidiPortDetails (d))); }
 		}
 		
 		public Task<IMidiInput> OpenInputAsync (string portId)

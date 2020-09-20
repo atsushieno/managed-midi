@@ -3,13 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace Commons.Music.Midi
 {
-	public partial class MidiAccessManager
+	public class MidiSystem : MidiAccessManager
 	{
-		partial void InitializeDefault ()
+		void Initialize()
 		{
-			Default =
-				Environment.OSVersion.Platform != PlatformID.Unix ? (IMidiAccess) new WinMM.WinMMMidiAccess () :
-				IsRunningOnMac () ? (IMidiAccess) new CoreMidiApi.CoreMidiAccess () : new Alsa.AlsaMidiAccess ();
+			Default = new Alsa.AlsaMidiAccess ();
 		}
 
 		//From Managed.Windows.Forms/XplatUI

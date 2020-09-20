@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.CoreMidiShared\Commons.Music.Midi.CoreMidiShared.projitems')" />
   <Import Project="..\Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.DesktopShared\Commons.Music.Midi.DesktopShared.projitems')" />
-  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -50,10 +49,13 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\external\alsa-sharp\alsa-sharp\alsa-sharp.csproj">
-      <Project>{D8537EB3-C573-43D6-914A-455D6AC5AA11}</Project>
+    <ProjectReference Include="..\Commons.Music.Midi\Commons.Music.Midi.csproj">
+      <Project>{7d9a799c-7724-4787-9f6d-61a76dc49f1f}</Project>
+      <Name>Commons.Music.Midi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\external\alsa-sharp\dotnetcore\alsa-sharp\alsa-sharp.csproj">
+      <Project>{4c7d511e-ee5d-4f88-9caa-a68dafa19132}</Project>
       <Name>alsa-sharp</Name>
     </ProjectReference>
   </ItemGroup>

@@ -16,18 +16,16 @@ namespace Commons.Music.Midi.UwpWithStub.Commons.Music.Midi.UwpMidi
 	}
 }
 
-namespace Commons.Music.Midi
+
+namespace Commons.Music.Midi.UwpMidi
 {
-	public partial class MidiAccessManager
+	public class MidiSystem : Commons.Music.Midi.MidiAccessManager
 	{
-		partial void InitializeDefault ()
+		public static void Initialize()
 		{
-			Default = new UwpMidiAccess ();
+			Default = new UwpMidiAccess();
 		}
 	}	
-}
-
-namespace Commons.Music.Midi.UwpMidi {
 
 	public class UwpMidiAccess : IMidiAccess {
 		public UwpMidiAccess ()
@@ -42,7 +40,8 @@ namespace Commons.Music.Midi.UwpMidi {
 
 		public async Task<IEnumerable<IMidiPortDetails>> GetOutputsAsync ()
 		{
-			var outputs = await DeviceInformation.FindAllAsync (MidiOutPort.GetDeviceSelector ()).AsTask ();
+			string midiOutputQueryString = MidiOutPort.GetDeviceSelector();
+			var outputs = await DeviceInformation.FindAllAsync (midiOutputQueryString);
 			return outputs.Select (i => new UwpMidiPortDetails (i));
 		}
 

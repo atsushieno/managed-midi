@@ -1,10 +1,41 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.4</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
-  <Import Project="..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems" Label="Shared" Condition="Exists('..\Commons.Music.Midi.Shared\Commons.Music.Midi.Shared.projitems')" />
+  <ItemGroup>
+    <None Remove="module-database\data\midi-module-catalog.txt" />
+    <None Remove="module-database\data\ms_gs_wavetable_synth.midimod" />
+    <None Remove="module-database\data\roland_sc-55.midimod" />
+    <None Remove="module-database\data\roland_sc-55mk2.midimod" />
+    <None Remove="module-database\data\roland_sc-88.midimod" />
+    <None Remove="module-database\data\roland_sc-8820.midimod" />
+    <None Remove="module-database\data\roland_sc-88pro.midimod" />
+    <None Remove="module-database\data\yamaha_motif-rack.midimod" />
+    <None Remove="module-database\data\yamaha_motif-rack_es.midimod" />
+    <None Remove="module-database\data\yamaha_motif.midimod" />
+    <None Remove="module-database\data\yamaha_mu2000ex.midimod" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="module-database\data\midi-module-catalog.txt" />
+    <EmbeddedResource Include="module-database\data\ms_gs_wavetable_synth.midimod" />
+    <EmbeddedResource Include="module-database\data\roland_sc-55.midimod" />
+    <EmbeddedResource Include="module-database\data\roland_sc-55mk2.midimod" />
+    <EmbeddedResource Include="module-database\data\roland_sc-88.midimod" />
+    <EmbeddedResource Include="module-database\data\roland_sc-8820.midimod" />
+    <EmbeddedResource Include="module-database\data\roland_sc-88pro.midimod" />
+    <EmbeddedResource Include="module-database\data\yamaha_motif-rack.midimod" />
+    <EmbeddedResource Include="module-database\data\yamaha_motif-rack_es.midimod" />
+    <EmbeddedResource Include="module-database\data\yamaha_motif.midimod" />
+    <EmbeddedResource Include="module-database\data\yamaha_mu2000ex.midimod" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
 
 </Project>

@@ -1,18 +1,19 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Commons.Music.Midi.PortMidi
 {
-	public class PortMidiAccess : IMidiAccess
+    public class PortMidiAccess : IMidiAccess
 	{
-		public IEnumerable<IMidiPortDetails> Inputs {
-			get { return PortMidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiPortDetails (d)); }
+		//Should be changed to something observable, by implementing a device watcher similar to the uwp one.
+		public ObservableCollection<IMidiPortDetails> Inputs {
+			get { return new ObservableCollection<IMidiPortDetails>(PortMidiDeviceManager.AllDevices.Where (d => d.IsInput).Select (d => new PortMidiPortDetails (d))); }
 		}
 
-		public IEnumerable<IMidiPortDetails> Outputs {
-			get { return PortMidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiPortDetails (d)); }
+		public ObservableCollection<IMidiPortDetails> Outputs {
+			get { return new ObservableCollection<IMidiPortDetails>(PortMidiDeviceManager.AllDevices.Where (d => d.IsOutput).Select (d => new PortMidiPortDetails (d))); }
 		}
 
 		public event EventHandler<MidiConnectionEventArgs> StateChanged;

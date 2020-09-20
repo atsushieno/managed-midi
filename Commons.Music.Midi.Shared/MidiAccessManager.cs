@@ -23,7 +23,7 @@ namespace Commons.Music.Midi
 		partial void InitializeDefault ();
 	}
 
-	[Obsolete ("There will be breaking change in this interface in the next API-breaking release. If you want to avoid API breakage, use IMidiAccess2 now. It will become identical to IMidiAccess2 and IMidiAccess2 will remain for a while.")]
+	//[Obsolete ("There will be breaking change in this interface in the next API-breaking release. If you want to avoid API breakage, use IMidiAccess2 now. It will become identical to IMidiAccess2 and IMidiAccess2 will remain for a while.")]
 	public interface IMidiAccess
 	{
 		IEnumerable<IMidiPortDetails> Inputs { get; }

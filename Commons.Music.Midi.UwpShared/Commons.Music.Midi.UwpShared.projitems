@@ -9,6 +9,7 @@
     <Import_RootNamespace>Commons.Music.Midi.UwpShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)MidiDeviceWatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UwpMidiAccess.cs" />
   </ItemGroup>
 </Project>

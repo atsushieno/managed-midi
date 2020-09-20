@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Commons.Music.Midi;
+using Commons.Music.Midi.WinMM;
 
 namespace ManagedMidiRecorder
 {
@@ -18,6 +19,8 @@ namespace ManagedMidiRecorder
 					outfile = arg;
 			}
 			Stream outStream = outfile != null ? File.OpenWrite (outfile) : null;
+
+			MidiSystem.Initialize();
 
 			var access = MidiAccessManager.Default;
 			foreach (var i in access.Inputs)

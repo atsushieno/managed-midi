@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XFTest.TestPage" Title="Midi Test" BackgroundColor="#ff202020">
+
+    <StackLayout>
+        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
+            <Label Text="Welcome to Commons.Music.Midi" HorizontalTextAlignment="Center" TextColor="White" FontSize="Large"/>
+        </Frame>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout x:Name="InputLayout" Grid.Column="0" Grid.Row="0" Orientation="Vertical">
+                <Label Text="List all input devices"  TextColor="White" VerticalOptions="End"/>
+                <ListView x:Name="InputDevices" BackgroundColor="LightGray" ItemSelected="OnInputDeviceSelected">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Name}" TextColor="Black">
+                            </TextCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout >
+                <StackLayout x:Name="MessageLayout" Grid.Column="1" Grid.Row="0" Orientation="Vertical" >
+                <Label Text="Received Messages"  Grid.Column="0" Grid.Row="0" TextColor="White" VerticalOptions="End"/>
+                <ListView x:Name="Messages" BackgroundColor="LightGray"/>
+            </StackLayout>
+                <StackLayout x:Name="OutputLayout" Orientation="Vertical" Grid.Column="0" Grid.Row="1">
+                <Label Text="List all output devices"  TextColor="White" VerticalOptions="End"/>
+                <ListView x:Name="OutputDevices" BackgroundColor="LightGray" ItemSelected="OnOutputItemSelected">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Name}" TextColor="Black">
+                            </TextCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            <StackLayout x:Name="OutputTests" Orientation="Vertical" Grid.Column="1" Grid.Row="1">
+                <Label Text="Define Events" TextColor="White"></Label>
+                <StackLayout Orientation="Horizontal" Margin="0,10,0,0">
+                    <Label Text="Connect Devices" TextColor="White"></Label>
+                    <Switch x:Name="Connected" BackgroundColor="Black"></Switch>
+                </StackLayout>
+                <Label Text="Message Type" TextColor="White"></Label>
+                <Picker x:Name="MessageType" TextColor="White" SelectedIndexChanged="MessageType_SelectedIndexChanged" IsEnabled="false"></Picker>
+                <StackLayout Orientation="Horizontal" Grid.Column="0" >
+                    <StackLayout Orientation="Vertical">
+                        <Label x:Name="Parameter1_Header" Text="Parameter1" TextColor="White" IsVisible="false"></Label>
+                        <Picker x:Name="Parameter1" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter1_SelectedIndexChanged"></Picker>
+                    </StackLayout>
+                    <StackLayout Orientation="Vertical">
+                        <Label x:Name="Parameter2_Header" Text="Parameter2" TextColor="White" IsVisible="false"></Label>
+                        <Picker x:Name="Parameter2" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter2_SelectedIndexChanged"></Picker>
+                    </StackLayout>
+                    <StackLayout Orientation="Vertical">
+                        <Label x:Name="Parameter3_Header" Text="Parameter3" TextColor="White" IsVisible="false"></Label>
+                        <Picker x:Name="Parameter3" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter3_SelectedIndexChanged" ></Picker>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label x:Name="RawBufferHeader" Text="Enter SysEx Message:" TextColor="White" IsVisible="false"></Label>
+                        <Entry x:Name="SysExMessageContent" IsVisible="false"></Entry>
+                    </StackLayout>
+                </StackLayout>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="End">
+                    <Button x:Name="ResetButton" Text="Reset" IsEnabled="false" Clicked="ResetButton_Clicked"/>
+                    <Button x:Name="SendButton" Text="Send" IsEnabled="false" Clicked="SendButton_Clicked"/>
+                </StackLayout>
+            </Grid>
+    </StackLayout>
+
+</ContentPage>
