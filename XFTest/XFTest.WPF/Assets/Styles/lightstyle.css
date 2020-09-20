@@ -1,0 +1,94 @@
+﻿workbenchpage {
+    background-color:lightgray;
+    color: black;
+}
+
+appnavigationpage {
+    -xf-bar-background-color: lightgray;
+    -xf-bar-text-color: black;
+}
+
+appshellmaster {
+    background-color: slategray;
+    color: white;
+    width: 200;
+}
+
+edit {
+    background-color: white;
+}
+
+appshell {
+    background-color: white;
+}
+
+.hamburger * {
+    font-size: 18;
+ }
+
+languagepicker {
+    background-color: slategray;
+    color: white;
+    border-color: black;
+    height: 32;
+    font-size: 14;
+    width: 200;
+}
+
+.dialog {
+    background-color: lightgray;
+    color: black;
+    font-size: 14;
+}
+
+.dialogSmallText {
+    color: black;
+    font-size: 11;
+    font-style: bold;
+}
+
+.dialogWarning {
+    color: red;
+    font-style: bold;
+    font-size: 14;
+}
+
+.closeDialogButton {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.dialogButton {
+    color: white;
+    background-color: slategray;
+    border-width: 2;
+    border-color: white;
+    padding-left: 10;
+    padding-right: 10;
+    width: 100;
+}
+
+contentdialog {
+    background-color: #0e1b29;
+}
+
+#run_button {
+    color: white;
+    background-color: slategray;
+    border-width: 2;
+    border-color: white;
+    padding-left: 10;
+    padding-right: 10;
+    width: 100;
+}
+
+iconbutton {
+    background-color: transparent;
+    border-color: transparent;
+    width: 32;
+    height: 32;
+    icon-size: 18;
+}
+.SpacerClass {
+    color: black;
+}

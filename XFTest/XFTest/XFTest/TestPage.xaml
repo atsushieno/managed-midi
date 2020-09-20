@@ -51,19 +51,59 @@
                     <Switch x:Name="Connected" BackgroundColor="Black"></Switch>
                 </StackLayout>
                 <Label Text="Message Type" TextColor="White"></Label>
-                <Picker x:Name="MessageType" TextColor="White" SelectedIndexChanged="MessageType_SelectedIndexChanged" IsEnabled="false"></Picker>
+                <Picker x:Name="MessageType" SelectedIndexChanged="MessageType_SelectedIndexChanged" IsEnabled="false">
+                    <Picker.TextColor>
+                        <OnPlatform x:TypeArguments="Color">
+                            <On Platform="Android" Value="White"/>
+                            <On Platform="iOS" Value="White"/>
+                            <On Platform="UWP" Value="White"/>
+                            <On Platform="macOS" Value="White"/>
+                            <On Platform="WPF" Value="Black"/>
+                        </OnPlatform>
+                    </Picker.TextColor>
+                </Picker>
                 <StackLayout Orientation="Horizontal" Grid.Column="0" >
                     <StackLayout Orientation="Vertical">
                         <Label x:Name="Parameter1_Header" Text="Parameter1" TextColor="White" IsVisible="false"></Label>
-                        <Picker x:Name="Parameter1" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter1_SelectedIndexChanged"></Picker>
+                        <Picker x:Name="Parameter1" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter1_SelectedIndexChanged">
+                            <Picker.TextColor>
+                                <OnPlatform x:TypeArguments="Color">
+                                    <On Platform="Android" Value="White"/>
+                                    <On Platform="iOS" Value="White"/>
+                                    <On Platform="UWP" Value="White"/>
+                                    <On Platform="macOS" Value="White"/>
+                                    <On Platform="WPF" Value="Black"/>
+                                </OnPlatform>
+                            </Picker.TextColor>
+                        </Picker>
                     </StackLayout>
                     <StackLayout Orientation="Vertical">
                         <Label x:Name="Parameter2_Header" Text="Parameter2" TextColor="White" IsVisible="false"></Label>
-                        <Picker x:Name="Parameter2" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter2_SelectedIndexChanged"></Picker>
+                        <Picker x:Name="Parameter2" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter2_SelectedIndexChanged">
+                            <Picker.TextColor>
+                                <OnPlatform x:TypeArguments="Color">
+                                    <On Platform="Android" Value="White"/>
+                                    <On Platform="iOS" Value="White"/>
+                                    <On Platform="UWP" Value="White"/>
+                                    <On Platform="macOS" Value="White"/>
+                                    <On Platform="WPF" Value="Black"/>
+                                </OnPlatform>
+                            </Picker.TextColor>
+                        </Picker>
                     </StackLayout>
                     <StackLayout Orientation="Vertical">
                         <Label x:Name="Parameter3_Header" Text="Parameter3" TextColor="White" IsVisible="false"></Label>
-                        <Picker x:Name="Parameter3" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter3_SelectedIndexChanged" ></Picker>
+                        <Picker x:Name="Parameter3" TextColor="White" IsVisible="false" SelectedIndexChanged="Parameter3_SelectedIndexChanged" >
+                            <Picker.TextColor>
+                                <OnPlatform x:TypeArguments="Color">
+                                    <On Platform="Android" Value="White"/>
+                                    <On Platform="iOS" Value="White"/>
+                                    <On Platform="UWP" Value="White"/>
+                                    <On Platform="macOS" Value="White"/>
+                                    <On Platform="WPF" Value="Black"/>
+                                </OnPlatform>
+                            </Picker.TextColor>
+                        </Picker>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
                         <Label x:Name="RawBufferHeader" Text="Enter SysEx Message:" TextColor="White" IsVisible="false"></Label>

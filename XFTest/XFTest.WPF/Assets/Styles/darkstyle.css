@@ -1,0 +1,107 @@
+﻿workbenchpage {
+    background-color: #0e1b29;
+    color:white;
+}
+
+appnavigationpage {
+    -xf-bar-background-color: #0e1b29;
+    -xf-bar-text-color: white;
+}
+
+appshellmaster {
+    background-color: #171717;
+    color: white;
+    width: 200;
+}
+
+edit {
+    background-color: #171717;
+}
+
+jentry {
+    background-color: white;
+    color: black;
+}
+
+appshell {
+    background-color: #171717;
+}
+
+.hamburger * {
+    font-size: 18;
+ }
+
+languagepicker {
+    background-color: #0e1b29;
+    color: white;
+    height: 32;
+    font-size: 14;
+    width: 200;
+}
+
+jpicker {
+    background-color: #0e1b29;
+    color: white;
+    height: 32;
+    font-size: 14;
+}
+
+.dialog {
+    background-color: #0e1b29;
+    color: white;
+    font-size: 14;
+}
+
+.dialogSmallText {
+    color: white;
+    font-size: 11;
+    font-style: bold;
+}
+
+.dialogWarning {
+    color: orangered;
+    font-style: bold;
+    font-size: 14;
+}
+
+.closeDialogButton {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.dialogButton {
+    color: white;
+    background-color: #0d1520;
+    border-width: 2;
+    border-color: white;
+    padding-left: 10;
+    padding-right: 10;
+    width: 100;
+}
+
+contentdialog {
+    background-color: #0e1b29;
+}
+
+#run_button {
+    color: white;
+    background-color: #0d1520;
+    border-width: 2;
+    border-color: white;
+    padding-left: 10;
+    padding-right: 10;
+    width: 100;
+}
+
+iconbutton {
+    color: white;
+    background-color: transparent;
+    border-color: transparent;
+    width: 32;
+    height: 32;
+    icon-size: 18;
+}
+
+.SpacerClass {
+    color: white;
+}
