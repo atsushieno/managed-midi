@@ -63,17 +63,15 @@ Basically, these features with raw MIDI access implementation makes up this mana
 
 Here is a quick list of per-platform backend implementation. **Bold** ones are default.
 
-| target framework | Linux | Mac | Windows | Android | iOS |
-|------------------|-------|-----|---------|---------|-----|
-| netstandard | **Empty** | **Empty** | **Empty** | **Empty** | **Empty** |
-| net45 | **ALSA**, portmidi, rtmidi | **own CoreMIDI** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
-| netcoreapp2.1 | **ALSA**, portmidi, rtmidi | **own CoreMidi** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
-| MonoAndroid | - | - | - | **Android MIDI API** | - |
-| XamariniOS | - | - | - | - | **Xamarin.iOS CoreMIDI** |
-| XamarinMac | - | **Xamarin.Mac CoreMIDI** | - | - | - |
-| uap10.0 | - | - | **UWP MIDI API** | - | - |
-
-`own CoreMIDI` is a Xamarin-compatible implementation within this repository. It is implemented here to avoid extra dependencies on Xamarin assemblies. They are different from `Xamarin.iOS CoreMIDI` and `Xamarin.Mac CoreMIDI`.
+| Device          | netstandard 1.4  | Internal Synthesizer      | 
+|-----------------|------------------|---------------------------|
+| Android         | Android MIDI API | billthefarmer Midi Driver |
+| iOS             | CoreMIDI         | AVAudioUnitSampler        |
+| Mac             | CoreMIDI         | AVAudioUnitSampler        |
+| UWP             | UWP MIDI API     | Microsoft G5 Wavetable    |
+| WPF             | WinMM            | Microsoft G5 Wavetable    |
+| Windows Mobile  | UWP MIDI API     | Microsoft G5 Wavetable    |
+| Linux           | alsa-sharp       |                           |
 
 ### ALSA
 
@@ -87,11 +85,11 @@ We needed this to create Xwt-based projects which depend on WPF.
 
 ### UWP
 
-Almost untested. We need some app beyond proof of concept SMF player.
+Almost tested. We need some app beyond proof of concept SMF player.
 
-### CoreMidiApi
+### CoreMidi
 
-Almost untested. We need some MIDI devices that work fine on our Mac environment. We never tried with iOS device yet.
+Almost tested. We need some MIDI devices that work fine on our Mac environment. We never tried with iOS device yet.
 
 ### RtMidiSharp
 
@@ -125,7 +123,7 @@ For example, [nfluidsynth](https://github.com/atsushieno/nfluidsynth) is a .NET 
 
 ## Quick Examples
 
-Also, see [tools](https://github.com/atsushieno/managed-midi/tree/master/tools/) directory for live use cases.
+Have a look to XFTest directory for live use cases.
 
 When trying them below, C# shell is useful: `csharp -r Commons.Music.Midi.dll`
 
@@ -135,6 +133,9 @@ Make sure that you have active and audible (i.e. non-thru) MIDI output device.
 
 ```csharp
 using Commons.Music.Midi;
+
+//Start with
+Commons.Music.Midi.YourPlatform.MidiSystem.Initialize();
 
 var access = MidiAccessManager.Default;
 var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
@@ -151,6 +152,9 @@ output.CloseAsync();
 
 ```csharp
 using Commons.Music.Midi;
+
+//Start with  
+Commons.Music.Midi.YourPlatform.MidiSystem.Initialize();
 
 var access = MidiAccessManager.Default;
 var output = access.OpenOutputAsync(access.Outputs.Last().Id).Result;
@@ -170,22 +174,17 @@ player.Dispose();
 
 ### The library and project structures
 
-It is kind of a "bait-and-switch" nuget package. However there is no reference assembly; the netstandrd2.0 library is part of the package, which contains *no* raw MIDI API access implementation. It can still be used to implement platform-specific API on top of it.
-
 There are many projects (in terms of `.csproj`) in `managed-midi.sln`:
 
 - managed-midi.sln
-  - Commons.Music.Midi.Shared.csproj - the most common shared library project
-  - Commons.Music.Midi.csproj - netstandard 2.0 **implementation**
-  - Commons.Music.Midi.DesktopShared.csproj - almost the same as desktop implementation, but shared library project. Used by the following projects
-    - Commons.Music.Midi.Desktop.csproj - .NET Framework (net4x) **implementation**
-    - Commons.Music.Midi.DotNetCore.csproj - .NET Core (netcoreapp2x) **implementation**
-  - Commons.Music.Midi.CoreMidiShared.csproj - shared library project used by iOS and XamMac (full).
+  - Commons.Music.Midi.csproj - netstandard 1.4 **implementation**
+  //platform specific
+  - Commons.Music.Midi.AppleShared.csproj - shared library project used by iOS and MacOS.
   - Commons.Music.Midi.iOS.csproj - Xamarin.iOS **implementation**
-  - Commons.Music.Midi.XamMac.csproj - Xamarin.Mac modern profile **implementation**
+  - Commons.Music.Midi.Mac.csproj - Xamarin.Mac modern profile **implementation**
   - Commons.Music.Midi.Android.csproj - Xamarin.Android **implementation**
-  - Commons.Music.Midi.UwpShared.csproj - almost the same as UWP implementation, byt shared library project. (Used by Uwp, and "UwpWithStub" which builds on Linux but implementation is useless)
   - Commons.Music.Midi.Uwp.csproj - UWP **implementation**.
+  - Commons.Music.Midi.Wpf.csproj - Windows 7 **implementation**.
 
 Apart from managed-midi.sln, there is another consolidated project:
 
