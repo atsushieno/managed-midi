@@ -32,13 +32,13 @@
     <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.pdb" target="lib\netcoreapp2.1" />
     <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.dll" target="lib\MonoAndroid" />
     <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.pdb" target="lib\MonoAndroid" />
-    <file src="Commons.Music.Midi.iOS\bin\Debug\Commons.Music.Midi.dll" target="lib\XamariniOS" />
-    <file src="Commons.Music.Midi.iOS\bin\Debug\Commons.Music.Midi.pdb" target="lib\XamariniOS" />
     <file src="Commons.Music.Midi.XamMac\bin\Debug\Commons.Music.Midi.dll" target="lib\XamarinMac" />
     <file src="Commons.Music.Midi.XamMac\bin\Debug\Commons.Music.Midi.pdb" target="lib\XamarinMac" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.dll" target="lib\uap10.0" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.pdb" target="lib\uap10.0" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.pri" target="lib\uap10.0" />
+    <file src="Commons.Music.Midi.XamiOS\bin\Debug\Commons.Music.Midi.dll" target="lib\XamariniOS" />
+    <file src="Commons.Music.Midi.XamiOS\bin\Debug\Commons.Music.Midi.pdb" target="lib\XamariniOS" />
   </files>
 </package>
 
