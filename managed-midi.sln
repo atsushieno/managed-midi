@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Uwp", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.Android", "Commons.Music.Midi.Android\Commons.Music.Midi.Android.csproj", "{8C6AF32A-3692-43B3-A907-9395564DB067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.iOS", "Commons.Music.Midi.iOS\Commons.Music.Midi.iOS.csproj", "{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.XamiOS", "Commons.Music.Midi.XamiOS\Commons.Music.Midi.XamiOS.csproj", "{9CED7E33-D8EB-43B2-A903-9E5D63B34F23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Music.Midi.XamMac", "Commons.Music.Midi.XamMac\Commons.Music.Midi.XamMac.csproj", "{48CF93CC-9B9D-4114-AD87-09BF4AD475DD}"
 EndProject
