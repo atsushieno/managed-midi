@@ -68,6 +68,7 @@ Here is a quick list of per-platform backend implementation. **Bold** ones are d
 | netstandard | **Empty** | **Empty** | **Empty** | **Empty** | **Empty** |
 | net45 | **ALSA**, portmidi, rtmidi | **own CoreMIDI** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
 | netcoreapp2.1 | **ALSA**, portmidi, rtmidi | **own CoreMidi** (incomplete), portmidi, rtmidi | **WinMM**, portmidi, rtmidi | - | - |
+| net6.0-ios | - | - | - | - | **Microsoft.iOS CoreMIDI** |
 | MonoAndroid | - | - | - | **Android MIDI API** | - |
 | XamariniOS | - | - | - | - | **Xamarin.iOS CoreMIDI** |
 | XamarinMac | - | **Xamarin.Mac CoreMIDI** | - | - | - |
@@ -181,7 +182,8 @@ There are many projects (in terms of `.csproj`) in `managed-midi.sln`:
     - Commons.Music.Midi.Desktop.csproj - .NET Framework (net4x) **implementation**
     - Commons.Music.Midi.DotNetCore.csproj - .NET Core (netcoreapp2x) **implementation**
   - Commons.Music.Midi.CoreMidiShared.csproj - shared library project used by iOS and XamMac (full).
-  - Commons.Music.Midi.iOS.csproj - Xamarin.iOS **implementation**
+  - Commons.Music.Midi.iOS.csproj - .NET iOS (net6.0-ios) **implementation**
+  - Commons.Music.Midi.XamiOS.csproj - Xamarin.iOS **implementation**
   - Commons.Music.Midi.XamMac.csproj - Xamarin.Mac modern profile **implementation**
   - Commons.Music.Midi.Android.csproj - Xamarin.Android **implementation**
   - Commons.Music.Midi.UwpShared.csproj - almost the same as UWP implementation, byt shared library project. (Used by Uwp, and "UwpWithStub" which builds on Linux but implementation is useless)
