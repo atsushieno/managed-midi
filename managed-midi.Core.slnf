@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "managed-midi.sln",
+    "projects": [
+      "Commons.Music.Midi\\Commons.Music.Midi.csproj",
+      "Commons.Music.Midi.Shared\\Commons.Music.Midi.Shared.shproj",
+      "Commons.Music.Midi.CoreMidiShared\\Commons.Music.Midi.CoreMidiShared.shproj",
+      "Commons.Music.Midi.DotNetCore\\Commons.Music.Midi.DotNetCore.csproj",
+      "Commons.Music.Midi.iOS\\Commons.Music.Midi.iOS.csproj"
+    ]
+  }
+}
