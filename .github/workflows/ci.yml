@@ -1,0 +1,49 @@
+on: [push, pull_request]
+name: Continuous Integration
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-2019
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Retrieve Commit Hash
+        uses: pr-mpt/actions-commit-hash@v2
+        id: commit-hash
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+  
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1.1.1
+  
+      - name: Install .NET 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install .NET iOS Workload
+        run: dotnet workload install ios
+
+      - name: Build .NET Core Projects
+        run: dotnet build managed-midi.Core.slnf
+
+      - name: Build .NET Framework Projects
+        run: msbuild managed-midi.Windows.slnf -restore -p:RestorePackagesConfig=true
+
+      - name: Build Xamarin Projects
+        run: msbuild managed-midi.Xamarin.slnf -restore
+
+      - name: Pack 
+        run: nuget pack -Version 1.0-${{ steps.commit-hash.outputs.short }}
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./*.nupkg

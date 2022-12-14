@@ -1,0 +1,76 @@
+name: Release
+on: workflow_dispatch
+
+jobs:
+  check-if-tag:
+    name: Set Package Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{steps.deployment.outputs.version}}
+    steps:
+      - name: Checkout
+        run: |
+          REPOSITORY="https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}.git"
+          BRANCH="${GITHUB_REF/#refs\/heads\//}"
+          git version
+          git clone --no-checkout ${REPOSITORY} .
+          git config --local gc.auto 0
+          git -c protocol.version=2 fetch --no-tags --prune --progress --depth=2 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
+          git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
+      - name: Set Variables
+        id: deployment
+        shell: bash
+        run: |
+          if [ $(git describe --exact-match --tags HEAD &> /dev/null; echo $?) == 0 ]; then
+            echo "::set-output name=VERSION::$(git describe --exact-match --tags HEAD)"
+          else
+            echo "fatal: no tag detected for HEAD. Workflow will now stop."
+            exit 128;
+          fi
+
+  release:
+    name: Release
+    needs: [check-if-tag]
+    runs-on: windows-2019
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+  
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1.1.1
+  
+      - name: Install .NET 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install .NET iOS Workload
+        run: dotnet workload install ios
+
+      - name: Build .NET Core Projects
+        run: dotnet build managed-midi.Core.slnf
+
+      - name: Build .NET Framework Projects
+        run: msbuild managed-midi.Windows.slnf -restore -p:RestorePackagesConfig=true
+
+      - name: Build Xamarin Projects
+        run: msbuild managed-midi.Xamarin.slnf -restore
+
+      - name: Pack Projects
+        run: nuget pack -Version ${{ needs.check-if-tag.outputs.version }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: managed-midi.${{ needs.check-if-tag.outputs.version }}
+          path: ./*.nupkg
+
+      - name: Publish to NuGet 
+        run: nuget push *.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
