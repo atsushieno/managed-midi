@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "managed-midi.sln",
+    "projects": [
+      "Commons.Music.Midi\\Commons.Music.Midi.csproj",
+      "Commons.Music.Midi.Shared\\Commons.Music.Midi.Shared.shproj",
+      "Commons.Music.Midi.Android\\Commons.Music.Midi.Android.csproj",
+      "Commons.Music.Midi.XamiOS\\Commons.Music.Midi.XamiOS.csproj",
+      "Commons.Music.Midi.XamMac\\Commons.Music.Midi.XamMac.csproj"
+    ]
+  }
+}

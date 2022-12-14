@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "managed-midi.sln",
+    "projects": [
+      "Commons.Music.Midi\\Commons.Music.Midi.csproj",
+      "Commons.Music.Midi.Tests\\Commons.Music.Midi.Tests.csproj",
+      "Commons.Music.Midi.Shared\\Commons.Music.Midi.Shared.shproj",
+      "Commons.Music.Midi.Uwp\\Commons.Music.Midi.Uwp.csproj",
+      "Commons.Music.Midi.UwpShared\\Commons.Music.Midi.UwpShared.shproj",
+      "Commons.Music.Midi.Desktop\\Commons.Music.Midi.Desktop.csproj",
+      "Commons.Music.Midi.DesktopShared\\Commons.Music.Midi.DesktopShared.shproj"
+    ]
+  }
+}
