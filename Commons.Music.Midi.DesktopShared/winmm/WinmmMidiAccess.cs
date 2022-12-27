@@ -141,7 +141,13 @@ namespace Commons.Music.Midi.WinMM
                 // FIXME: this is a nasty workaround for https://github.com/atsushieno/managed-midi/issues/49
                 // We have no idea when/how this message is sent (midi in proc is not well documented).
                 if (buffer.Header.BytesRecorded == 0)
-	                return;
+                {
+                    if (Connection != MidiPortConnectionState.Open)
+                    {
+                        FreeBuffer(buffer);
+                    }
+                    return;
+                }
 
                 data = new byte[buffer.Header.BytesRecorded];
 
@@ -153,8 +159,7 @@ namespace Commons.Music.Midi.WinMM
                 }
                 else
                 {
-                    lmBuffers.Remove(buffer.Ptr);
-                    buffer.Dispose();
+                    FreeBuffer(buffer);
                 }
             }
 
@@ -190,7 +195,21 @@ namespace Commons.Music.Midi.WinMM
                         break;
                 }
 			}
+            else if (Connection != MidiPortConnectionState.Open && msg == MidiInMessage.LongData)
+            {
+                lock (lockObject)
+                {
+                    var buffer = lmBuffers[param1];
+                    FreeBuffer(buffer);
+                }
+            }
 		}
+
+        void FreeBuffer(LongMessageBuffer buffer)
+        {
+            lmBuffers.Remove(buffer.Ptr);
+            buffer.Dispose();
+        }
 
 		public IMidiPortDetails Details { get; private set; }
 
@@ -209,22 +228,22 @@ namespace Commons.Music.Midi.WinMM
                     DieOnError(WinMMNatives.midiInReset(handle));
                     DieOnError(WinMMNatives.midiInStop(handle));
                     DieOnError(WinMMNatives.midiInClose(handle));
+                }
 
-                    // wait for the device driver to hand back the long buffers through HandleMidiInProc
+                // wait for the device driver to hand back the long buffers through HandleMidiInProc
 
-                    for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 1000; i++)
+                {
+                    lock (lockObject)
                     {
-                        lock (lockObject)
-                        {
-                            if (lmBuffers.Count < 1)
-                                break;
-                        }
-
-                        Thread.Sleep(10);
+                        if (lmBuffers.Count < 1)
+                            break;
                     }
 
-                    Connection = MidiPortConnectionState.Closed;
+                    Thread.Sleep(10);
                 }
+
+                Connection = MidiPortConnectionState.Closed;
             });
 		}
 
