@@ -212,12 +212,8 @@ namespace Commons.Music.Midi.CoreMidiApi
 		MidiPacket[] arr = new MidiPacket[1];
 		public void Send (byte[] mevent, int offset, int length, long timestamp)
 		{
-			unsafe {
-				fixed (byte* ptr = mevent) {
-					arr [0] = new MidiPacket(timestamp, (ushort)length, (IntPtr)(ptr + offset));
-					port.Send (details.Endpoint, arr);
-				}
-			}
+			arr [0] = new MidiPacket(timestamp, mevent, offset, length);
+			port.Send (details.Endpoint, arr);
 		}
 	}
 }
