@@ -381,9 +381,16 @@ namespace Commons.Music.Midi.WinMM
                     {
                         // allocate unmanaged memory and hand ownership over to the device driver
 
-                        header.Data = Marshal.AllocHGlobal(evt.ExtraDataLength);
-                        header.BufferLength = evt.ExtraDataLength;
-                        Marshal.Copy(evt.ExtraData, evt.ExtraDataOffset, header.Data, header.BufferLength);
+                        if (evt.ExtraDataLength > 0)
+                        {
+							header.Data = Marshal.AllocHGlobal(evt.ExtraDataLength);
+	                        header.BufferLength = evt.ExtraDataLength;
+	                        Marshal.Copy(evt.ExtraData, evt.ExtraDataOffset, header.Data, header.BufferLength);
+                        }
+                        else
+                        {
+	                        header.Data = IntPtr.Zero;
+                        }
 
                         ptr = Marshal.AllocHGlobal(hdrSize);
                         Marshal.StructureToPtr(header, ptr, false);
