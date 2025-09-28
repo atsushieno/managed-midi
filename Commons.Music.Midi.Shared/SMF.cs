@@ -334,7 +334,7 @@ namespace Commons.Music.Midi
 						i += z + 1;
 					}
 				} else {
-					var z = FixedDataSize(runningStatus);
+					var z = MidiEvent.FixedDataSize(runningStatus);
 					if (end < i + z)
 						throw new Exception($"Received data was incomplete to build MIDI running status message for '{runningStatus:X}' status.");
 					yield return new MidiEvent(runningStatus,
