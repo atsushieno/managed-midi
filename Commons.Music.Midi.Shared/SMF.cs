@@ -394,7 +394,7 @@ namespace Commons.Music.Midi
 		public byte EventType {
 			get {
 				var statusByte = StatusByte;
-				if (FixedDataSize(statusByte) == 0)
+				if (statusByte >= 0xF0)
 					return statusByte;
 				return (byte)(statusByte & 0xF0);
 			}
