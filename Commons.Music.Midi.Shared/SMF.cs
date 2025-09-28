@@ -309,25 +309,45 @@ namespace Commons.Music.Midi
 		public const byte EndSysEx = 0xF7;
 		public const byte Meta = 0xFF;
 
+		private static byte runningStatus;
+
 		public static IEnumerable<MidiEvent> Convert (byte[] bytes, int index, int size)
 		{
 			int i = index;
 			int end = index + size;
-			while (i < end) {
-				if (bytes [i] == 0xF0) {
-					yield return new MidiEvent (0xF0, 0, 0, bytes, index, size);
-					i += size;
-				} else {
-					var z = MidiEvent.FixedDataSize (bytes [i]);
+			while (i < end) 
+			{
+				if (bytes[i] >= 128)
+				{
+					// New status byte
+					runningStatus = bytes[i];
+					if (runningStatus == SysEx1)
+					{
+						yield return new MidiEvent(SysEx1, 0, 0, bytes, index, size);
+						i += size;
+						continue;
+					}
+					var z = FixedDataSize(runningStatus);
 					if (end < i + z)
 						throw new Exception (string.Format (
 							"Received data was incomplete to build MIDI status message for '{0:X}' status.",
-							bytes [i]));
-					yield return new MidiEvent (bytes [i],
+							runningStatus));
+					yield return new MidiEvent (runningStatus,
 						(byte) (z > 0 ? bytes [i + 1] : 0),
 						(byte) (z > 1 ? bytes [i + 2] : 0),
 						null, 0, 0);
 					i += z + 1;
+				}
+				else
+				{
+					// Is using running status
+					var z = FixedDataSize(runningStatus);
+					if (end < i + z)
+					{
+						throw new Exception($"Received data was incomplete to build MIDI running status message for '{runningStatus:X}' status.");
+					}
+					yield return new MidiEvent(runningStatus, bytes[i], (byte)((z > 1) ? bytes[i + 1] : 0), null, 0, 0);
+					i += z;
 				}
 			}
 		}
