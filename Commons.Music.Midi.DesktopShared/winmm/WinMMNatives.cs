@@ -34,15 +34,15 @@ namespace Commons.Music.Midi.WinMM
 	struct MidiHdr
 	{
 		public IntPtr Data;
-		public int BufferLength;
-		public int BytesRecorded;
+		public int BufferLength; // should be uint
+		public int BytesRecorded; // should be uint
 		public IntPtr User;
 		public int Flags;
 		public IntPtr Next; // of MidiHdr
 		public IntPtr Reserved;
-		public int Offset;
-		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 4)]
-		private int[] reservedArray;
+		public int Offset; // should be uint
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 8)]
+		private IntPtr reservedArray;
 	}
 
 	[Flags]
