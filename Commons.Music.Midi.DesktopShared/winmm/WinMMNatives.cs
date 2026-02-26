@@ -30,7 +30,7 @@ namespace Commons.Music.Midi.WinMM
 		public int Support;
 	}
 
-	[StructLayout (LayoutKind.Sequential)]
+	[StructLayout (LayoutKind.Sequential, Pack = 1)]
 	struct MidiHdr
 	{
 		public IntPtr Data;
@@ -42,7 +42,7 @@ namespace Commons.Music.Midi.WinMM
 		public IntPtr Reserved;
 		public int Offset; // should be uint
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 8)]
-		private IntPtr reservedArray;
+		private IntPtr[] reservedArray;
 	}
 
 	[Flags]
