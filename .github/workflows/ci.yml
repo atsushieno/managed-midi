@@ -4,29 +4,30 @@ name: Continuous Integration
 jobs:
   build:
     name: Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     timeout-minutes: 60
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Retrieve Commit Hash
-        uses: pr-mpt/actions-commit-hash@v2
         id: commit-hash
+        shell: bash
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v3
   
       - name: Setup NuGet
-        uses: nuget/setup-nuget@v1.1.1
+        uses: nuget/setup-nuget@v3
   
-      - name: Install .NET 6.0
-        uses: actions/setup-dotnet@v3
+      - name: Install .NET 10.0
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 10.0.x
 
       - name: Install .NET iOS Workload
         run: dotnet workload install ios
@@ -38,12 +39,12 @@ jobs:
         run: msbuild managed-midi.Windows.slnf -restore -p:RestorePackagesConfig=true
 
       - name: Build Xamarin Projects
-        run: msbuild managed-midi.Xamarin.slnf -restore
+        run: msbuild managed-midi.Xamarin.slnf -restore -p:AndroidSdkDirectory="$env:ANDROID_HOME" -p:JavaSdkDirectory="$env:JAVA_HOME_11_X64"
 
       - name: Pack 
         run: nuget pack -Version 1.0-${{ steps.commit-hash.outputs.short }}
         
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           path: ./*.nupkg
