@@ -1,0 +1,9 @@
+<Project>
+  <!-- Upgrade any subproject that still targets .NET Framework v4.5 (not available on windows-2022 runners) -->
+  <PropertyGroup>
+    <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == 'v4.5'">v4.7.2</TargetFrameworkVersion>
+    <!-- TargetFrameworkMoniker is set from TargetFrameworkVersion before Directory.Build.targets is imported,
+         so override it explicitly to match the upgraded version. -->
+    <TargetFrameworkMoniker Condition="'$(TargetFrameworkMoniker)' == '.NETFramework,Version=v4.5'">.NETFramework,Version=v4.7.2</TargetFrameworkMoniker>
+  </PropertyGroup>
+</Project>

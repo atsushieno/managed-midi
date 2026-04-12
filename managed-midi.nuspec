@@ -26,21 +26,15 @@
     <file src="Commons.Music.Midi.Desktop\bin\Debug\Commons.Music.Midi.pdb" target="lib\net45" />
     <file src="Commons.Music.Midi.Desktop\bin\Debug\alsa-sharp.dll" target="lib\net45" />
     <file src="Commons.Music.Midi.Desktop\bin\Debug\alsa-sharp.pdb" target="lib\net45" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\Commons.Music.Midi.dll" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\Commons.Music.Midi.pdb" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.dll" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\netcoreapp2.1\alsa-sharp.pdb" target="lib\netcoreapp2.1" />
-    <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.dll" target="lib\MonoAndroid" />
-    <file src="Commons.Music.Midi.Android\bin\Debug\Commons.Music.Midi.pdb" target="lib\MonoAndroid" />
-    <file src="Commons.Music.Midi.XamMac\bin\Debug\Commons.Music.Midi.dll" target="lib\XamarinMac" />
-    <file src="Commons.Music.Midi.XamMac\bin\Debug\Commons.Music.Midi.pdb" target="lib\XamarinMac" />
+    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\net10.0\Commons.Music.Midi.dll" target="lib\net10.0" />
+    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\net10.0\Commons.Music.Midi.pdb" target="lib\net10.0" />
+    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\net10.0\alsa-sharp.dll" target="lib\net10.0" />
+    <file src="Commons.Music.Midi.DotNetCore\bin\Debug\net10.0\alsa-sharp.pdb" target="lib\net10.0" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.dll" target="lib\uap10.0" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.pdb" target="lib\uap10.0" />
     <file src="Commons.Music.Midi.Uwp\bin\Debug\Commons.Music.Midi.pri" target="lib\uap10.0" />
-    <file src="Commons.Music.Midi.iOS\bin\Debug\net6.0-ios\Commons.Music.Midi.dll" target="lib\net6.0-ios16" />
-    <file src="Commons.Music.Midi.iOS\bin\Debug\net6.0-ios\Commons.Music.Midi.pdb" target="lib\net6.0-ios16" />
-    <file src="Commons.Music.Midi.XamiOS\bin\Debug\Commons.Music.Midi.dll" target="lib\XamariniOS" />
-    <file src="Commons.Music.Midi.XamiOS\bin\Debug\Commons.Music.Midi.pdb" target="lib\XamariniOS" />
-  </files>
+    <file src="Commons.Music.Midi.iOS\bin\Debug\net10.0-ios\Commons.Music.Midi.dll" target="lib\net10.0-ios17.0" />
+    <file src="Commons.Music.Midi.iOS\bin\Debug\net10.0-ios\Commons.Music.Midi.pdb" target="lib\net10.0-ios17.0" />
+    </files>
 </package>
 
